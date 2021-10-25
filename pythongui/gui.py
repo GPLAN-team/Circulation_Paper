@@ -21,10 +21,61 @@ import pythongui.tablenoscroll as tablenoscroll
 import pythongui.final as final
 import numpy as np
 import datetime
+from fpdf import FPDF
+
+pdf_w=210
+pdf_h=297
+pdf_w_c = 210/2
+pdf_h_c = 297/2
+
+
+class PDF(FPDF):
+    def add_border(self):
+        self.set_fill_color(105,105,105) # color for outer rectangle
+        self.rect(5.0, 5.0, 200.0,287.0,'DF')
+        self.set_fill_color(255, 255, 255) # color for inner rectangle
+        self.rect(8.0, 8.0, 194.0,282.0,'FD')
+        self.set_margins(left=10, top=10, right=-10)
+
+    def add_title(self):
+        self.set_title(title= "A catalogue of floor plans")
+        self.set_font('Arial', 'B', 8)
+        self.multi_cell(100, 10, 'A catalogue for multiple floor plans from a given adjacency graph', 0, 1, 'C')
+        
+
 done = True
 col = ["white","#9A8C98","light grey","white"]
 # colors = ['#4BC0D9','#76E5FC','#6457A6','#5C2751','#7D8491','#BBBE64','#64F58D','#9DFFF9','#AB4E68','#C4A287','#6F9283','#696D7D','#1B1F3B','#454ADE','#FB6376','#6C969D','#519872','#3B5249','#A4B494','#CCFF66','#FFC800','#FF8427','#0F7173','#EF8354','#795663','#AF5B5B','#667761','#CF5C36','#F0BCD4','#ADB2D3','#FF1B1C','#6A994E','#386641','#8B2635','#2E3532','#124E78']*10
-colors = ['#4BC0D9']*10
+# colors = ['#4BC0D9']*10
+rgb_colors = [ 	
+    (123,104,238), #medium slate blue	
+    (64,224,208), #turqouise
+    (250,128,114), #salmon
+    (255,127,80), #coral
+    (255,105,180), #hot pink	
+    (230,230,250), #lavender
+    (152,251,152), #pale green
+    (186,85,211), #medium orchid
+    (176,196,222), #light steel blue
+    (255,165,0), #orange
+    (255,218,185), #peach puff
+    (100,149,237), #corn flower blue
+    ]
+hex_colors = [
+    "#7B68EE", #medium slate blue	
+    "#40E0D0", #turqouise
+    "#FA8072", #salmon
+    "#FF7F50", #coral
+    "#FF69B4", #hot pink	
+    "#E6E6FA", #lavender
+    "#98FB98", #pale green
+    "#BA55D3", #medium orchid
+    "#B0C4DE", #light steel blue
+    "#FFA500", #orange
+    "#FFDAB9", #peach puff
+    "#6495ED", #corn flower blue
+]
+colors = hex_colors
 font={'font' : ("lato bold",10,"")}
 # reloader = Reloader()
 warnings.filterwarnings("ignore") 
@@ -106,6 +157,11 @@ class gui_class:
 
         self.cir_graph = nx.Graph()
         self.cir_dim_mat = []
+        self.output_data = []
+        self.time_taken = -1
+        self.num_rfp = 0
+        self.pdf_colors = []
+        self.multiple_output_found = 0
         
 
         while((self.value[0] == 0) and done):
@@ -150,8 +206,22 @@ class gui_class:
             self.nodes_data = []
 
         # colors = ['#4BC0D9','#76E5FC','#6457A6','#5C2751','#7D8491','#BBBE64','#64F58D','#9DFFF9','#AB4E68','#C4A287','#6F9283','#696D7D','#1B1F3B','#454ADE','#FB6376','#6C969D','#519872','#3B5249','#A4B494','#CCFF66','#FFC800','#FF8427','#0F7173','#EF8354','#795663','#AF5B5B','#667761','#CF5C36','#F0BCD4','#ADB2D3','#FF1B1C','#6A994E','#386641','#8B2635','#2E3532','#124E78']
-        colors = ['#4BC0D9']*1000
+        # colors = ['#4BC0D9']*1000
         # colors = ['#edf1fe','#c6e3f7','#e1eaec','#e5e8f2','#def7fe','#f1ebda','#f3e2c6','#fff2de','#ecdfd6','#f5e6d3','#e3e7c4','#efdbcd','#ebf5f0','#cae1d9','#c3ddd6','#cef0cc','#9ab8c2','#ddffdd','#fdfff5','#eae9e0','#e0dddd','#f5ece7','#f6e6c5','#f4dbdc','#f4daf1','#f7cee0','#f8d0e7','#efa6aa','#fad6e5','#f9e8e2','#c4adc9','#f6e5f6','#feedca','#f2efe1','#fff5be','#ffffdd']
+        colors = [
+            "#7B68EE", #medium slate blue	
+            "#40E0D0", #turqouise
+            "#FA8072", #salmon
+            "#FF7F50", #coral
+            "#FF69B4", #hot pink	
+            "#E6E6FA", #lavender
+            "#98FB98", #pale green
+            "#BA55D3", #medium orchid
+            "#B0C4DE", #light steel blue
+            "#FFA500", #orange
+            "#FFDAB9", #peach puff
+            "#6495ED", #corn flower blue
+        ]
         nodes_data=[]
         id_circle=[]
         name_circle= []
@@ -285,7 +355,6 @@ class gui_class:
             node2_y=self.nodes_data[node2_id].pos_y
             edge = self.canvas.create_line(node1_x,node1_y,node2_x,node2_y,width=3)
             self.elines.append([edge,connections])
-            print("edges",type(self.elines[0][0]))
 
         def toggle_edge_connectivity(self,evalue):
             for node1_id, node2_id in evalue:
@@ -306,6 +375,8 @@ class gui_class:
         def create_new_node(self, x, y ,id_node):
             self.random_list.append(0)
             hex_number = self.colors[0]
+            # self.colors.insert(len(self.colors),self.colors[0])
+            self.colors.pop(0)
             self.hex_list.append(hex_number)
             node=self.master.Nodes(id_node,x,y)
             self.nodes_data.append(node)
@@ -1102,7 +1173,7 @@ class gui_class:
             leaves = self.leaves
             for room in leaves:
                 i+=1
-                canvas.create_rectangle(room.d1,room.d2, room.d3, room.d4, fill = colors[i])
+                canvas.create_rectangle(room.d1,room.d2, room.d3, room.d4, fill = hex_colors[i])
 
             num_corridors = len(mat) - len(leaves)
             print("No of corridors are ",num_corridors)
@@ -1277,6 +1348,7 @@ class gui_class:
             filemenu.add_command(label="Open",command=master.open_file)
             filemenu.add_command(label="Save",command=master.save_file)
             filemenu.add_command(label="Save as JSON",command=master.save_JSON)
+            filemenu.add_command(label="Download Catalogue",command=master.download_catalogue)
             filemenu.add_command(label="Close",command=master.exit)
 
             filemenu.add_separator()
@@ -1330,7 +1402,7 @@ class gui_class:
             self.tscreen.screensize(50000,1000)
             self.tscreen.bgcolor(col[3])
             self.pen = turtle.RawTurtle(self.tscreen)
-            self.pen.speed(10000000)
+            self.pen.speed(0)
 
             self.canvas.bind("<MouseWheel>",  self.do_zoom)
             self.canvas.bind('<Button-1>', lambda event: self.canvas.scan_mark(event.x, event.y))
@@ -1533,6 +1605,71 @@ class gui_class:
             fauto.write(jstr)
             fauto.close()
             f.close()
+
+    def download_catalogue(self):
+        if not self.multiple_output_found:
+            tk.messagebox.showinfo("error","Output not yet found")
+
+        else:
+            print("[LOG] Downloading Catalogue")
+            
+
+            pdf = PDF() 
+            pdf.add_page()
+            pdf.add_border()
+            pdf.add_title()
+            self.save_graph()
+            pdf.multi_cell(100, 10, str( "Adjacency List: " + str(self.app.edges)), 0, 1, 'C')
+            # pdf.set_y(pdf.get_y() + 10)
+            x1 = pdf.get_x()
+            y1 = pdf.get_y()
+            pdf.image("./latest_adj_graph.png", x = x1, y = y1, w = 100, h = 100, type = 'png', link = './latest_adj_graph.png')
+            pdf.set_y(pdf.get_y() + 110)
+            pdf.multi_cell(100, 10, "Time taken: " + str(self.time_taken) + " ms", 0, 1, 'C')
+            pdf.multi_cell(100, 10, "Number of floorplans: " +  str(self.num_rfp), 0, 1, 'C')
+            # pdf.set_fill_color(111,111,111)
+            # pdf.set_draw_color(111,111,0)
+            idx = 6
+            origin = [ [75,75], [75,175], [75, 250], [175, 75], [175,175], [175, 250] ]
+            for rfp in range(self.num_rfp):
+                if idx == 6:
+                    pdf.add_page()
+                    pdf.add_border()
+                    idx = 0
+                    pdf.cell(40)
+                    pdf.cell(100,10, str(rfp) + " of " + str(self.num_rfp) + " Floor Plans",0,1,'C')
+                
+                # pdf.multi_cell(100, 10, str(self.output_data[i]), 0, 1, 'C')
+                origin_x = origin[idx][0]
+                origin_y = origin[idx][1]
+                scale = 10
+                # print(self.pdf_colors)
+                for each_room in range(len(self.output_data[rfp]['room_x_top_left'])):
+                    pdf.set_fill_color(*rgb_colors[each_room])
+                    pdf.set_draw_color(0,0,0)
+                    pdf.rect( 
+                        origin_x + scale * int(self.output_data[rfp]['room_x_top_left'][each_room]) * -1,
+                        origin_y + scale * int(self.output_data[rfp]['room_y_left_top'][each_room]) * -1, 
+                        scale * int(self.output_data[rfp]['room_width'][each_room]) * 1, 
+                        scale * int(self.output_data[rfp]['room_height'][each_room])* 1,
+                        'DF')
+                    pdf.text(
+                        origin_x + scale * int(self.output_data[rfp]['room_x_top_left'][each_room]) * -1 + 5,
+                        origin_y + scale * int(self.output_data[rfp]['room_y_left_top'][each_room]) * -1 + 5,
+                        txt = str(each_room) )
+                # print("i = ", i)
+                # print(" self.output_data[i]['room_x_top_left']" , self.output_data[i])
+                idx+=1
+                
+
+            pdf.output('latest_catalogue.pdf','F')
+
+    
+    def save_graph(self):
+        G = nx.Graph()
+        G.add_edges_from(self.app.edges)
+        nx.draw_planar(G,with_labels = True)
+        plt.savefig('latest_adj_graph.png')
 
     def change_entry_gui(self):
         self.top = tk.Toplevel(self.root, width = 300, height = 300)

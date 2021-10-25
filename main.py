@@ -6,6 +6,7 @@ import warnings
 import time
 import tkinter as tk
 import networkx as nx
+from numpy import true_divide
 import pythongui.gui as gui
 import source.inputgraph as inputgraph
 import pythongui.drawing as draw
@@ -78,6 +79,7 @@ def run():
                             'mergednodes': graph.mergednodes,
                             'irreg_nodes': graph.irreg_nodes1
                         }
+                    gclass.output_data.append(graph_data)
                     draw.draw_rdg(graph_data
                             ,1
                             ,gclass.pen
@@ -121,6 +123,8 @@ def run():
                             'mergednodes': graph.mergednodes,
                             'irreg_nodes': graph.irreg_nodes1
                         }
+                    
+                    gclass.output_data.append(graph_data)
                     draw.draw_rdg(graph_data
                             ,1
                             ,gclass.pen
@@ -135,6 +139,8 @@ def run():
                     end = time.time()
                     printe("Average Time taken: " + str(((end-start)*1000)/graph.fpcnt) + " ms")
                     printe("Number of floorplans: " +  str(graph.fpcnt))
+                    gclass.multiple_output_found = 1
+
                     for idx in range(graph.fpcnt):
                         graph_data = {
                             'room_x': graph.room_x[idx],
@@ -154,14 +160,18 @@ def run():
                             'mergednodes': graph.mergednodes[idx],
                             'irreg_nodes': graph.irreg_nodes1[idx]
                         }
-                        draw.draw_rdg(graph_data
-                            ,idx+1
-                            ,gclass.pen
-                            ,1
-                            ,gclass.value[6]
-                            ,[]
-                            ,origin)
-                        origin += 1000
+                        
+                        gclass.output_data.append(graph_data)
+                        # draw.draw_rdg(graph_data
+                        #     ,idx+1
+                        #     ,gclass.pen
+                        #     ,1
+                        #     ,gclass.value[6]
+                        #     ,[]
+                        #     ,origin)
+                        # gclass.ocan.add_tab()
+                        # gclass.pen = gclass.ocan.getpen()
+                        # gclass.pen.speed(0)
                 else:
                     old_dims = [[0] * gclass.value[0]
                                 , [0] * gclass.value[0]
@@ -177,6 +187,7 @@ def run():
                     end = time.time()
                     printe("Time taken: " + str((end-start)*1000) + " ms")
                     printe("Number of floorplans: " +  str(len(graph.room_x)))
+                    gclass.multiple_output_found = 1
                     for idx in range(len(graph.room_x)):
                         graph_data = {
                             'room_x': graph.room_x[idx],
@@ -196,7 +207,11 @@ def run():
                             'mergednodes': graph.mergednodes,
                             'irreg_nodes': graph.irreg_nodes1
                         }
-                        origin += 1000
+                        
+                        gclass.output_data.append(graph_data)
+                        gclass.ocan.add_tab()
+                        gclass.pen = gclass.ocan.getpen()
+                        gclass.pen.speed(0)
                         draw.draw_rdg(graph_data
                             ,1
                             ,gclass.pen
@@ -204,15 +219,19 @@ def run():
                             ,gclass.value[6]
                             ,[]
                             ,origin)
+            
+            gclass.time_taken = (end-start)*1000
+            gclass.num_rfp = len(graph.room_x)
+            gclass.pdf_colors = gclass.value[6][0]
+            gclass.output_found = 1
+            
         gclass.root.wait_variable(gclass.end)
         gclass.graph_ret()
         gclass.ocan.add_tab()
 
         # gclass.ocan.tscreen.resetscreen()
         gclass.pen = gclass.ocan.getpen()
-        gclass.pen.speed(100000)
-
-
+        gclass.pen.speed(0)
 
 
 def make_dissection_corridor(gclass):
