@@ -233,7 +233,6 @@ def run():
         gclass.pen = gclass.ocan.getpen()
         gclass.pen.speed(0)
 
-
 def make_dissection_corridor(gclass):
     dis =nx.Graph()
     dis = nx.from_numpy_matrix(gclass.dclass.mat)

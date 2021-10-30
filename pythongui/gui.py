@@ -22,26 +22,7 @@ import pythongui.final as final
 import numpy as np
 import datetime
 from fpdf import FPDF
-
-pdf_w=210
-pdf_h=297
-pdf_w_c = 210/2
-pdf_h_c = 297/2
-
-
-class PDF(FPDF):
-    def add_border(self):
-        self.set_fill_color(105,105,105) # color for outer rectangle
-        self.rect(5.0, 5.0, 200.0,287.0,'DF')
-        self.set_fill_color(255, 255, 255) # color for inner rectangle
-        self.rect(8.0, 8.0, 194.0,282.0,'FD')
-        self.set_margins(left=10, top=10, right=-10)
-
-    def add_title(self):
-        self.set_title(title= "A catalogue of floor plans")
-        self.set_font('Arial', 'B', 8)
-        self.multi_cell(100, 10, 'A catalogue for multiple floor plans from a given adjacency graph', 0, 1, 'C')
-        
+from .catalogue_maker import generate_catalogue
 
 done = True
 col = ["white","#9A8C98","light grey","white"]
@@ -50,31 +31,31 @@ col = ["white","#9A8C98","light grey","white"]
 rgb_colors = [ 	
     (123,104,238), #medium slate blue	
     (64,224,208), #turqouise
-    (250,128,114), #salmon
     (255,127,80), #coral
     (255,105,180), #hot pink	
     (230,230,250), #lavender
+    (250,128,114), #salmon
     (152,251,152), #pale green
     (186,85,211), #medium orchid
     (176,196,222), #light steel blue
     (255,165,0), #orange
     (255,218,185), #peach puff
     (100,149,237), #corn flower blue
-    ]
+    ]*10
 hex_colors = [
     "#7B68EE", #medium slate blue	
     "#40E0D0", #turqouise
-    "#FA8072", #salmon
     "#FF7F50", #coral
     "#FF69B4", #hot pink	
     "#E6E6FA", #lavender
+    "#FA8072", #salmon
     "#98FB98", #pale green
     "#BA55D3", #medium orchid
     "#B0C4DE", #light steel blue
     "#FFA500", #orange
     "#FFDAB9", #peach puff
     "#6495ED", #corn flower blue
-]
+]*10
 colors = hex_colors
 font={'font' : ("lato bold",10,"")}
 # reloader = Reloader()
@@ -211,17 +192,17 @@ class gui_class:
         colors = [
             "#7B68EE", #medium slate blue	
             "#40E0D0", #turqouise
-            "#FA8072", #salmon
             "#FF7F50", #coral
             "#FF69B4", #hot pink	
             "#E6E6FA", #lavender
+            "#FA8072", #salmon
             "#98FB98", #pale green
             "#BA55D3", #medium orchid
             "#B0C4DE", #light steel blue
             "#FFA500", #orange
             "#FFDAB9", #peach puff
             "#6495ED", #corn flower blue
-        ]
+        ]*10
         nodes_data=[]
         id_circle=[]
         name_circle= []
@@ -505,6 +486,8 @@ class gui_class:
         
         def reset(self):
             self.canvas.destroy()
+            self.app.edges = []
+            self.output_data = []
             self.createCanvas()
 
     class dissected:
@@ -1609,67 +1592,8 @@ class gui_class:
     def download_catalogue(self):
         if not self.multiple_output_found:
             tk.messagebox.showinfo("error","Output not yet found")
-
         else:
-            print("[LOG] Downloading Catalogue")
-            
-
-            pdf = PDF() 
-            pdf.add_page()
-            pdf.add_border()
-            pdf.add_title()
-            self.save_graph()
-            pdf.multi_cell(100, 10, str( "Adjacency List: " + str(self.app.edges)), 0, 1, 'C')
-            # pdf.set_y(pdf.get_y() + 10)
-            x1 = pdf.get_x()
-            y1 = pdf.get_y()
-            pdf.image("./latest_adj_graph.png", x = x1, y = y1, w = 100, h = 100, type = 'png', link = './latest_adj_graph.png')
-            pdf.set_y(pdf.get_y() + 110)
-            pdf.multi_cell(100, 10, "Time taken: " + str(self.time_taken) + " ms", 0, 1, 'C')
-            pdf.multi_cell(100, 10, "Number of floorplans: " +  str(self.num_rfp), 0, 1, 'C')
-            # pdf.set_fill_color(111,111,111)
-            # pdf.set_draw_color(111,111,0)
-            idx = 6
-            origin = [ [75,75], [75,175], [75, 250], [175, 75], [175,175], [175, 250] ]
-            for rfp in range(self.num_rfp):
-                if idx == 6:
-                    pdf.add_page()
-                    pdf.add_border()
-                    idx = 0
-                    pdf.cell(40)
-                    pdf.cell(100,10, str(rfp) + " of " + str(self.num_rfp) + " Floor Plans",0,1,'C')
-                
-                # pdf.multi_cell(100, 10, str(self.output_data[i]), 0, 1, 'C')
-                origin_x = origin[idx][0]
-                origin_y = origin[idx][1]
-                scale = 10
-                # print(self.pdf_colors)
-                for each_room in range(len(self.output_data[rfp]['room_x_top_left'])):
-                    pdf.set_fill_color(*rgb_colors[each_room])
-                    pdf.set_draw_color(0,0,0)
-                    pdf.rect( 
-                        origin_x + scale * int(self.output_data[rfp]['room_x_top_left'][each_room]) * -1,
-                        origin_y + scale * int(self.output_data[rfp]['room_y_left_top'][each_room]) * -1, 
-                        scale * int(self.output_data[rfp]['room_width'][each_room]) * 1, 
-                        scale * int(self.output_data[rfp]['room_height'][each_room])* 1,
-                        'DF')
-                    pdf.text(
-                        origin_x + scale * int(self.output_data[rfp]['room_x_top_left'][each_room]) * -1 + 5,
-                        origin_y + scale * int(self.output_data[rfp]['room_y_left_top'][each_room]) * -1 + 5,
-                        txt = str(each_room) )
-                # print("i = ", i)
-                # print(" self.output_data[i]['room_x_top_left']" , self.output_data[i])
-                idx+=1
-                
-
-            pdf.output('latest_catalogue.pdf','F')
-
-    
-    def save_graph(self):
-        G = nx.Graph()
-        G.add_edges_from(self.app.edges)
-        nx.draw_planar(G,with_labels = True)
-        plt.savefig('latest_adj_graph.png')
+            generate_catalogue(self.app.edges, self.num_rfp, self.time_taken, self.output_data)
 
     def change_entry_gui(self):
         self.top = tk.Toplevel(self.root, width = 300, height = 300)
