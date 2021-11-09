@@ -61,12 +61,14 @@ def save_graph(edges):
 
 def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100):
 
-    pdf.rect( x, y, grid_w, grid_h)
+    # Bounding Box
+    # pdf.rect( x, y, grid_w, grid_h)
 
     min_x = rfp_data['room_x'][0]
     min_y = rfp_data['room_y'][0]
     max_x = rfp_data['room_x'][0] + rfp_data['room_width'][0]
     max_y = rfp_data['room_y'][0] + rfp_data['room_height'][0]
+    # print("min_x, max_x, min_y, max_y" , min_x, max_x, min_y, max_y)
     for each_room in range(len(rfp_data['room_x_top_left'])):
 
         min_x = min( min_x,  rfp_data['room_x'][each_room] )
@@ -76,10 +78,18 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100):
 
     plot_width = abs( min_x - max_x)
     plot_height = abs( min_y - max_y)
-
-    print("plot height width = ", plot_height, plot_width)
     scale = max( grid_h/plot_height, grid_w/plot_width) / 6
 
+    # pdf.text(
+    #         x + grid_w,
+    #         y,
+    #         txt = "Dimensions of each room" )
+
+    # pdf.set_xy(x + grid_w - 10, y)
+    pdf.text(x + grid_w, y, 'Dimensions \n')
+
+    for each_room in range(len(rfp_data['room_x_top_left'])):
+        pdf.text(x + grid_w, y + each_room * 5 + 5, 'Room ' + str(each_room) + ' : ' + str(rfp_data['room_width'][each_room]) + ' X ' + str(rfp_data['room_height'][each_room]) + '\n')
 
     for each_room in range(len(rfp_data['room_x_top_left'])):
         if each_room in rfp_data['extranodes']:
@@ -95,15 +105,15 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100):
         pdf.rect( 
             x + scale * int(rfp_data['room_x'][each_room]) ,
             y + scale * int(rfp_data['room_y'][each_room]) , 
-            scale * int(rfp_data['room_width'][each_room]) * 1, 
-            scale * int(rfp_data['room_height'][each_room])* 1,
+            scale * int(rfp_data['room_width'][each_room]) , 
+            scale * int(rfp_data['room_height'][each_room]) ,
             'DF')
 
-        # if each_room not in rfp_data['mergednodes']:
-        #     pdf.text(
-        #         x + scale * int(rfp_data['room_x'][each_room])  + 5,
-        #         y + scale * int(rfp_data['room_y'][each_room])  + 5,
-        #         txt = str(each_room) )
+        if each_room not in rfp_data['mergednodes']:
+            pdf.text(
+                x + scale * int(rfp_data['room_x'][each_room])  + 5,
+                y + scale * int(rfp_data['room_y'][each_room])  + 5,
+                txt = str(each_room) )
 
         line_width = 0.2
         pdf.set_line_width(line_width)
@@ -143,9 +153,12 @@ def generate_catalogue(edges, num_rfp, time_taken, output_data ):
         origin_x = 15
         origin_y = 30
 
-        grid_height = 20
-        grid_width = 20
+        grid_height = 50
+        grid_width = 50
 
+        grid_cols = int( (pdf_w - 30) / grid_width ) 
+        grid_rows = int( (pdf_h - 30) / grid_height)
+        # print(" cols rows" , grid_cols, grid_rows)
 
         rfp_no = 0
         break_while = 0
@@ -156,19 +169,22 @@ def generate_catalogue(edges, num_rfp, time_taken, output_data ):
             pdf.cell(40)
             pdf.cell(100,10, str(rfp_no) + " of " + str(num_rfp) + " Floor Plans",0,1,'C')
 
-            for i in range(9):
+            for i in range(grid_rows):
                 if break_while == 1:
                     break
-                for j in range(12):
+
+                j = 0
+                while j < grid_cols:
                     if rfp_no >= num_rfp:
                         break_while = 1
                         break
-                    rfp_x = origin_x + i * grid_width 
-                    rfp_y = origin_y + j * grid_height
+
+                    rfp_x = origin_x + j * (grid_width + 2)
+                    rfp_y = origin_y + i * (grid_height + 2)
                     rfp_data = output_data[rfp_no]
-                    print("drawing rfp with x y = ", rfp_x, rfp_y)
                     draw_one_rfp(pdf, rfp_x, rfp_y, rfp_data, grid_width, grid_height)
                     rfp_no += 1
+                    j += 2
                     
             
 
