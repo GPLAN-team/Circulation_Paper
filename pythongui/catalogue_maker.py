@@ -2,6 +2,9 @@ from turtle import width
 from fpdf import FPDF
 import networkx as nx
 import matplotlib.pyplot as plt
+from tkinter import *
+from tkinter.filedialog import asksaveasfilename
+from tkinter import messagebox
 
 pdf_w=210
 pdf_h=297
@@ -185,10 +188,31 @@ def generate_catalogue(edges, num_rfp, time_taken, output_data ):
                     draw_one_rfp(pdf, rfp_x, rfp_y, rfp_data, grid_width, grid_height)
                     rfp_no += 1
                     j += 2
-                    
-            
 
-        pdf.output('latest_catalogue.pdf','F')
+        win = Tk()
+        win.geometry("750x250")
+
+        # Define the function
+        def save_file():
+            f = asksaveasfilename(initialfile='Catalogue.pdf', defaultextension=".pdf",
+                                  filetypes=[("All Files", "*.*"), ('pdf file', '*.pdf')])
+            pdf.output(f, 'F')
+            print("saved at:", f)
+
+        # Create a button
+        btn = Button(win, text="Save", command=lambda: save_file())
+        btn.pack(pady=10)
+        win.after(3000, lambda: win.destroy())
+        win.mainloop()
+
+        # Success alert
+        root = Tk()
+        root.geometry("300x200")
+        w = Label(root, text='Success confirmation', font="30")
+        w.pack()
+        messagebox.showinfo("SUCCESS", "Catalogue downloaded successfully!")
+        root.mainloop()
+
 
 
 
