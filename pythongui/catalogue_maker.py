@@ -56,7 +56,72 @@ def save_graph(edges):
     nx.draw_planar(G,node_color=hex_colors[:G.number_of_nodes()], with_labels = True)
     plt.savefig('latest_adj_graph.png')
     
+
+
+
+def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100):
+
+    pdf.rect( x, y, grid_w, grid_h)
+
+    min_x = rfp_data['room_x'][0]
+    min_y = rfp_data['room_y'][0]
+    max_x = rfp_data['room_x'][0] + rfp_data['room_width'][0]
+    max_y = rfp_data['room_y'][0] + rfp_data['room_height'][0]
+    for each_room in range(len(rfp_data['room_x_top_left'])):
+
+        min_x = min( min_x,  rfp_data['room_x'][each_room] )
+        min_y = min( min_y,  rfp_data['room_y'][each_room] )
+        max_x = min( max_x,  rfp_data['room_x'][each_room] + rfp_data['room_width'][each_room] )
+        max_y = min( max_y,  rfp_data['room_y'][each_room] + rfp_data['room_height'][each_room] )
+
+    plot_width = abs( min_x - max_x)
+    plot_height = abs( min_y - max_y)
+
+    print("plot height width = ", plot_height, plot_width)
+    scale = max( grid_h/plot_height, grid_w/plot_width) / 6
+
+
+    for each_room in range(len(rfp_data['room_x_top_left'])):
+        if each_room in rfp_data['extranodes']:
+            continue
+        if each_room in rfp_data['mergednodes']:
+            rgb_colors[each_room] = rgb_colors[
+                int (rfp_data['irreg_nodes'][
+                    rfp_data['mergednodes'].index(each_room)
+                    ])
+                    ]
+        pdf.set_fill_color(*rgb_colors[each_room])
+        pdf.set_draw_color(0,0,0)
+        pdf.rect( 
+            x + scale * int(rfp_data['room_x'][each_room]) ,
+            y + scale * int(rfp_data['room_y'][each_room]) , 
+            scale * int(rfp_data['room_width'][each_room]) * 1, 
+            scale * int(rfp_data['room_height'][each_room])* 1,
+            'DF')
+
+        # if each_room not in rfp_data['mergednodes']:
+        #     pdf.text(
+        #         x + scale * int(rfp_data['room_x'][each_room])  + 5,
+        #         y + scale * int(rfp_data['room_y'][each_room])  + 5,
+        #         txt = str(each_room) )
+
+        line_width = 0.2
+        pdf.set_line_width(line_width)
+        pdf.set_draw_color(*rgb_colors[each_room])
+        if rfp_data['room_x_bottom_left'][each_room] != rfp_data['room_x_bottom_right'][each_room]:
+            pdf.line(x + scale * rfp_data['room_x_bottom_left'][each_room] + line_width, y + scale * rfp_data['room_y'][each_room], x + scale * rfp_data['room_x_bottom_right'][each_room] - line_width, y + scale * rfp_data['room_y'][each_room])
+        if rfp_data['room_x_top_left'][each_room] != rfp_data['room_x_top_right'][each_room]:
+            pdf.line(x + scale * rfp_data['room_x_top_left'][each_room] + line_width, y + scale * rfp_data['room_y'][each_room] + scale * rfp_data['room_height'][each_room] , x + scale * rfp_data['room_x_top_right'][each_room] - line_width, y + scale * rfp_data['room_y'][each_room] + scale * rfp_data['room_height'][each_room])
+        if rfp_data['room_y_left_bottom'][each_room] != rfp_data['room_y_left_top'][each_room]:
+            pdf.line( x + scale * rfp_data['room_x'][each_room],y + scale * rfp_data['room_y_left_bottom'][each_room] + line_width ,x + scale * rfp_data['room_x'][each_room], y + scale * rfp_data['room_y_left_top'][each_room] - line_width )
+        if rfp_data['room_y_right_bottom'][each_room] != rfp_data['room_y_right_top'][each_room]:
+            pdf.line( x + scale * rfp_data['room_x'][each_room] + scale * rfp_data['room_width'][each_room], y + scale * rfp_data['room_y_right_bottom'][each_room] + line_width , x + scale * rfp_data['room_x'][each_room] + scale * rfp_data['room_width'][each_room], y + scale * rfp_data['room_y_right_top'][each_room] - line_width)
+            
         
+        pdf.set_draw_color(0,0,0)
+
+
+
 def generate_catalogue(edges, num_rfp, time_taken, output_data ):
         print("[LOG] Downloading Catalogue")
         pdf = PDF() 
@@ -73,66 +138,38 @@ def generate_catalogue(edges, num_rfp, time_taken, output_data ):
         pdf.multi_cell(100, 10, "Time taken: " + str(time_taken) + " ms", 0, 1, 'C')
         pdf.multi_cell(100, 10, "Number of floorplans: " +  str(num_rfp), 0, 1, 'C')
         idx = 6
-        origin = [ [75,75], [75,175], [75, 250], [175, 75], [175,175], [175, 250] ]
-        print(output_data[0])
+        # origin = [ [75,75], [75,175], [75, 250], [175, 75], [175,175], [175, 250] ]
+        
+        origin_x = 15
+        origin_y = 30
 
-        for rfp in range(num_rfp):
-            if idx == 6:
-                pdf.add_page()
-                pdf.add_border()
-                idx = 0
-                pdf.cell(40)
-                pdf.cell(100,10, str(rfp) + " of " + str(num_rfp) + " Floor Plans",0,1,'C')
+        grid_height = 20
+        grid_width = 20
+
+
+        rfp_no = 0
+        break_while = 0
+        while rfp_no < num_rfp:
             
-            origin_x = origin[idx][0] - 50
-            origin_y = origin[idx][1] - 50
-            # pdf.multi_cell(origin_x, origin_y, str(output_data[i]), 0, 1, 'C')
-            scale = 10
-            # print(pdf_colors)
-            for each_room in range(len(output_data[rfp]['room_x_top_left'])):
-                if each_room in output_data[rfp]['extranodes']:
-                    continue
-                if each_room in output_data[rfp]['mergednodes']:
-                    rgb_colors[each_room] = rgb_colors[
-                        int (output_data[rfp]['irreg_nodes'][
-                            output_data[rfp]['mergednodes'].index(each_room)
-                            ])
-                            ]
-                pdf.set_fill_color(*rgb_colors[each_room])
-                pdf.set_draw_color(0,0,0)
-                pdf.rect( 
-                    origin_x + scale * int(output_data[rfp]['room_x'][each_room]) ,
-                    origin_y + scale * int(output_data[rfp]['room_y'][each_room]) , 
-                    scale * int(output_data[rfp]['room_width'][each_room]) * 1, 
-                    scale * int(output_data[rfp]['room_height'][each_room])* 1,
-                    'DF')
+            pdf.add_page()
+            pdf.add_border()
+            pdf.cell(40)
+            pdf.cell(100,10, str(rfp_no) + " of " + str(num_rfp) + " Floor Plans",0,1,'C')
 
-                if each_room not in output_data[rfp]['mergednodes']:
-                    pdf.text(
-                        origin_x + scale * int(output_data[rfp]['room_x'][each_room])  + 5,
-                        origin_y + scale * int(output_data[rfp]['room_y'][each_room])  + 5,
-                        txt = str(each_room) )
-
-                line_width = 0.2
-                pdf.set_line_width(line_width)
-                pdf.set_draw_color(*rgb_colors[each_room])
-                if output_data[rfp]['room_x_bottom_left'][each_room] != output_data[rfp]['room_x_bottom_right'][each_room]:
-                    pdf.line(origin_x + scale * output_data[rfp]['room_x_bottom_left'][each_room] + line_width, origin_y + scale * output_data[rfp]['room_y'][each_room], origin_x + scale * output_data[rfp]['room_x_bottom_right'][each_room] - line_width, origin_y + scale * output_data[rfp]['room_y'][each_room])
-                if output_data[rfp]['room_x_top_left'][each_room] != output_data[rfp]['room_x_top_right'][each_room]:
-                    pdf.line(origin_x + scale * output_data[rfp]['room_x_top_left'][each_room] + line_width, origin_y + scale * output_data[rfp]['room_y'][each_room] + scale * output_data[rfp]['room_height'][each_room] , origin_x + scale * output_data[rfp]['room_x_top_right'][each_room] - line_width, origin_y + scale * output_data[rfp]['room_y'][each_room] + scale * output_data[rfp]['room_height'][each_room])
-                if output_data[rfp]['room_y_left_bottom'][each_room] != output_data[rfp]['room_y_left_top'][each_room]:
-                    pdf.line( origin_x + scale * output_data[rfp]['room_x'][each_room],origin_y + scale * output_data[rfp]['room_y_left_bottom'][each_room] + line_width ,origin_x + scale * output_data[rfp]['room_x'][each_room], origin_y + scale * output_data[rfp]['room_y_left_top'][each_room] - line_width )
-                if output_data[rfp]['room_y_right_bottom'][each_room] != output_data[rfp]['room_y_right_top'][each_room]:
-                    pdf.line( origin_x + scale * output_data[rfp]['room_x'][each_room] + scale * output_data[rfp]['room_width'][each_room], origin_y + scale * output_data[rfp]['room_y_right_bottom'][each_room] + line_width , origin_x + scale * output_data[rfp]['room_x'][each_room] + scale * output_data[rfp]['room_width'][each_room], origin_y + scale * output_data[rfp]['room_y_right_top'][each_room] - line_width)
+            for i in range(9):
+                if break_while == 1:
+                    break
+                for j in range(12):
+                    if rfp_no >= num_rfp:
+                        break_while = 1
+                        break
+                    rfp_x = origin_x + i * grid_width 
+                    rfp_y = origin_y + j * grid_height
+                    rfp_data = output_data[rfp_no]
+                    print("drawing rfp with x y = ", rfp_x, rfp_y)
+                    draw_one_rfp(pdf, rfp_x, rfp_y, rfp_data, grid_width, grid_height)
+                    rfp_no += 1
                     
-                
-                pdf.set_draw_color(0,0,0)
-                
-
-                    
-            # print("i = ", i)
-            # print(" output_data[i]['room_x_top_left']" , output_data[i])
-            idx+=1
             
 
         pdf.output('latest_catalogue.pdf','F')
