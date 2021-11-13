@@ -1,7 +1,6 @@
 """Main file of the project
 
 """
-
 import warnings
 import time
 import tkinter as tk
@@ -96,6 +95,8 @@ def run():
                                 , [0] * gclass.value[0]
                                 , [0] * gclass.value[0]]
                     min_width,max_width,min_height,max_height, symm_string, min_aspect, max_aspect, plot_width, plot_height  = dimgui.gui_fnc(old_dims, gclass.value[0])
+                    dimensional_constraints = [min_width,max_width,min_height,max_height, symm_string, min_aspect, max_aspect, plot_width, plot_height]
+                    gclass.dimensional_constraints = dimensional_constraints
                     start = time.time()
                     graph.multiple_dual()
                     graph.single_floorplan(min_width,min_height,max_width,max_height,symm_string, min_aspect, max_aspect, plot_width, plot_height)
@@ -181,6 +182,7 @@ def run():
                                 , [0] * gclass.value[0]
                                 , [0] * gclass.value[0]]
                     min_width,max_width,min_height,max_height, symm_string, min_aspect, max_aspect, plot_width, plot_height  = dimgui.gui_fnc(old_dims, gclass.value[0])
+                    dimensional_constraints = [min_width,max_width,min_height,max_height, symm_string, min_aspect, max_aspect, plot_width, plot_height]
                     start = time.time()
                     graph.multiple_dual()
                     graph.multiple_floorplan(min_width,min_height,max_width,max_height,symm_string, min_aspect, max_aspect, plot_width, plot_height)
@@ -209,16 +211,17 @@ def run():
                         }
                         
                         gclass.output_data.append(graph_data)
-                        gclass.ocan.add_tab()
-                        gclass.pen = gclass.ocan.getpen()
-                        gclass.pen.speed(0)
-                        draw.draw_rdg(graph_data
-                            ,1
-                            ,gclass.pen
-                            ,1
-                            ,gclass.value[6]
-                            ,[]
-                            ,origin)
+                        gclass.dimensional_constraints = dimensional_constraints
+                        # gclass.ocan.add_tab()
+                        # gclass.pen = gclass.ocan.getpen()
+                        # gclass.pen.speed(0)
+                        # draw.draw_rdg(graph_data
+                        #     ,1
+                        #     ,gclass.pen
+                        #     ,1
+                        #     ,gclass.value[6]
+                        #     ,[]
+                        #     ,origin)
             
             gclass.time_taken = (end-start)*1000
             gclass.num_rfp = len(graph.room_x)
