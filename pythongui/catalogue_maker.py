@@ -134,15 +134,13 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100, dimensioned =
 
 
 
-def add_dimensional_constraints(pdf : PDF, dimensional_constraints):
+def add_dimensional_constraints(pdf : PDF, dimensional_constraints, fpcnt, num_rfp):
     [min_width,max_width,min_height,max_height, symm_string, min_aspect, max_aspect, plot_width, plot_height] = dimensional_constraints
+    pdf.multi_cell(100,10, str(num_rfp) + " of " + str(fpcnt) + " possible floor plans satisfy the dimensional constraints \n")
     if len(dimensional_constraints) != 0:
         pdf.multi_cell(100, 10, "Dimenstional Constraints \n", 0, 1, 'C')
 
         cons_y = pdf.y
-
-
-
         pdf.multi_cell(20, 10, "Room Name", 1, 1, 'C')
 
         pdf.y = cons_y
@@ -173,7 +171,7 @@ def add_dimensional_constraints(pdf : PDF, dimensional_constraints):
         for room in range(len(min_width)):
             cons_y = pdf.y
 
-            pdf.cell(20, 10, "Room" + str(room), 0, 1, 'C')
+            pdf.cell(20, 10, "Room " + str(room), 0, 1, 'C')
             pdf.x = pdf.x + 20
             pdf.y = cons_y
 
@@ -200,6 +198,7 @@ def add_dimensional_constraints(pdf : PDF, dimensional_constraints):
             pdf.cell(30, 10, str(max_aspect[room]), 0, 1, 'C')
 
 
+
 def add_home_page(pdf, edges, num_rfp, time_taken):
     pdf.add_page()
     pdf.add_border()
@@ -209,7 +208,7 @@ def add_home_page(pdf, edges, num_rfp, time_taken):
     # pdf.set_y(pdf.get_y() + 10)
     x1 = pdf.get_x()
     y1 = pdf.get_y()
-    pdf.image("./latest_adj_graph.png", x = x1, y = y1, w = 100, h = 100, type = 'png', link = './latest_adj_graph.png')
+    pdf.image("./latest_adj_graph.png", x = x1, y = y1, w = 70, h = 70, type = 'png', link = './latest_adj_graph.png')
     pdf.set_y(pdf.get_y() + 110)
     pdf.multi_cell(100, 10, "Time taken: " + str(time_taken) + " ms", 0, 1, 'C')
     pdf.multi_cell(100, 10, "Number of floorplans: " +  str(num_rfp), 0, 1, 'C')
@@ -257,13 +256,11 @@ def generate_catalogue(edges, num_rfp, time_taken, output_data, dimensional_cons
                     j += 1
         pdf.output('latest_catalogue.pdf','F')
 
-
-            
-def generate_catalogue_dimensioned(edges, num_rfp, time_taken, output_data, dimensional_constraints ):
+def generate_catalogue_dimensioned(edges, num_rfp, time_taken, output_data, dimensional_constraints, fpcnt ):
         print("[LOG] Downloading Dimensioned Catalogue")
         pdf = PDF() 
         add_home_page(pdf, edges, num_rfp, time_taken)
-        add_dimensional_constraints(pdf, dimensional_constraints)
+        add_dimensional_constraints(pdf, dimensional_constraints, fpcnt, num_rfp)
         # origin = [ [75,75], [75,175], [75, 250], [175, 75], [175,175], [175, 250] ]
         origin_x = 15
         origin_y = 30

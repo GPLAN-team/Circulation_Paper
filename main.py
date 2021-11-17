@@ -212,6 +212,7 @@ def run():
                         
                         gclass.output_data.append(graph_data)
                         gclass.dimensional_constraints = dimensional_constraints
+                        gclass.ptpg = graph
                         # gclass.ocan.add_tab()
                         # gclass.pen = gclass.ocan.getpen()
                         # gclass.pen.speed(0)

@@ -1597,7 +1597,7 @@ class gui_class:
             if self.value[4] == 0:
                 generate_catalogue(self.app.edges, self.num_rfp, self.time_taken, self.output_data, self.dimensional_constraints)
             else:
-                generate_catalogue_dimensioned(self.app.edges, self.num_rfp, self.time_taken, self.output_data, self.dimensional_constraints)
+                generate_catalogue_dimensioned(self.app.edges, self.num_rfp, self.time_taken, self.output_data, self.dimensional_constraints, self.ptpg.fpcnt)
 
     def change_entry_gui(self):
         self.top = tk.Toplevel(self.root, width = 300, height = 300)
