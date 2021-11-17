@@ -33,8 +33,6 @@ def draw_rdg(graph_data,count,pen,mode,color_list,room_names,origin):
     # origin = {'x': graph_data[origin, 'y': -550}
     dim =[0,0]
     origin = {'x': origin - 400, 'y': -100}
-    print("----------------------------")
-    print(graph_data['extranodes'])
     for i in range(graph_data['room_x'].shape[0]):
         if graph_data['room_width'][i] == 0 or i in graph_data['extranodes']:
             continue
