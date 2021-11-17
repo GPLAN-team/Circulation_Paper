@@ -102,6 +102,7 @@ def run():
                     graph.single_floorplan(min_width,min_height,max_width,max_height,symm_string, min_aspect, max_aspect, plot_width, plot_height)
                     while(graph.floorplan_exist == False):
                         old_dims = [min_width, max_width, min_height, max_height, symm_string, min_aspect, max_aspect]
+                        min_width,max_width,min_height,max_height, symm_string, min_aspect, max_aspect, plot_width, plot_height  = dimgui.gui_fnc(old_dims, gclass.value[0])
                         graph.multiple_dual()
                         graph.single_floorplan(min_width,min_height,max_width,max_height,symm_string, min_aspect, max_aspect, plot_width, plot_height)
                     end = time.time()
@@ -156,12 +157,11 @@ def run():
                             'room_y_right_bottom': graph.room_y_right_bottom[idx],
                             'room_y_left_top': graph.room_y_left_top[idx],
                             'room_y_right_top': graph.room_y_right_top[idx],
-                            'area': graph.area[idx],
+                            'area': graph.area,
                             'extranodes': graph.extranodes[idx],
                             'mergednodes': graph.mergednodes[idx],
                             'irreg_nodes': graph.irreg_nodes1[idx]
                         }
-                        
                         gclass.output_data.append(graph_data)
                         # draw.draw_rdg(graph_data
                         #     ,idx+1
@@ -173,6 +173,7 @@ def run():
                         # gclass.ocan.add_tab()
                         # gclass.pen = gclass.ocan.getpen()
                         # gclass.pen.speed(0)
+
                 else:
                     old_dims = [[0] * gclass.value[0]
                                 , [0] * gclass.value[0]
@@ -204,12 +205,11 @@ def run():
                             'room_y_right_bottom': graph.room_y_right_bottom[idx],
                             'room_y_left_top': graph.room_y_left_top[idx],
                             'room_y_right_top': graph.room_y_right_top[idx],
-                            'area': graph.area,
-                            'extranodes': graph.extranodes,
-                            'mergednodes': graph.mergednodes,
-                            'irreg_nodes': graph.irreg_nodes1
+                            'area': graph.area[idx],
+                            'extranodes': graph.extranodes[idx],
+                            'mergednodes': graph.mergednodes[idx],
+                            'irreg_nodes': graph.irreg_nodes1[idx]
                         }
-                        
                         gclass.output_data.append(graph_data)
                         gclass.dimensional_constraints = dimensional_constraints
                         gclass.ptpg = graph
@@ -228,14 +228,15 @@ def run():
             gclass.num_rfp = len(graph.room_x)
             gclass.pdf_colors = gclass.value[6][0]
             gclass.output_found = 1
-            
+
         gclass.root.wait_variable(gclass.end)
         gclass.graph_ret()
         gclass.ocan.add_tab()
-
-        # gclass.ocan.tscreen.resetscreen()
         gclass.pen = gclass.ocan.getpen()
         gclass.pen.speed(0)
+
+        # gclass.ocan.tscreen.resetscreen()
+
 
 def make_dissection_corridor(gclass):
     dis =nx.Graph()
