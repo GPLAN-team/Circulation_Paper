@@ -22,7 +22,7 @@ import pythongui.final as final
 import numpy as np
 import datetime
 from fpdf import FPDF
-from .catalogue_maker import generate_catalogue
+from .catalogue_maker import generate_catalogue, generate_catalogue_dimensioned
 
 done = True
 col = ["white","#9A8C98","light grey","white"]
@@ -143,6 +143,7 @@ class gui_class:
         self.num_rfp = 0
         self.pdf_colors = []
         self.multiple_output_found = 0
+        self.dimensional_constraints = []
         
 
         while((self.value[0] == 0) and done):
@@ -1593,7 +1594,10 @@ class gui_class:
         if not self.multiple_output_found:
             tk.messagebox.showinfo("error","Output not yet found")
         else:
-            generate_catalogue(self.app.edges, self.num_rfp, self.time_taken, self.output_data)
+            if self.value[4] == 0:
+                generate_catalogue(self.app.edges, self.num_rfp, self.time_taken, self.output_data, self.dimensional_constraints)
+            else:
+                generate_catalogue_dimensioned(self.app.edges, self.num_rfp, self.time_taken, self.output_data, self.dimensional_constraints, self.ptpg.fpcnt)
 
     def change_entry_gui(self):
         self.top = tk.Toplevel(self.root, width = 300, height = 300)
