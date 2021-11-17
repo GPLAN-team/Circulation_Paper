@@ -89,10 +89,13 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100):
     #         txt = "Dimensions of each room" )
 
     # pdf.set_xy(x + grid_w - 10, y)
-    pdf.text(x + grid_w, y, 'Dimensions \n')
 
-    for each_room in range(len(rfp_data['room_x_top_left'])):
-        pdf.text(x + grid_w, y + each_room * 5 + 5, 'Room ' + str(each_room) + ' : ' + str(rfp_data['room_width'][each_room]) + ' X ' + str(rfp_data['room_height'][each_room]) + '\n')
+
+    # Prints room dimensions sideways
+    # pdf.text(x + grid_w, y, 'Dimensions \n')
+    # for each_room in range(len(rfp_data['room_x_top_left'])):
+    #     pdf.text(x + grid_w, y + each_room * 5 + 5, 'Room ' + str(each_room) + ' : ' + str(rfp_data['room_width'][each_room]) + ' X ' + str(rfp_data['room_height'][each_room]) + '\n')
+
 
     for each_room in range(len(rfp_data['room_x_top_left'])):
         if each_room in rfp_data['extranodes']:
@@ -113,10 +116,33 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100):
             'DF')
 
         if each_room not in rfp_data['mergednodes']:
+            x_disp = 5
+            y_disp = 5
+            if rfp_data['room_width'][each_room] > 1 and rfp_data['room_height'][each_room] >= 1:
+                message = str(rfp_data['room_width'][each_room]) + ' X ' + str(rfp_data['room_height'][each_room])
+            elif rfp_data['room_width'][each_room] == 1 and rfp_data['room_height'][each_room] > 1:
+                x_disp = 1
+                message = str(rfp_data['room_width'][each_room]) + " X"
+                pdf.text(
+                    x + scale * int(rfp_data['room_x'][each_room]) + x_disp,
+                    y + scale * int(rfp_data['room_y'][each_room]) + y_disp,
+                    txt=message)
+                y_disp = 8
+                message = str(rfp_data['room_height'][each_room])
+            else:
+                x_disp = 1
+                y_disp = 4
+                message = str(rfp_data['room_width'][each_room]) + " X"
+                pdf.text(
+                    x + scale * int(rfp_data['room_x'][each_room]) + x_disp,
+                    y + scale * int(rfp_data['room_y'][each_room]) + y_disp,
+                    txt=message)
+                y_disp = 7
+                message = str(rfp_data['room_height'][each_room])
             pdf.text(
-                x + scale * int(rfp_data['room_x'][each_room])  + 5,
-                y + scale * int(rfp_data['room_y'][each_room])  + 5,
-                txt = str(each_room) )
+                x + scale * int(rfp_data['room_x'][each_room]) + x_disp,
+                y + scale * int(rfp_data['room_y'][each_room])  + y_disp,
+                txt = message)
 
         line_width = 0.2
         pdf.set_line_width(line_width)
@@ -129,7 +155,7 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100):
             pdf.line( x + scale * rfp_data['room_x'][each_room],y + scale * rfp_data['room_y_left_bottom'][each_room] + line_width ,x + scale * rfp_data['room_x'][each_room], y + scale * rfp_data['room_y_left_top'][each_room] - line_width )
         if rfp_data['room_y_right_bottom'][each_room] != rfp_data['room_y_right_top'][each_room]:
             pdf.line( x + scale * rfp_data['room_x'][each_room] + scale * rfp_data['room_width'][each_room], y + scale * rfp_data['room_y_right_bottom'][each_room] + line_width , x + scale * rfp_data['room_x'][each_room] + scale * rfp_data['room_width'][each_room], y + scale * rfp_data['room_y_right_top'][each_room] - line_width)
-            
+
         
         pdf.set_draw_color(0,0,0)
 
@@ -157,9 +183,9 @@ def generate_catalogue(edges, num_rfp, time_taken, output_data ):
         origin_y = 30
 
         grid_height = 50
-        grid_width = 50
+        grid_width = 30
 
-        grid_cols = int( (pdf_w - 30) / grid_width ) 
+        grid_cols = int( (pdf_w - 30) / grid_width)
         grid_rows = int( (pdf_h - 30) / grid_height)
         # print(" cols rows" , grid_cols, grid_rows)
 
