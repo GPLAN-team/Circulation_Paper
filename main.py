@@ -132,18 +132,21 @@ def run():
                             'mergednodes': graph.mergednodes[idx],
                             'irreg_nodes': graph.irreg_nodes1[idx]
                         }
-                        draw.draw_rdg(graph_data
-                            ,idx+1
-                            ,gclass.pen
-                            ,1
-                            ,gclass.value[6]
-                            ,[]
-                            ,origin)
+                        gclass.multiple_output_found = 1
+
+                        gclass.output_data.append(graph_data)
+                        # draw.draw_rdg(graph_data
+                        #     ,idx+1
+                        #     ,gclass.pen
+                        #     ,1
+                        #     ,gclass.value[6]
+                        #     ,[]
+                        #     ,origin)
                         # origin += 1000
                         
-                        gclass.ocan.add_tab()
-                        gclass.pen = gclass.ocan.getpen()
-                        gclass.pen.speed(0)
+                        # gclass.ocan.add_tab()
+                        # gclass.pen = gclass.ocan.getpen()
+                        # gclass.pen.speed(0)
                 else:#Dimensioned multiple floorplans
                     old_dims = [[0] * gclass.value[0]
                                 , [0] * gclass.value[0]
@@ -170,18 +173,23 @@ def run():
                             'mergednodes': graph.mergednodes[idx],
                             'irreg_nodes': graph.irreg_nodes1[idx]
                         }
+                        gclass.multiple_output_found = 1
+
+                        gclass.output_data.append(graph_data)
+                        gclass.dimensional_constraints = dimensional_constraints
+                        gclass.ptpg = graph
                         # origin += 1000
-                        draw.draw_rdg(graph_data
-                            ,idx+1
-                            ,gclass.pen
-                            ,1
-                            ,gclass.value[6]
-                            ,[]
-                            ,origin)
+                        # draw.draw_rdg(graph_data
+                        #     ,idx+1
+                        #     ,gclass.pen
+                        #     ,1
+                        #     ,gclass.value[6]
+                        #     ,[]
+                        #     ,origin)
                         
-                        gclass.ocan.add_tab()
-                        gclass.pen = gclass.ocan.getpen()
-                        gclass.pen.speed(0)
+                        # gclass.ocan.add_tab()
+                        # gclass.pen = gclass.ocan.getpen()
+                        # gclass.pen.speed(0)
             elif(gclass.command == "single_oc"):
                 if(gclass.value[4] == 0): #Non-Dimensioned single rectangular dual
                     start = time.time()

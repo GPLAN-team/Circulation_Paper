@@ -72,7 +72,7 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100, dimensioned =
     max_x = rfp_data['room_x'][0] + rfp_data['room_width'][0]
     max_y = rfp_data['room_y'][0] + rfp_data['room_height'][0]
     # print("min_x, max_x, min_y, max_y" , min_x, max_x, min_y, max_y)
-    for each_room in range(len(rfp_data['room_x_top_left'])):
+    for each_room in range(len(rfp_data['room_x'])):
 
         min_x = min( min_x,  rfp_data['room_x'][each_room] )
         min_y = min( min_y,  rfp_data['room_y'][each_room] )
@@ -97,7 +97,7 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100, dimensioned =
     #     pdf.text(x + grid_w, y + each_room * 5 + 5, 'Room ' + str(each_room) + ' : ' + str(rfp_data['room_width'][each_room]) + ' X ' + str(rfp_data['room_height'][each_room]) + '\n')
 
 
-    for each_room in range(len(rfp_data['room_x_top_left'])):
+    for each_room in range(len(rfp_data['room_x'])):
         if each_room in rfp_data['extranodes']:
             continue
         if each_room in rfp_data['mergednodes']:
@@ -148,14 +148,14 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100, dimensioned =
         line_width = 0.2
         pdf.set_line_width(line_width)
         pdf.set_draw_color(*rgb_colors[each_room])
-        if rfp_data['room_x_bottom_left'][each_room] != rfp_data['room_x_bottom_right'][each_room]:
-            pdf.line(x + scale * rfp_data['room_x_bottom_left'][each_room] + line_width, y + scale * rfp_data['room_y'][each_room], x + scale * rfp_data['room_x_bottom_right'][each_room] - line_width, y + scale * rfp_data['room_y'][each_room])
-        if rfp_data['room_x_top_left'][each_room] != rfp_data['room_x_top_right'][each_room]:
-            pdf.line(x + scale * rfp_data['room_x_top_left'][each_room] + line_width, y + scale * rfp_data['room_y'][each_room] + scale * rfp_data['room_height'][each_room] , x + scale * rfp_data['room_x_top_right'][each_room] - line_width, y + scale * rfp_data['room_y'][each_room] + scale * rfp_data['room_height'][each_room])
-        if rfp_data['room_y_left_bottom'][each_room] != rfp_data['room_y_left_top'][each_room]:
-            pdf.line( x + scale * rfp_data['room_x'][each_room],y + scale * rfp_data['room_y_left_bottom'][each_room] + line_width ,x + scale * rfp_data['room_x'][each_room], y + scale * rfp_data['room_y_left_top'][each_room] - line_width )
-        if rfp_data['room_y_right_bottom'][each_room] != rfp_data['room_y_right_top'][each_room]:
-            pdf.line( x + scale * rfp_data['room_x'][each_room] + scale * rfp_data['room_width'][each_room], y + scale * rfp_data['room_y_right_bottom'][each_room] + line_width , x + scale * rfp_data['room_x'][each_room] + scale * rfp_data['room_width'][each_room], y + scale * rfp_data['room_y_right_top'][each_room] - line_width)
+        # if rfp_data['room_x_bottom_left'][each_room] != rfp_data['room_x_bottom_right'][each_room]:
+        #     pdf.line(x + scale * rfp_data['room_x_bottom_left'][each_room] + line_width, y + scale * rfp_data['room_y'][each_room], x + scale * rfp_data['room_x_bottom_right'][each_room] - line_width, y + scale * rfp_data['room_y'][each_room])
+        # if rfp_data['room_x_top_left'][each_room] != rfp_data['room_x_top_right'][each_room]:
+        #     pdf.line(x + scale * rfp_data['room_x_top_left'][each_room] + line_width, y + scale * rfp_data['room_y'][each_room] + scale * rfp_data['room_height'][each_room] , x + scale * rfp_data['room_x_top_right'][each_room] - line_width, y + scale * rfp_data['room_y'][each_room] + scale * rfp_data['room_height'][each_room])
+        # if rfp_data['room_y_left_bottom'][each_room] != rfp_data['room_y_left_top'][each_room]:
+        #     pdf.line( x + scale * rfp_data['room_x'][each_room],y + scale * rfp_data['room_y_left_bottom'][each_room] + line_width ,x + scale * rfp_data['room_x'][each_room], y + scale * rfp_data['room_y_left_top'][each_room] - line_width )
+        # if rfp_data['room_y_right_bottom'][each_room] != rfp_data['room_y_right_top'][each_room]:
+        #     pdf.line( x + scale * rfp_data['room_x'][each_room] + scale * rfp_data['room_width'][each_room], y + scale * rfp_data['room_y_right_bottom'][each_room] + line_width , x + scale * rfp_data['room_x'][each_room] + scale * rfp_data['room_width'][each_room], y + scale * rfp_data['room_y_right_top'][each_room] - line_width)
 
         
         pdf.set_draw_color(0,0,0)
