@@ -21,12 +21,13 @@ import pythongui.tablenoscroll as tablenoscroll
 import pythongui.final as final
 import numpy as np
 import datetime
+from fpdf import FPDF
+from .catalogue_maker import generate_catalogue, generate_catalogue_dimensioned
+
 done = True
 col = ["white","#9A8C98","light grey","white"]
 # colors = ['#4BC0D9','#76E5FC','#6457A6','#5C2751','#7D8491','#BBBE64','#64F58D','#9DFFF9','#AB4E68','#C4A287','#6F9283','#696D7D','#1B1F3B','#454ADE','#FB6376','#6C969D','#519872','#3B5249','#A4B494','#CCFF66','#FFC800','#FF8427','#0F7173','#EF8354','#795663','#AF5B5B','#667761','#CF5C36','#F0BCD4','#ADB2D3','#FF1B1C','#6A994E','#386641','#8B2635','#2E3532','#124E78']*10
-colors = ['#4BC0D9']*10
-
-
+# colors = ['#4BC0D9']*10
 rgb_colors = [ 	
     (123,104,238), #medium slate blue	
     (64,224,208), #turqouise
@@ -41,7 +42,6 @@ rgb_colors = [
     (255,218,185), #peach puff
     (100,149,237), #corn flower blue
     ]*10
-
 hex_colors = [
     "#7B68EE", #medium slate blue	
     "#40E0D0", #turqouise
@@ -56,7 +56,7 @@ hex_colors = [
     "#FFDAB9", #peach puff
     "#6495ED", #corn flower blue
 ]*10
-
+colors = hex_colors
 font={'font' : ("lato bold",10,"")}
 # reloader = Reloader()
 warnings.filterwarnings("ignore") 
@@ -137,6 +137,12 @@ class gui_class:
 
         self.cir_graph = nx.Graph()
         self.cir_dim_mat = []
+        self.output_data = []
+        self.time_taken = -1
+        self.num_rfp = 0
+        self.pdf_colors = []
+        self.multiple_output_found = 0
+        self.dimensional_constraints = []
         
 
         while((self.value[0] == 0) and done):
@@ -182,6 +188,20 @@ class gui_class:
         # colors = ['#4BC0D9','#76E5FC','#6457A6','#5C2751','#7D8491','#BBBE64','#64F58D','#9DFFF9','#AB4E68','#C4A287','#6F9283','#696D7D','#1B1F3B','#454ADE','#FB6376','#6C969D','#519872','#3B5249','#A4B494','#CCFF66','#FFC800','#FF8427','#0F7173','#EF8354','#795663','#AF5B5B','#667761','#CF5C36','#F0BCD4','#ADB2D3','#FF1B1C','#6A994E','#386641','#8B2635','#2E3532','#124E78']
         # colors = ['#4BC0D9']*1000
         # colors = ['#edf1fe','#c6e3f7','#e1eaec','#e5e8f2','#def7fe','#f1ebda','#f3e2c6','#fff2de','#ecdfd6','#f5e6d3','#e3e7c4','#efdbcd','#ebf5f0','#cae1d9','#c3ddd6','#cef0cc','#9ab8c2','#ddffdd','#fdfff5','#eae9e0','#e0dddd','#f5ece7','#f6e6c5','#f4dbdc','#f4daf1','#f7cee0','#f8d0e7','#efa6aa','#fad6e5','#f9e8e2','#c4adc9','#f6e5f6','#feedca','#f2efe1','#fff5be','#ffffdd']
+        colors = [
+            "#7B68EE", #medium slate blue	
+            "#40E0D0", #turqouise
+            "#FF7F50", #coral
+            "#FF69B4", #hot pink	
+            "#E6E6FA", #lavender
+            "#FA8072", #salmon
+            "#98FB98", #pale green
+            "#BA55D3", #medium orchid
+            "#B0C4DE", #light steel blue
+            "#FFA500", #orange
+            "#FFDAB9", #peach puff
+            "#6495ED", #corn flower blue
+        ]*10
         nodes_data=[]
         id_circle=[]
         name_circle= []
@@ -329,8 +349,9 @@ class gui_class:
 
         def create_new_node(self, x, y ,id_node):
             self.random_list.append(0)
-            hex_number = hex_colors[0]
-            hex_colors.pop(0)
+            hex_number = self.colors[0]
+            # self.colors.insert(len(self.colors),self.colors[0])
+            self.colors.pop(0)
             self.hex_list.append(hex_number)
             node=self.master.Nodes(id_node,x,y)
             self.nodes_data.append(node)
@@ -450,6 +471,8 @@ class gui_class:
         
         def reset(self):
             self.canvas.destroy()
+            self.app.edges = []
+            self.output_data = []
             self.createCanvas()
 
     class dissected:
@@ -1283,6 +1306,7 @@ class gui_class:
             filemenu.add_command(label="Open",command=master.open_file)
             filemenu.add_command(label="Save",command=master.save_file)
             filemenu.add_command(label="Save as JSON",command=master.save_JSON)
+            filemenu.add_command(label="Download Catalogue",command=master.download_catalogue)
             filemenu.add_command(label="Close",command=master.exit)
 
             filemenu.add_separator()
@@ -1336,7 +1360,7 @@ class gui_class:
             self.tscreen.screensize(50000,1000)
             self.tscreen.bgcolor(col[3])
             self.pen = turtle.RawTurtle(self.tscreen)
-            self.pen.speed(10000000)
+            self.pen.speed(0)
 
             self.canvas.bind("<MouseWheel>",  self.do_zoom)
             self.canvas.bind('<Button-1>', lambda event: self.canvas.scan_mark(event.x, event.y))
@@ -1545,6 +1569,15 @@ class gui_class:
             fauto.write(jstr)
             fauto.close()
             f.close()
+
+    def download_catalogue(self):
+        if not self.multiple_output_found:
+            tk.messagebox.showinfo("error","Output not yet found")
+        else:
+            if self.value[4] == 0:
+                generate_catalogue(self.app.edges, self.num_rfp, self.time_taken, self.output_data, self.dimensional_constraints)
+            else:
+                generate_catalogue_dimensioned(self.app.edges, self.num_rfp, self.time_taken, self.output_data, self.dimensional_constraints, self.ptpg.fpcnt)
 
     def change_entry_gui(self):
         self.top = tk.Toplevel(self.root, width = 300, height = 300)
