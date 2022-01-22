@@ -471,7 +471,7 @@ class gui_class:
         
         def reset(self):
             self.canvas.destroy()
-            self.app.edges = []
+            self.edges = []
             self.output_data = []
             self.createCanvas()
 
