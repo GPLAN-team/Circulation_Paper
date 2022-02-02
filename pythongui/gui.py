@@ -250,21 +250,17 @@ class gui_class:
             self.canvas = tk.Canvas(self._root,bg=col[3], width=1000, height=370)
             self.canvas.grid(column=0,row =1, sticky='nwes')
 
-            if (platform.system() == 'Darwin'):
+            if (platform.system() == 'Darwin'):   #if MacOS
                 self.canvas.bind("<Button-2>",self.addH)
                 self.connection=[]
                 self.canvas.bind("<Button-1>",self.button_1_clicked)    
                 self.canvas.bind("<Button-3>",self.remove_node)
-            elif (platform.system() == 'Windows' or platform.system() == 'Linux'):
+
+            elif (platform.system() == 'Windows' or platform.system() == 'Linux'):   #if Windows or Linux
                 self.canvas.bind("<Button-3>",self.addH)
                 self.connection=[]
                 self.canvas.bind("<Button-1>",self.button_1_clicked)    
                 self.canvas.bind("<Button-2>",self.remove_node)
-
-            # self.canvas.bind("<Button-2>",self.addH)
-            # self.connection=[]
-            # self.canvas.bind("<Button-1>",self.button_1_clicked)    
-            # self.canvas.bind("<Button-3>",self.remove_node)
 
             self.ButtonReset = tk.Button(self._root, text="Reset",fg='white',width=10,height=2 ,**font,relief = 'flat',bg=col[1] ,command=self.reset)
             self.ButtonReset.grid(column=0 ,row=1,sticky='n',pady=20,padx=40)
