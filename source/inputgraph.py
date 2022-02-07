@@ -15,6 +15,7 @@ from random import randint
 from .graphoperations import biconnectivity as bcn
 from .graphoperations import oneconnectivity as onc
 from .graphoperations import operations as opr
+from .graphoperations import graph_crossings as gc
 from .irregular import shortcutresolver as sr
 from .boundary import cip as cip
 from .boundary import news as news
@@ -106,6 +107,27 @@ class InputGraph:
         self.floorplan_exist = False
         self.fpcnt = 0
         self.coordinates = [np.array(x) for x in node_coordinates]
+
+        # Check if input has crossings
+        x_coord = [x[0] for x in node_coordinates]
+        y_coord = [x[1] for x in node_coordinates]
+
+        if(gc.check_intersection(x_coord, y_coord, self.matrix)):
+
+            # Inside if block when the graph has edge crossings
+            G = nx.Graph()
+            # Creates the networkx graph for the given adjacencies
+            for i in range(self.nodecnt):
+                for j in range(i+1, self.nodecnt):
+
+                    if(self.matrix[i][j] == 1):
+                        G.add_edge(i,j)
+            
+            # Generate planar embedding
+            node_coordinates1 = list(nx.planar_layout(G).values())
+            self.coordinates = [np.array(x) for x in node_coordinates1]
+        else:
+            pass
 
     def irreg_single_dual(self):
         """Generates an irregular single dual for a given input graph.
