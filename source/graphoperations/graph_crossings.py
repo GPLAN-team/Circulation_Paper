@@ -232,7 +232,9 @@ def check_intersection(x_coord: list, y_coord: list, A: np.array) -> bool:
 
                 for i in indices_p:
                     for j in range(len(traversed) - len(indices_p) - check_count, len(traversed) - len(indices_p)):
-                        if(doIntersect_endpts(edges.get(i)[0], edges.get(i)[1], edges.get(j)[0], edges.get(j)[1])):
+
+                        t = traversed[j]
+                        if(doIntersect_endpts(edges.get(i)[0], edges.get(i)[1], edges.get(t)[0], edges.get(t)[1])):
                             return True
                         else:
                             pass
