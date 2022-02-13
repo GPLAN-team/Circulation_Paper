@@ -111,7 +111,7 @@ def angleCCW(a, b):
     """
     dot = a[0]*b[0] + a[1]*b[1]
     det = a[0]*b[1] - a[1]*b[0]
-    angle = np.arctan2(det, dot)
+    angle = np.arctan2(dot, det)
     if angle<0.0 :
         angle = 2.0*np.pi + angle
     return angle
