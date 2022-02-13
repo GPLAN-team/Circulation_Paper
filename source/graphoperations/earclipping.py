@@ -122,7 +122,13 @@ def isConvex(vertex_prev, vertex, vertex_next):
     """
     a = vertex_prev - vertex
     b = vertex_next - vertex
-    internal_angle = angleCCW(b, a)
+    angle1 = np.arctan2(a[1],a[0])
+    angle2 = np.arctan2(b[1],b[0])
+    internal_angle = (angle2 - angle1)
+    if(internal_angle<0):
+        internal_angle += (2*np.pi)
+    if(internal_angle > np.pi):
+        internal_angle = 2*np.pi - internal_angle
     return internal_angle <= np.pi
 
 def insideTriangle(a, b, c, p):

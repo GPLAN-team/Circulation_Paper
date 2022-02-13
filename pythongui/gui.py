@@ -1375,20 +1375,20 @@ class gui_class:
             self.canvas.bind("<MouseWheel>",  self.do_zoom)
             self.canvas.bind('<Button-1>', lambda event: self.canvas.scan_mark(event.x, event.y))
             self.canvas.bind("<B1-Motion>", lambda event: self.canvas.scan_dragto(event.x, event.y, gain=1))
-            imname = "./assets/close1.png"
-            im1 = Image.open(imname).convert("1")
-            size = (im1.width // 24, im1.height // 24)
-            im1.resize(size)
-            # # im1.show()
-            # im1 = ImageTk.BitmapImage(im1.resize(size)) 
-            im2 = ImageTk.PhotoImage(Image.open(imname).resize(size))
+            # imname = "./assets/close1.png"
+            # im1 = Image.open(imname).convert("1")
+            # size = (im1.width // 24, im1.height // 24)
+            # im1.resize(size)
+            # # # im1.show()
+            # # im1 = ImageTk.BitmapImage(im1.resize(size)) 
+            # im2 = ImageTk.PhotoImage(Image.open(imname).resize(size))
             
-            ImageTk.PhotoImage(file="./assets/close1.png")
-            # flat, groove, raised, ridge, solid, or sunke
-            # self.canvas.create_image(20,20,anchor='ne',image=butimg)
-            self.closeb = tk.Button(self.tabs[self.tabno],relief='solid',bg=col[3],activebackground=col[2],image=im2,command=self.close)
-            self.closeb.image=im2
-            self.closeb.grid(row=1,column=0,sticky='ne',pady=20,padx=70)
+            # ImageTk.PhotoImage(file="./assets/close1.png")
+            # # flat, groove, raised, ridge, solid, or sunke
+            # # self.canvas.create_image(20,20,anchor='ne',image=butimg)
+            # self.closeb = tk.Button(self.tabs[self.tabno],relief='solid',bg=col[3],activebackground=col[2],image=im2,command=self.close)
+            # self.closeb.image=im2
+            # self.closeb.grid(row=1,column=0,sticky='ne',pady=20,padx=70)
 
         def add_cir_tab(self):
             self.tabno+=1
