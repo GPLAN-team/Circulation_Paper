@@ -344,8 +344,43 @@ def main():
             print("Your graph is not planar")
         else:
             print("Your graph is planar")
-
         
+        # Example 5
+        x5 = np.array([244,235,352,359])
+        y5 = np.array([253,122,105,324])
+        A5 = np.array([[0, 1, 1, 1], [1, 0, 1, 1], [1, 1, 0, 1], [1, 1, 1, 0]])
+        if(check_intersection(x5,y5,A5)):
+            print("Your graph is not planar")
+        else:
+            print("Your graph is planar")
+        
+        # Example 6
+        x6 = np.array([0,10,15,18,25,35,45])
+        y6 = np.array([10,15,0,7,13,2,10])
+        A6 = np.array([[0, 1, 0, 0, 0, 1, 0],
+                       [1, 0, 1, 0, 1, 0, 0],
+                       [0, 1, 0, 1, 0, 0, 1],
+                       [0, 0, 1, 0, 1, 0, 0],
+                       [0, 1, 0, 1, 0, 1, 0],
+                       [1, 0, 0, 0, 1, 0, 1],
+                       [0, 0, 1, 0, 0, 1, 0]])
+        if(check_intersection(x6,y6,A6)):
+            print("Your graph is not planar")
+        else:
+            print("Your graph is planar")
+        
+        # Example 7
+        x7 = np.array([0,5,10,5,15])
+        y7 = np.array([10,0,10,15,5])
+        A7 = np.array([[0, 1, 1, 0, 1],
+                       [1, 0, 1, 1, 0],
+                       [1, 1, 0, 0, 0],
+                       [0, 1, 0, 0, 0],
+                       [1, 0, 0, 0, 0]])
+        if(check_intersection(x7,y7,A7)):
+            print("Your graph is not planar")
+        else:
+            print("Your graph is planar")
 
     test_check_intersection()
     
