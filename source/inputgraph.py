@@ -111,21 +111,10 @@ class InputGraph:
         # Check if input has crossings
         x_coord = [x[0] for x in node_coordinates]
         y_coord = [x[1] for x in node_coordinates]
-
         if(gc.check_intersection(x_coord, y_coord, self.matrix)):
-
-            # Inside if block when the graph has edge crossings
-            G = nx.Graph()
-            # Creates the networkx graph for the given adjacencies
-            for i in range(self.nodecnt):
-                for j in range(i+1, self.nodecnt):
-
-                    if(self.matrix[i][j] == 1):
-                        G.add_edge(i,j)
-            
-            # Generate planar embedding
-            node_coordinates1 = list(nx.planar_layout(G).values())
-            self.coordinates = [np.array(x) for x in node_coordinates1]
+            graph = nx.from_numpy_matrix(self.matrix)
+            new_node_coordinates = list(nx.planar_layout(graph).values())
+            self.coordinates = [np.array(x) for x in new_node_coordinates]
         else:
             pass
 
@@ -165,7 +154,7 @@ class InputGraph:
         
         if(len(bcn_edges) != 0 or len(trng_edges) != 0):
             self.nonrect = True
-        
+
         #Edge to vertex transformation
         for edge in bcn_edges:
             self.extranodes.append(self.nodecnt)
@@ -173,12 +162,14 @@ class InputGraph:
                 self.matrix, edge, tri_faces, positions)
             self.nodecnt += 1  # Extra node added
             self.edgecnt += extra_edges_cnt
+        
         for edge in trng_edges:
             self.extranodes.append(self.nodecnt)
             self.matrix, tri_faces, positions, extra_edges_cnt = transform.transform_edges(
                 self.matrix, edge, tri_faces, positions)
             self.nodecnt += 1  # Extra node added
             self.edgecnt += extra_edges_cnt
+
         
         #Separating Triangle Elimination
         if(self.nodecnt - self.edgecnt + len(opr.get_trngls(self.matrix)) != 1):
