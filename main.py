@@ -10,7 +10,7 @@ import pythongui.gui as gui
 import source.inputgraph as inputgraph
 import pythongui.drawing as draw
 import pythongui.dimensiongui as dimgui
-# import circulation
+import source.circulation.circulation as cir
 # import checker
 # from tkinter import messagebox
 # import dimension_gui as dimgui
