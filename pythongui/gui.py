@@ -1287,6 +1287,9 @@ class gui_class:
             
             b4 = tk.Button(master.frame1,width=15, text='Multiple Rectangular Floor Plans',relief='flat',**button_details,command=master.multiple_oc_floorplan)
             b4.grid(row=4,column=0,padx=5,pady=5)
+            
+            b6 = tk.Button(master.frame1,width=15, text='Circulation',relief='flat',**button_details,command=master.change_entry_gui)
+            b6.grid(row=4,column=0,padx=5,pady=5)
             # b3 = tk.Button(master.frame1,width=15, text='Circulation',relief='flat',**button_details,command=master.change_entry_gui)
             # b3.grid(row=4,column=0,padx=5,pady=5)
 
@@ -1590,6 +1593,8 @@ class gui_class:
                 generate_catalogue_dimensioned(self.app.edges, self.num_rfp, self.time_taken, self.output_data, self.dimensional_constraints, self.ptpg.fpcnt)
 
     def change_entry_gui(self):
+        """This function takes user input for starting edge/door for the corridor
+        """
         self.top = tk.Toplevel(self.root, width = 300, height = 300)
         root = self.top
         root.title('Circulation Entry Changer')
@@ -1601,6 +1606,21 @@ class gui_class:
         r_val.grid(row = 1, column = 1)
         ex = tk.Button(root,text = "Submit",command = self.entry_ender)
         ex.grid(row = 3)
+    
+    # def change_entry_gui(self) -> None:
+    #     """This function takes user input for starting edge/door for the corridor
+    #     """
+    #     self.top = tk.Toplevel(self.root, width = 300, height = 300)
+    #     root = self.top
+    #     root.title('Circulation Entry Changer')
+    #     main_text = tk.Label(root, text="Enter the two rooms adjacent to the new entry door")
+    #     main_text.grid(row = 0, column = 0)
+    #     l_val = tk.Entry(root, textvariable = self.l)
+    #     l_val.grid(row  = 1, column = 0)
+    #     r_val = tk.Entry(root, textvariable = self.r)
+    #     r_val.grid(row = 1, column = 1)
+    #     ex = tk.Button(root,text = "Submit",command = self.entry_ender)
+    #     ex.grid(row = 3)
         
     def entry_ender(self):
         self.left = self.l.get() + 1
