@@ -5,6 +5,7 @@ import warnings
 import time
 import tkinter as tk
 import networkx as nx
+import numpy as np
 from numpy import true_divide
 import pythongui.gui as gui
 import source.inputgraph as inputgraph
