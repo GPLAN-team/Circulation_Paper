@@ -54,7 +54,7 @@ def run():
             origin = 0
             if(gclass.command == "circulation"): # For spanning circulation
                 start = time.time()
-                graph.single_dual()
+                graph.irreg_single_dual()
                 end = time.time()
                 printe("Time taken: " + str((end-start)*1000) + " ms")
                 print("type of roomx " + str(type(graph.room_x)))
