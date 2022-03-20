@@ -53,6 +53,7 @@ def run():
                 ,gclass.value[7])
             origin = 0
             if(gclass.command == "single"): #Single Irregular Dual/Floorplan
+            elif(gclass.command == "single"): #Single Irregular Dual/Floorplan
                 if(gclass.value[4] == 0): #Non-Dimensioned single dual
                     start = time.time()
                     graph.irreg_single_dual()
@@ -384,26 +385,91 @@ def make_dissection_corridor(gclass):
     gclass.ocan.add_cir_tab()
     gclass.dclass.add_cir()
 
-def make_graph_circulation(G,gclass):
-    m =len(G.graph)
-    spanned = circulation.BFS(G.graph,1,2)
-    # plotter.plot(spanned,m)
-    colors= gclass.value[6].copy()
-    for i in range(0,100):
-        colors.append('#FF4C4C')
-    # print(colors)
-    rnames = G.room_names
-    rnames.append("Corridor")
-    for i in range(0,100):
-        rnames.append("")
-    # print(rnames)
+# def make_graph_circulation(G,gclass):
+#     m =len(G.graph)
+#     spanned = circulation.BFS(G.graph,1,2)
+#     # plotter.plot(spanned,m)
+#     colors= gclass.value[6].copy()
+#     for i in range(0,100):
+#         colors.append('#FF4C4C')
+#     # print(colors)
+#     rnames = G.room_names
+#     rnames.append("Corridor")
+#     for i in range(0,100):
+#         rnames.append("")
+#     # print(rnames)
     
-    parameters= [len(spanned), spanned.size() , spanned.edges() , 0,0 ,rnames,colors]
-    C = ptpg.PTPG(parameters)
-    # C.create_single_dual(1,gclass.pen,gclass.textbox)
-    G.create_circulation_dual(1,gclass.pen,gclass.textbox)
-    # draw.draw_rdg(G,1,gclass.pen,G.to_be_merged_vertices,G.rdg_vertices,0,gclass.value[6],gclass.value[5])
-    G.circulation(gclass.pen,gclass.ocan.canvas, C, 1, 2)
+#     parameters= [len(spanned), spanned.size() , spanned.edges() , 0,0 ,rnames,colors]
+#     C = ptpg.PTPG(parameters)
+#     # C.create_single_dual(1,gclass.pen,gclass.textbox)
+#     G.create_circulation_dual(1,gclass.pen,gclass.textbox)
+#     # draw.draw_rdg(G,1,gclass.pen,G.to_be_merged_vertices,G.rdg_vertices,0,gclass.value[6],gclass.value[5])
+#     G.circulation(gclass.pen,gclass.ocan.canvas, C, 1, 2)
+
+def call_circulation(graph_data, edge_set, entry):
+
+    g = nx.Graph()
+    
+    for x in edge_set:
+        g.add_edge(x[0], x[1])
+    
+    n = len(g)
+
+    rooms = []
+    for i in range(n):
+        rooms.append(cir.Room(i, graph_data.get("room_x")[i], graph_data.get("room_y")[i] + graph_data.get("room_height")[i], graph_data.get("room_x")[i] + graph_data.get("room_width")[i], graph_data.get("room_y")[i]))
+
+    # cir.plot(g,n)
+    rfp = cir.RFP(g, rooms)
+
+    circulation_obj = cir.circulation(g, rfp)
+    circulation_result = circulation_obj.circulation_algorithm(entry[0], entry[1])
+    if circulation_result == 0:
+        return None 
+    circulation_obj.adjust_RFP_to_circulation()
+
+    for room in circulation_obj.RFP.rooms:
+        print("Room ",room.id, ":")
+        print("Push top edge by: ", room.rel_push_T)
+        print("Push bottom edge by: ", room.rel_push_B)
+        print("Push left edge by: ", room.rel_push_L)
+        print("Push right edge by: ", room.rel_push_R)
+        print(room.target)
+        print('\n')
+
+    room_x = []
+    room_y = []
+    room_height = []
+    room_width = []
+
+    for room in circulation_obj.RFP.rooms:
+        room_x.append(room.top_left_x)
+        room_y.append(room.bottom_right_y)
+        room_height.append(abs(room.top_left_y - room.bottom_right_y))
+        room_width.append(abs(room.top_left_x - room.bottom_right_x))
+
+
+
+
+
+    graph_data['room_x'] = np.array(room_x)
+    graph_data['room_y'] = np.array(room_y)
+    graph_data['room_height'] = np.array(room_height)
+    graph_data['room_width'] = np.array(room_width)
+
+    return graph_data
+
+def draw_circulation(graph_data, canvas):
+    
+    origin_x, origin_y = -200,-100
+    scale = 50
+    room_x = graph_data["room_x"]
+    room_y = graph_data["room_y"]
+    room_height = graph_data["room_height"]
+    room_width = graph_data["room_width"]
+    for i in range(len(room_x)):
+        canvas.create_rectangle(origin_x + scale*room_x[i], origin_y + scale*room_y[i], origin_x + scale*(room_x[i] + room_width[i]), origin_y + scale*(room_y[i] + room_height[i]), fill = "#4BC0D9")
+        canvas.create_text(origin_x + scale*(room_x[i] + room_width[i]/2), origin_y + scale*(room_y[i] + room_height[i]/2), text = str(i))
 
 if __name__ == "__main__":
     run()
