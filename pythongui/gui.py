@@ -83,6 +83,8 @@ class gui_class:
         self.command = "Null"
         self.value = []
         self.root =tk.Tk()
+
+        self.entry_door = []
         
         self.l = tk.IntVar(None)
         self.l.set(0)
