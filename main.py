@@ -52,7 +52,43 @@ def run():
                 ,gclass.value[2]
                 ,gclass.value[7])
             origin = 0
-            if(gclass.command == "single"): #Single Irregular Dual/Floorplan
+            if(gclass.command == "circulation"): # For spanning circulation
+                start = time.time()
+                graph.single_dual()
+                end = time.time()
+                printe("Time taken: " + str((end-start)*1000) + " ms")
+                print("type of roomx " + str(type(graph.room_x)))
+
+
+                graph_data = {
+                        'room_x': graph.room_x,
+                        'room_y': graph.room_y,
+                        'room_width': graph.room_width,
+                        'room_height': graph.room_height,
+                        'room_x_bottom_left': graph.room_x_bottom_left,
+                        'room_x_bottom_right': graph.room_x_bottom_right,
+                        'room_x_top_left': graph.room_x_top_left,
+                        'room_x_top_right': graph.room_x_top_right,
+                        'room_y_left_bottom': graph.room_y_left_bottom,
+                        'room_y_right_bottom': graph.room_y_right_bottom,
+                        'room_y_left_top': graph.room_y_left_top,
+                        'room_y_right_top': graph.room_y_right_top,
+                        'area': graph.area,
+                        'extranodes': graph.extranodes,
+                        'mergednodes': graph.mergednodes,
+                        'irreg_nodes': graph.irreg_nodes1
+                    }
+    
+                new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door)
+                # If there was some error in algorithm execution new_graph_data will be empty
+                # we display the pop-up error message
+                if new_graph_data == None:
+                    tk.messagebox.showerror("Error", "ERROR!! THE INITIAL CHOSEN ENTRY EDGE MUST BE EXTERIOR EDGE")
+                
+                # If no issues we continue to draw the corridor
+                else :
+                    draw_circulation(new_graph_data, gclass.ocan.canvas)
+
             elif(gclass.command == "single"): #Single Irregular Dual/Floorplan
                 if(gclass.value[4] == 0): #Non-Dimensioned single dual
                     start = time.time()
