@@ -92,6 +92,8 @@ class gui_class:
         self.r.set(1)
         self.left = 0
         self.right = 1
+        self.entry_door.append(self.l)
+        self.entry_door.append(self.r)
 
         self.output_found = False
         self.json_data = {}
@@ -1627,6 +1629,7 @@ class gui_class:
     def entry_ender(self):
         self.left = self.l.get() + 1
         self.right = self.r.get() + 1
+        self.entry_door = [self.left, self.right]
         self.end.set(self.end.get()+1)
         self.top.destroy()
         
