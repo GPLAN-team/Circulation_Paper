@@ -4,22 +4,22 @@ import copy
 import numpy as np
 import networkx as nx
 from random import randint
-from source.graphoperations import biconnectivity as bcn
-from source.graphoperations import oneconnectivity as onc
-from source.graphoperations import operations as opr
-from source.graphoperations import graph_crossings as gc
-from source.irregular import shortcutresolver as sr
-from source.boundary import cip as cip
-from source.boundary import news as news
-from source.floorplangen import contraction as cntr
-from source.floorplangen import expansion as exp
-from source.floorplangen import rdg as rdg
-from source.graphoperations import triangularity as trng
-from source.floorplangen import transformation as transform
-from source.dimensioning import floorplan_to_st as fpts
-from source.floorplangen import flippable as flp
-from source.irregular import septri as st
-from source.dimensioning import block_checker as bc
+from GPLAN.source.graphoperations import biconnectivity as bcn
+from GPLAN.source.graphoperations import oneconnectivity as onc
+from GPLAN.source.graphoperations import operations as opr
+from GPLAN.source.graphoperations import graph_crossings as gc
+from GPLAN.source.irregular import shortcutresolver as sr
+from GPLAN.source.boundary import cip as cip
+from GPLAN.source.boundary import news as news
+from GPLAN.source.floorplangen import contraction as cntr
+from GPLAN.source.floorplangen import expansion as exp
+from GPLAN.source.floorplangen import rdg as rdg
+from GPLAN.source.graphoperations import triangularity as trng
+from GPLAN.source.floorplangen import transformation as transform
+from GPLAN.source.dimensioning import floorplan_to_st as fpts
+from GPLAN.source .floorplangen import flippable as flp
+from GPLAN.source.irregular import septri as st
+from GPLAN.source.dimensioning import block_checker as bc
 
 class Boundary:
     """A Boundary class for boundary identification of the graph.
@@ -89,7 +89,8 @@ class Boundary:
         else:
             pass
     
-    def identify_bdy()
+    def identify_bdy(self):
+
         #Boundary Identification
         triangular_cycles = opr.get_trngls(self.matrix)
         digraph = opr.get_directed(self.matrix)
@@ -120,5 +121,21 @@ class Boundary:
                 bdy_ordered = opr.ordered_bdy(self.bdy_nodes, self.bdy_edges)
                 cips = cip.find_cip(bdy_ordered, shortcuts)
                 bdys = news.bdy_path(news.find_bdy(cips), bdy_ordered)
-    
-    return bdys
+        return bdys
+
+def main():
+
+    g =nx.Graph()
+    g.add_edge(0,1)
+    g.add_edge(1,2)
+    g.add_edge(2,3)
+    g.add_edge(3,4)
+    g.add_edge(4,5)
+    g.add_edge(5,0)
+
+    bdy_obj = Boundary(6,6,[[0,1],[1,2],[2,3],[3,4],[4,5],[5,0]],[[0,5],[0,10],[5,15],[10,10],[10,5],[5,0]])
+    bdy = bdy_obj.identify_bdy()
+    print(bdy)
+
+if __name__ == "__main__":
+    main()
