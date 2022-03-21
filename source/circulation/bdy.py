@@ -4,22 +4,22 @@ import copy
 import numpy as np
 import networkx as nx
 from random import randint
-from GPLAN.source.graphoperations import biconnectivity as bcn
-from GPLAN.source.graphoperations import oneconnectivity as onc
-from GPLAN.source.graphoperations import operations as opr
-from GPLAN.source.graphoperations import graph_crossings as gc
-from GPLAN.source.irregular import shortcutresolver as sr
-from GPLAN.source.boundary import cip as cip
-from GPLAN.source.boundary import news as news
-from GPLAN.source.floorplangen import contraction as cntr
-from GPLAN.source.floorplangen import expansion as exp
-from GPLAN.source.floorplangen import rdg as rdg
-from GPLAN.source.graphoperations import triangularity as trng
-from GPLAN.source.floorplangen import transformation as transform
-from GPLAN.source.dimensioning import floorplan_to_st as fpts
-from GPLAN.source .floorplangen import flippable as flp
-from GPLAN.source.irregular import septri as st
-from GPLAN.source.dimensioning import block_checker as bc
+import source.graphoperations.biconnectivity as bcn
+import source.graphoperations.oneconnectivity as onc
+import source.graphoperations.operations as opr
+import source.graphoperations.graph_crossings as gc
+import source.graphoperations.triangularity as trng
+import source.irregular.shortcutresolver as sr
+import source.irregular.septri as st
+import source.floorplangen.contraction as cntr
+import source.floorplangen.expansion as exp
+import source.floorplangen.rdg as rdg
+import source.floorplangen.transformation as transform
+import source.floorplangen.flippable as flp
+import source.dimensioning.floorplan_to_st as fpts
+import source.dimensioning.block_checker as bc
+import source.boundary.cip as cip
+import source.boundary.news as news
 
 class Boundary:
     """A Boundary class for boundary identification of the graph.
