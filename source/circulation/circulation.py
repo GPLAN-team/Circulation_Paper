@@ -141,7 +141,7 @@ class circulation:
     def multiple_circulation(self):
 
         graph = deepcopy(self.graph)
-        flag = -1
+        flag = -1 # variable to see if wheel graph is subgraph of given graph
 
         # Steps:
         # (1) Run a for loop from 4 to size of graph
