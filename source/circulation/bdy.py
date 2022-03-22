@@ -1,25 +1,24 @@
 """This file is to use boundary identification algo to find the exterior edges of the planar graph
 """
-import copy
 import numpy as np
 import networkx as nx
 from random import randint
-import source.graphoperations.biconnectivity as bcn
-import source.graphoperations.oneconnectivity as onc
-import source.graphoperations.operations as opr
-import source.graphoperations.graph_crossings as gc
-import source.graphoperations.triangularity as trng
-import source.irregular.shortcutresolver as sr
-import source.irregular.septri as st
-import source.floorplangen.contraction as cntr
-import source.floorplangen.expansion as exp
-import source.floorplangen.rdg as rdg
-import source.floorplangen.transformation as transform
-import source.floorplangen.flippable as flp
-import source.dimensioning.floorplan_to_st as fpts
-import source.dimensioning.block_checker as bc
-import source.boundary.cip as cip
-import source.boundary.news as news
+from ..graphoperations import biconnectivity as bcn
+from ..graphoperations import oneconnectivity as onc
+from ..graphoperations import operations as opr
+from ..graphoperations import graph_crossings as gc
+from ..graphoperations import triangularity as trng
+from ..irregular import shortcutresolver as sr
+from ..irregular import septri as st
+from ..floorplangen import contraction as cntr
+from ..floorplangen import expansion as exp
+from ..floorplangen import rdg as rdg
+from ..floorplangen import transformation as transform
+from ..floorplangen import flippable as flp
+from ..dimensioning import floorplan_to_st as fpts
+from ..dimensioning import block_checker as bc
+from ..boundary import cip as cip
+from ..boundary import news as news
 
 class Boundary:
     """A Boundary class for boundary identification of the graph.
