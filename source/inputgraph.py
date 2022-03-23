@@ -24,10 +24,10 @@ from .floorplangen import expansion as exp
 from .floorplangen import rdg as rdg
 from .graphoperations import triangularity as trng
 from .floorplangen import transformation as transform
-from .dimensioning import floorplan_to_st as fpts
+from source.dimensioning import floorplan_to_st as fpts
 from .floorplangen import flippable as flp
 from .irregular import septri as st
-from .dimensioning import block_checker as bc
+from source.dimensioning import block_checker as bc
 
 class OCError(Exception):
     """One-connected Error
@@ -267,11 +267,14 @@ class InputGraph:
             encoded_matrix = opr.get_encoded_matrix(
                 rel_matrix.shape[0]-4, self.room_x[i], self.room_y[i], self.room_width[i], self.room_height[i])
             encoded_matrix_deepcopy = copy.deepcopy(encoded_matrix)
+            
             [boolean, ver_list, hor_list] = bc.block_checker(
                 encoded_matrix_deepcopy, symm_rooms)
+            print([boolean, ver_list, hor_list])
             if boolean:
                 [width, height, hor_dgph, status] = fpts.floorplan_to_st(
                     encoded_matrix_deepcopy, min_width, min_height, max_width, max_height, ver_list, hor_list, min_ar, max_ar, plot_width, plot_height)
+                print([width, height, hor_dgph, status])
             else:
                 status = False
             if(status == False):

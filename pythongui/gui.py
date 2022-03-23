@@ -1293,7 +1293,7 @@ class gui_class:
             b4.grid(row=4,column=0,padx=5,pady=5)
             
             b6 = tk.Button(master.frame1,width=15, text='Circulation',relief='flat',**button_details,command=master.change_entry_gui)
-            b6.grid(row=5,column=0,padx=5,pady=5)
+            b6.grid(row=6,column=0,padx=5,pady=5)
             # b3 = tk.Button(master.frame1,width=15, text='Circulation',relief='flat',**button_details,command=master.change_entry_gui)
             # b3.grid(row=4,column=0,padx=5,pady=5)
 
