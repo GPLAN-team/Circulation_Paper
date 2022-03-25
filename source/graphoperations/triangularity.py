@@ -35,13 +35,12 @@ def atan2(x,y):
     Returns:
         A value between 0 and 2*pi representing the angular coordinate.
     """
-    tan_inverse = math.atan(y/x)
     if x > 0:
-        return tan_inverse
+        return math.atan(y/x)
     elif x < 0 and y >= 0:
-        return tan_inverse + math.pi
+        return math.atan(y/x) + math.pi
     elif x < 0 and y < 0:
-        return tan_inverse - math.pi
+        return math.atan(y/x) - math.pi
     elif x == 0 and y > 0:
         return math.pi/2
     elif x == 0 and y < 0:

@@ -3,22 +3,22 @@
 import numpy as np
 import networkx as nx
 from random import randint
-from ..graphoperations import biconnectivity as bcn
-from ..graphoperations import oneconnectivity as onc
-from ..graphoperations import operations as opr
-from ..graphoperations import graph_crossings as gc
-from ..graphoperations import triangularity as trng
-from ..irregular import shortcutresolver as sr
-from ..irregular import septri as st
-from ..floorplangen import contraction as cntr
-from ..floorplangen import expansion as exp
-from ..floorplangen import rdg as rdg
-from ..floorplangen import transformation as transform
-from ..floorplangen import flippable as flp
-from ..dimensioning import floorplan_to_st as fpts
-from ..dimensioning import block_checker as bc
-from ..boundary import cip as cip
-from ..boundary import news as news
+from source.graphoperations import biconnectivity as bcn
+from source.graphoperations import oneconnectivity as onc
+from source.graphoperations import operations as opr
+from source.graphoperations import graph_crossings as gc
+from source.graphoperations import triangularity as trng
+from source.irregular import shortcutresolver as sr
+from source.irregular import septri as st
+from source.floorplangen import contraction as cntr
+from source.floorplangen import expansion as exp
+from source.floorplangen import rdg as rdg
+from source.floorplangen import transformation as transform
+from source.floorplangen import flippable as flp
+from source.dimensioning import floorplan_to_st as fpts
+from source.dimensioning import block_checker as bc
+from source.boundary import cip as cip
+from source.boundary import news as news
 
 class Boundary:
     """A Boundary class for boundary identification of the graph.
@@ -90,6 +90,62 @@ class Boundary:
     
     def identify_bdy(self):
 
+        if(self.nodecnt == 2 and self.edgecnt == 1):
+            self.room_x = np.array([0.0, 1.0])
+            self.room_y = np.array([0.0, 0.0])
+            self.room_width = np.array([1.0, 1.0])
+            self.room_height = np.array([1.0, 1.0])
+            return 
+        #Biconnectivity Augmentation
+        bcn_edges = []
+        if (not bcn.is_biconnected(self.matrix)):
+            bcn_edges = bcn.biconnect(self.matrix)
+        for edge in bcn_edges:
+            self.matrix[edge[0]][edge[1]] = 1
+            self.matrix[edge[1]][edge[0]] = 1
+            self.edgecnt += 1  # Extra edge added
+        bcn_edges_added = len(bcn_edges) > 0
+
+        #Triangularity
+        trng_edges,positions,tri_faces = trng.triangulate(self.matrix
+                                                ,bcn_edges_added
+                                                ,self.coordinates)
+        for edge in trng_edges:
+            self.matrix[edge[0]][edge[1]] = 1
+            self.matrix[edge[1]][edge[0]] = 1
+            self.edgecnt += 1  # Extra edge added
+        
+        if(len(bcn_edges) != 0 or len(trng_edges) != 0):
+            self.nonrect = True
+
+        #Edge to vertex transformation
+        for edge in bcn_edges:
+            self.extranodes.append(self.nodecnt)
+            self.matrix, tri_faces, positions, extra_edges_cnt = transform.transform_edges(
+                self.matrix, edge, tri_faces, positions)
+            self.nodecnt += 1  # Extra node added
+            self.edgecnt += extra_edges_cnt
+        
+        for edge in trng_edges:
+            self.extranodes.append(self.nodecnt)
+            self.matrix, tri_faces, positions, extra_edges_cnt = transform.transform_edges(
+                self.matrix, edge, tri_faces, positions)
+            self.nodecnt += 1  # Extra node added
+            self.edgecnt += extra_edges_cnt
+
+        
+        #Separating Triangle Elimination
+        if(self.nodecnt - self.edgecnt + len(opr.get_trngls(self.matrix)) != 1):
+            ptpg_matrices, extra_nodes = st.handle_STs(
+                self.matrix, positions, 1)
+            self.matrix = ptpg_matrices[0]
+            self.nodecnt = self.matrix.shape[0]
+            self.edgecnt = int(np.count_nonzero(self.matrix == 1)/2)
+            for key in extra_nodes[0]:
+                self.mergednodes.append(key)
+                self.irreg_nodes1.append(extra_nodes[0][key][0])
+                self.irreg_nodes2.append(extra_nodes[0][key][1])
+
         #Boundary Identification
         triangular_cycles = opr.get_trngls(self.matrix)
         digraph = opr.get_directed(self.matrix)
@@ -132,9 +188,11 @@ def main():
     g.add_edge(4,5)
     g.add_edge(5,0)
 
-    bdy_obj = Boundary(6,6,[[0,1],[1,2],[2,3],[3,4],[4,5],[5,0]],[[0,5],[0,10],[5,15],[10,10],[10,5],[5,0]])
+    bdy_obj = Boundary(6,6,[[0,1],[1,2],[2,3],[3,4],[4,5],[5,0]],[[1,5],[1,10],[5,15],[10,10],[10,5],[5,1]])
     bdy = bdy_obj.identify_bdy()
-    print(bdy)
+    for x in bdy:
+        print("bdy: ")
+        print(x)
 
 if __name__ == "__main__":
     main()

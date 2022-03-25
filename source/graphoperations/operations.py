@@ -275,4 +275,3 @@ def calculate_area(nodecnt, room_width, room_height, extranodes, mergednodes, ir
                 area += room_width[mergednodes[idx]] * room_height[mergednodes[idx]]
         rooms_area.append(round(area,3))
     return rooms_area
-
