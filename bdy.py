@@ -190,9 +190,16 @@ def main():
 
     bdy_obj = Boundary(6,6,[[0,1],[1,2],[2,3],[3,4],[4,5],[5,0]],[[1,5],[1,10],[5,15],[10,10],[10,5],[5,1]])
     bdy = bdy_obj.identify_bdy()
+    exterior = []
     for x in bdy:
-        print("bdy: ")
-        print(x)
+        if len(x) == 2:
+            exterior.append(x)
+        
+        else:
+            for i in range(len(x) - 1):
+                exterior.append([x[i], x[i+1]])
+    
+    print(exterior)
 
 if __name__ == "__main__":
     main()

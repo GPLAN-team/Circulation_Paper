@@ -7,6 +7,7 @@ import numpy as np
 from networkx.readwrite.json_graph import adjacency
 from copy import deepcopy
 import itertools
+from ...bdy import *
 
 class Point:
     def __init__(self, x: float, y: float):
@@ -161,7 +162,17 @@ class circulation:
         
         # If no wheel graph is subgraph of given graph then we jus generate
         # circ for different exterior edges
-        # if(flag == -1):
+        if(flag == -1):
+            bdy_obj = bdy.Boundary()
+            bdy = bdy_obj.identify_bdy()
+            exterior = []
+            for x in bdy:
+                if len(x) == 2:
+                    exterior.append(x)
+                
+                else:
+                    for i in range(len(x) - 1):
+                        exterior.append([x[i], x[i+1]])
 
 
 
