@@ -48,7 +48,7 @@ class RFP:
     #Functions to create RFP from the graph
 
 class circulation:
-    def __init__(self,graph: nx.Graph, rfp: RFP) -> None:
+    def __init__(self,graph: nx.Graph, rfp: RFP = None) -> None:
         self.graph = graph
         self.adjacency = {}
         self.circulation_graph = nx.Graph() 
@@ -913,6 +913,28 @@ def main():
             print(room.target)
             print('\n') 
 
+    def test_multiple_circulation():
+        # Example1
+        g1 = nx.wheel_graph(10)
+
+        circ_obj1 = circulation(g1)
+        circ_obj1.multiple_circulation()
+        print(len(circ_obj1.multiple_circ))
+
+        # Example2
+        g2 = nx.complete_graph(5)
+
+        circ_obj2 = circulation(g2)
+        circ_obj2.multiple_circulation()
+        print(len(circ_obj2.multiple_circ))
+
+        # Example3
+        g3 = nx.complete_graph(4)
+
+        circ_obj3 = circulation(g3)
+        circ_obj3.multiple_circulation()
+        print(len(circ_obj3.multiple_circ))
+
     def test_is_subgraph():
         # Example1
         g1 = nx.wheel_graph(10)
@@ -936,7 +958,8 @@ def main():
         if(is_subgraph(g3,len(g3))):
             print("This graph contains wheel graph")
         else:
-            print("This graph doesn't contain wheel graph")    
+            print("This graph doesn't contain wheel graph")
+
 
 
 
@@ -946,6 +969,7 @@ def main():
     # test_move_edges()
     # test_adjust_RFP_to_circ()
     # test_is_subgraph()
+    test_multiple_circulation()
     
 
 if __name__ == "__main__":
