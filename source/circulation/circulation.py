@@ -165,7 +165,13 @@ class circulation:
         if(flag == -1):
             graph1 = deepcopy(self.graph)
             adj = nx.adjacency_matrix(graph1)
-            bdy_obj = bdy.Boundary(len(graph1), )
+            edgecnt = np.sum(np.array(adj))/2
+            edgeset =[]
+            for i in range(len(graph1)):
+                for j in range(i+1, len(graph1)):
+                    if(adj[i][j] == 1):
+                        edgeset.append([i,j])
+            bdy_obj = bdy.Boundary(len(graph1), edgecnt, edgeset)
             bdy = bdy_obj.identify_bdy()
             exterior = []
             for x in bdy:
@@ -175,6 +181,8 @@ class circulation:
                 else:
                     for i in range(len(x) - 1):
                         exterior.append([x[i], x[i+1]])
+            
+            print(exterior)
 
 
 

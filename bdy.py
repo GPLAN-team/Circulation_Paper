@@ -52,7 +52,7 @@ class Boundary:
         fpcnt: An integer indicating the count of floorplans.
         coordinates: A list containing the coordinates of each node.
     """
-    def __init__(self, nodecnt, edgecnt, edgeset, node_coordinates):
+    def __init__(self, nodecnt, edgecnt, edgeset):
         self.nodecnt = nodecnt
         self.edgecnt = edgecnt
         self.matrix = np.zeros((self.nodecnt, self.nodecnt), int)
@@ -76,17 +76,17 @@ class Boundary:
         self.rel_matrix_list = []
         self.floorplan_exist = False
         self.fpcnt = 0
-        self.coordinates = [np.array(x) for x in node_coordinates]
+        # self.coordinates = [np.array(x) for x in node_coordinates]
 
-        # Check if input has crossings
-        x_coord = [x[0] for x in node_coordinates]
-        y_coord = [x[1] for x in node_coordinates]
-        if(gc.check_intersection(x_coord, y_coord, self.matrix)):
-            graph = nx.from_numpy_matrix(self.matrix)
-            new_node_coordinates = list(nx.planar_layout(graph).values())
-            self.coordinates = [np.array(x) for x in new_node_coordinates]
-        else:
-            pass
+        # # Check if input has crossings
+        # x_coord = [x[0] for x in node_coordinates]
+        # y_coord = [x[1] for x in node_coordinates]
+        # if(gc.check_intersection(x_coord, y_coord, self.matrix)):
+        #     graph = nx.from_numpy_matrix(self.matrix)
+        #     new_node_coordinates = list(nx.planar_layout(graph).values())
+        #     self.coordinates = [np.array(x) for x in new_node_coordinates]
+        # else:
+        #     pass
     
     def identify_bdy(self):
 
