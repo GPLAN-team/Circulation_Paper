@@ -163,7 +163,9 @@ class circulation:
         # If no wheel graph is subgraph of given graph then we jus generate
         # circ for different exterior edges
         if(flag == -1):
-            bdy_obj = bdy.Boundary()
+            graph1 = deepcopy(self.graph)
+            adj = nx.adjacency_matrix(graph1)
+            bdy_obj = bdy.Boundary(len(graph1), )
             bdy = bdy_obj.identify_bdy()
             exterior = []
             for x in bdy:
