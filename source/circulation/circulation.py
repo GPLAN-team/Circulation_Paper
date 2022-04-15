@@ -1,3 +1,6 @@
+import sys
+sys.path.append("...") # Adds higher directory to python modules path.
+sys.path.append("..") # Adds higher directory to python modules path.
 from glob import glob1
 import networkx as nx
 import matplotlib.pyplot as plt
