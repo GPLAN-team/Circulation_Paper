@@ -7,7 +7,7 @@ import numpy as np
 from networkx.readwrite.json_graph import adjacency
 from copy import deepcopy
 import itertools
-from ...bdy import *
+from ..trial.bdy import *
 
 class Point:
     def __init__(self, x: float, y: float):
