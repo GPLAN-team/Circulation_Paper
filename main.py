@@ -1,6 +1,11 @@
 """Main file of the project
 
 """
+# import os, sys; sys.path += [x[0] for x in os.walk(os.path.dirname(os.path.realpath(__file__)))]
+# exit()
+# print(os.path.dirname(os.path.realpath(__file__)))
+# import os, sys; sys.path.append(".")
+
 import warnings
 import time
 import tkinter as tk

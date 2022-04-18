@@ -6,6 +6,9 @@ from tkinter import *
 from tkinter.filedialog import asksaveasfilename
 from tkinter import messagebox
 
+import numpy as np
+from source.graphoperations.operations import get_encoded_matrix
+
 pdf_w=210
 pdf_h=297
 pdf_w_c = 210/2
@@ -64,8 +67,7 @@ def save_graph(edges):
 
 def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100, dimensioned = 0):
 
-    # Bounding Box
-    # pdf.rect( x, y, grid_w, grid_h)
+    em = get_encoded_matrix(len(rfp_data['room_x']), rfp_data['room_x'], rfp_data['room_y'], rfp_data['room_width'], rfp_data['room_height'])
 
     min_x = rfp_data['room_x'][0]
     min_y = rfp_data['room_y'][0]
@@ -96,7 +98,7 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100, dimensioned =
     # for each_room in range(len(rfp_data['room_x_top_left'])):
     #     pdf.text(x + grid_w, y + each_room * 5 + 5, 'Room ' + str(each_room) + ' : ' + str(rfp_data['room_width'][each_room]) + ' X ' + str(rfp_data['room_height'][each_room]) + '\n')
 
-
+    flag = 0
     for each_room in range(len(rfp_data['room_x'])):
         if each_room in rfp_data['extranodes']:
             continue
@@ -106,44 +108,115 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100, dimensioned =
                     rfp_data['mergednodes'].index(each_room)
                     ])
                     ]
+            flag = 1      
         pdf.set_fill_color(*rgb_colors[each_room])
         pdf.set_draw_color(0,0,0)
         pdf.rect( 
-            x + scale * int(rfp_data['room_x'][each_room]) ,
-            y + scale * int(rfp_data['room_y'][each_room]) , 
-            scale * int(rfp_data['room_width'][each_room]) , 
-            scale * int(rfp_data['room_height'][each_room]) ,
-            'DF')
+        x + scale * int(rfp_data['room_x'][each_room]) ,
+        y + scale * int(rfp_data['room_y'][each_room]) , 
+        scale * int(rfp_data['room_width'][each_room]) , 
+        scale * int(rfp_data['room_height'][each_room]) ,
+        'DF')
+
+        if flag == 1:
+            flag = 0
+            occ = np.where(em == each_room)
+
+            lt = []
+            rt = []
+            tp = []
+            bm = []
+
+            rows = occ[0]
+            cols = occ[1]
+            for pos in range(len(rows)):
+                r = rows[pos]
+                c = cols[pos]
+                
+                if c != 0:
+                    e = em.item((r,c-1))
+                    if e != each_room:
+                        lt.append(e)
+                if c != len(em[0])-1:
+                    e = em.item((r,c+1))
+                    if e != each_room:
+                        rt.append(e)
+                if r != 0:
+                    e = em.item((r-1,c))
+                    if e != each_room:
+                        tp.append(e)
+                if r != len(em)-1:
+                    e = em.item((r+1,c))
+                    if e != each_room:
+                        bm.append(e)
+            
+            i = rfp_data['mergednodes'].index(each_room)
+            irreg = rfp_data['irreg_nodes'][i]
+
+            x_m = rfp_data['room_x'][each_room]
+            y_m = rfp_data['room_y'][each_room]
+            w_m = rfp_data['room_width'][each_room]
+            h_m = rfp_data['room_height'][each_room]
+
+            x_i = rfp_data['room_x'][irreg]
+            y_i = rfp_data['room_y'][irreg]
+            w_i = rfp_data['room_width'][irreg]
+            h_i = rfp_data['room_height'][irreg]
+
+            a,b,c = rgb_colors[each_room]
+            pdf.set_draw_color(a,b,c)
+            if irreg in lt:
+                if h_m <= h_i:
+                    pdf.line(x + scale * int(x_m), y + scale * int(y_m) + 0.2, x + scale * int(x_m), y + scale * int(y_m)+scale * int(h_m)-0.2)
+                else:
+                    pdf.line(x + scale * int(x_i) + scale * int(w_i), y + scale * int(y_i) + 0.2, x + scale * int(x_i) + scale * int(w_i), y + scale * int(y_i)+scale * int(h_i)-0.2)
+            if irreg in rt:
+                if h_m <= h_i:
+                    pdf.line(x + scale * int(x_m) + scale * int(w_m), y + scale * int(y_m) + 0.2, x + scale * int(x_m) + scale * int(w_m), y + scale * int(y_m)+scale * int(h_m)-0.2)
+                else:
+                    pdf.line(x + scale * int(x_i), y + scale * int(y_i) + 0.2, x + scale * int(x_i), y + scale * int(y_i)+scale * int(h_i)-0.2)
+            if irreg in tp:
+                if w_m <= w_i:
+                    pdf.line(x + scale * int(x_m) + 0.2, y + scale * int(y_m), x + scale * int(x_m) + scale * int(w_m) -0.2, y + scale * int(y_m))
+                else:
+                    pdf.line(x + scale * int(x_i) + 0.2, y + scale * int(y_i) + scale * int(h_i), x + scale * int(x_i) + scale * int(w_i) -0.2, y + scale * int(y_i) + scale * int(h_i))
+            if irreg in bm:
+                if w_m <= w_i:
+                    pdf.line(x + scale * int(x_m) + 0.2, y + scale * int(y_m) + scale * int(h_m), x + scale * int(x_m) + scale * int(w_m) -0.2, y + scale * int(y_m) + scale * int(h_m))
+                else:
+                    pdf.line(x + scale * int(x_i) + 0.2, y + scale * int(y_i), x + scale * int(x_i) + scale * int(w_i) -0.2, y + scale * int(y_i))
+
+            pdf.set_draw_color(0,0,0)             
 
         if dimensioned == 1:
-          if each_room not in rfp_data['mergednodes']:
-              x_disp = 5
-              y_disp = 5
-              if rfp_data['room_width'][each_room] > 1 and rfp_data['room_height'][each_room] >= 1:
-                  message = str(rfp_data['room_width'][each_room]) + ' X ' + str(rfp_data['room_height'][each_room])
-              elif rfp_data['room_width'][each_room] == 1 and rfp_data['room_height'][each_room] > 1:
-                  x_disp = 1
-                  message = str(rfp_data['room_width'][each_room]) + " X"
-                  pdf.text(
-                      x + scale * int(rfp_data['room_x'][each_room]) + x_disp,
-                      y + scale * int(rfp_data['room_y'][each_room]) + y_disp,
-                      txt=message)
-                  y_disp = 8
-                  message = str(rfp_data['room_height'][each_room])
-              else:
-                  x_disp = 1
-                  y_disp = 4
-                  message = str(rfp_data['room_width'][each_room]) + " X"
-                  pdf.text(
-                      x + scale * int(rfp_data['room_x'][each_room]) + x_disp,
-                      y + scale * int(rfp_data['room_y'][each_room]) + y_disp,
-                      txt=message)
-                  y_disp = 7
-                  message = str(rfp_data['room_height'][each_room])
-              pdf.text(
-                  x + scale * int(rfp_data['room_x'][each_room]) + x_disp,
-                  y + scale * int(rfp_data['room_y'][each_room])  + y_disp,
-                  txt = message)
+            if each_room not in rfp_data['mergednodes']:
+                x_disp = 5
+                y_disp = 5
+                if rfp_data['room_width'][each_room] > 1 and rfp_data['room_height'][each_room] >= 1:
+                    message = str(rfp_data['room_width'][each_room]) + ' X ' + str(rfp_data['room_height'][each_room])
+                elif rfp_data['room_width'][each_room] == 1 and rfp_data['room_height'][each_room] > 1:
+                    x_disp = 1
+                    message = str(rfp_data['room_width'][each_room]) + " X"
+                    pdf.text(
+                        x + scale * int(rfp_data['room_x'][each_room]) + x_disp,
+                        y + scale * int(rfp_data['room_y'][each_room]) + y_disp,
+                        txt=message)
+                    y_disp = 8
+                    message = str(rfp_data['room_height'][each_room])
+                else:
+                    x_disp = 1
+                    y_disp = 4
+                    message = str(rfp_data['room_width'][each_room]) + " X"
+                    pdf.text(
+                        x + scale * int(rfp_data['room_x'][each_room]) + x_disp,
+                        y + scale * int(rfp_data['room_y'][each_room]) + y_disp,
+                        txt=message)
+                    y_disp = 7
+                    message = str(rfp_data['room_height'][each_room])
+                pdf.text(
+                    x + scale * int(rfp_data['room_x'][each_room]) + x_disp,
+                    y + scale * int(rfp_data['room_y'][each_room])  + y_disp,
+                    txt = message)
 
         line_width = 0.2
         pdf.set_line_width(line_width)
