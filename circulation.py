@@ -161,8 +161,6 @@ class circulation:
             else:
                 for i in range(len(x) - 1):
                     self.exterior_edges.append([x[i], x[i+1]])
-        print(self.exterior_edges)
-
         # Steps:
         # (1) Run a for loop from 4 to size of graph
         # (2) For each k in above range, check if wheel graph of size k is contained in graph
@@ -179,11 +177,11 @@ class circulation:
 
                 # Inform user that multiple circulation for fixed edge is possible
                 print("Multiple circulation for fixed edge possible. These are the exterior edges: ")
-                # print(self.exterior_edges)              
-                # v1 = int(input("Please enter the first end of entry door: "))
-                # v2 = int(input("Please enter the other end of entry door: "))
-                # print([(v1,v2,-1)])
-                # self.multiple_circulation_fixed_entry([(v1, v2, -1)],graph,len(graph))
+                print(self.exterior_edges)             
+                v1 = int(input("Please enter the first end of entry door: "))
+                v2 = int(input("Please enter the other end of entry door: "))
+                print([(v1,v2,-1)])
+                self.multiple_circulation_fixed_entry([(v1, v2, -1)],graph,len(graph))
                 break
         
         # If no wheel graph is subgraph of given graph then we jus generate
@@ -640,11 +638,13 @@ def wheel_graph(n: int) -> Tuple[nx.Graph, list]:
 
     A[0][n-1] = A[n-1][0] = A[1][n-1] = A[n-1][0] = 1
 
-    coord = []
-    t = np.linspace(0, 2*np.pi, n, endpoint=False)
+    coord = [(0,0)]
+    t = np.linspace(0, 2*np.pi, n - 1, endpoint=False)
     x = 10 * np.cos(t)
     y = 10 * np.sin(t)
-    coord = [(x[i], y[i]) for i in range(len(t))]
+    
+    for i in range(len(t)):
+        coord.append((x[i],y[i]))
     G = nx.from_numpy_matrix(A)
     return G, coord
 

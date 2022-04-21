@@ -100,10 +100,13 @@ class Boundary:
         bcn_edges = []
         if (not bcn.is_biconnected(self.matrix)):
             bcn_edges = bcn.biconnect(self.matrix)
-        for edge in bcn_edges:
-            self.matrix[edge[0]][edge[1]] = 1
-            self.matrix[edge[1]][edge[0]] = 1
-            self.edgecnt += 1  # Extra edge added
+        
+        if(len(bcn_edges) > 0):
+            for edge in bcn_edges:
+                self.matrix[edge[0]][edge[1]] = 1
+                self.matrix[edge[1]][edge[0]] = 1
+                self.edgecnt += 1  # Extra edge added
+            
         bcn_edges_added = len(bcn_edges) > 0
 
         #Triangularity
