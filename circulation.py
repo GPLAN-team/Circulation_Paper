@@ -10,7 +10,7 @@ import numpy as np
 from networkx.readwrite.json_graph import adjacency
 from copy import deepcopy
 import itertools
-# from ..trial.bdy import *
+from source.trial.bdy import *
 
 class Point:
     def __init__(self, x: float, y: float):
@@ -458,6 +458,7 @@ class circulation:
                 continue
             
             room = self.RFP.rooms[neighbor_room_id]
+        # for room in list(nx.common_neighbors(self.graph, 0, 1)):
             # Change self.RFP[room] to just room and resolving the error will just be to make it an
             # object of class room, but how to assign the coordinates
             common_edge1 = self.find_common_edges(room, room1) 
@@ -508,6 +509,11 @@ class circulation:
             neighbor_of_room2 = self.RFP.rooms[neighbor2[0]]
             self.find_common_neighbors(room2, neighbor_of_room2, room1.id)
 
+            # print(neighbors)
+            # flag1 = 0
+            # flag2 = 0
+        # return neighbors     
+        
     def calculate_edge_move(self,room: Room, direction: str, coordinate: str) -> None:
         """This function takes in two room objects and calculates by what value
            the corresponding common edge should be shifted in the required direction
@@ -519,32 +525,97 @@ class circulation:
             direction2 (string): The direction in which room2's edge needs to be shifted
         """
         room_obj = self.RFP.rooms[room.id]
+        # room_obj2 = self.RFP.rooms[room2]
+
+        # The following 3 lines have to be removed at the end:
+        # This tuple has 5 elements, namely the x and y of left end of common edge, x and y of right end of common edge
+        #  and the direction of common edge with respect to room1 (N/S/E/W)
+        # common_edge = self.find_common_edges(room_obj1, room_obj2)
 
         # This shifts edge of room1 in given direction
         if(direction == "E" and coordinate == "R"):
+            # room_obj1.bottom_right_x += 0.5*self.corridor_thickness
+            # self.pushed_stack.append((room_obj1.id, "bottom_right_x", direction1))
             room_obj.rel_push_R = max(room_obj.rel_push_R, 0.5*self.corridor_thickness) if room_obj.rel_push_R >= 0 else room_obj.rel_push_R
 
         elif(direction == "E" and coordinate == "L"):
+            # room_obj1.top_left_x += 0.5*self.corridor_thickness
+            # self.pushed_stack.append((room_obj1.id, "top_left_x", direction1))
             room_obj.rel_push_L = max(room_obj.rel_push_L, 0.5*self.corridor_thickness) if room_obj.rel_push_L >= 0 else room_obj.rel_push_L
 
         elif(direction == "W" and coordinate == "R"):
+            # room_obj1.bottom_right_x -= 0.5*self.corridor_thickness
+            # self.pushed_stack.append((room_obj1.id, "bottom_right_x", direction1))
             room_obj.rel_push_R = min(room_obj.rel_push_R, -0.5*self.corridor_thickness) if room_obj.rel_push_R <= 0 else room_obj.rel_push_R
 
         elif(direction == "W" and coordinate == "L"):
+            # room_obj1.top_left_x -= 0.5*self.corridor_thickness
+            # self.pushed_stack.append((room_obj1.id, "top_left_x", direction))
             room_obj.rel_push_L = min(room_obj.rel_push_L, -0.5*self.corridor_thickness) if room_obj.rel_push_L <= 0 else room_obj.rel_push_L 
         
         elif(direction == "N" and coordinate == "T"):
+            # room_obj.top_left_y += 0.5*self.corridor_thickness
+            # self.pushed_stack.append((room_obj.id, "top_left_y", direction))
             room_obj.rel_push_T = max(room_obj.rel_push_T, 0.5*self.corridor_thickness) if room_obj.rel_push_T >= 0 else room_obj.rel_push_T
 
             
         elif(direction == "N" and coordinate == "B"):
+            # room_obj.bottom_right_y += 0.5*self.corridor_thickness
+            # self.pushed_stack.append((room_obj.id, "bottom_right_y", direction))
             room_obj.rel_push_B = max(room_obj.rel_push_B, 0.5*self.corridor_thickness) if room_obj.rel_push_B >= 0 else room_obj.rel_push_B
         
         elif(direction == "S" and coordinate == "T"):
+            # room_obj.top_left_y -= 0.5*self.corridor_thickness
+            # self.pushed_stack.append((room_obj.id, "top_left_y", direction))
             room_obj.rel_push_T = min(room_obj.rel_push_L, -0.5*self.corridor_thickness) if room_obj.rel_push_T <= 0 else room_obj.rel_push_T
 
         elif(direction == "S" and coordinate == "B"):
+            # room_obj.bottom_right_y -= 0.5*self.corridor_thickness
+            # self.pushed_stack.append((room_obj.id, "bottom_right_y", direction1))
             room_obj.rel_push_B = min(room_obj.rel_push_B, -0.5*self.corridor_thickness) if room_obj.rel_push_B <= 0 else room_obj.rel_push_B
+        
+
+        # # This shifts edge of room2 in given direction
+        # if(direction2 == "E" and coordinate2 == "R"):
+        #     # room_obj2.top_left_x += 0.5*self.corridor_thickness
+        #     # self.pushed_stack.append((room_obj2.id, "bottom_right_x", direction2))
+        #     room_obj2.rel_push_R = max(room_obj2.rel_push_R, 0.5*self.corridor_thickness)
+
+        # elif(direction2 == "E" and coordinate2 == "L"):
+        #     # room_obj2.bottom_right_x += 0.5*self.corridor_thickness
+        #     # self.pushed_stack.append((room_obj2.id, "top_left_x", direction2))
+        #     room_obj2.rel_push_L = max(room_obj2.rel_push_L, 0.5*self.corridor_thickness)
+
+        # elif(direction2 == "W" and coordinate2 == "R"):
+        #     # room_obj2.top_left_x -= 0.5*self.corridor_thickness
+        #     # self.pushed_stack.append((room_obj2.id, "bottom_right_x", direction2))
+        #     room_obj2.rel_push_R = min(room_obj2.rel_push_R, -0.5*self.corridor_thickness)
+
+        # elif(direction2 == "W" and coordinate2 == "L"):
+        #     # room_obj2.bottom_right_x -= 0.5*self.corridor_thickness
+        #     # self.pushed_stack.append((room_obj2.id, "top_left_x", direction2))
+        #     room_obj2.rel_push_L = min(room_obj2.rel_push_L, -0.5*self.corridor_thickness)
+        
+        # elif(direction2 == "N" and coordinate2 == "T"):
+        #     # room_obj2.bottom_right_y += 0.5*self.corridor_thickness
+        #     # self.pushed_stack.append((room_obj2.id, "top_left_y", direction2))
+        #     room_obj2.rel_push_T = max(room_obj2.rel_push_T, 0.5*self.corridor_thickness)
+
+        # elif(direction2 == "N" and coordinate2 == "B"):
+        #     # room_obj2.top_left_y += 0.5*self.corridor_thickness
+        #     # self.pushed_stack.append((room_obj2.id, "bottom_right_y", direction2))
+        #     room_obj2.rel_push_B = max(room_obj2.rel_push_B, 0.5*self.corridor_thickness)
+
+        
+        # elif(direction2 == "S" and coordinate2 == "T"):
+        #     # room_obj2.bottom_right_y -= 0.5*self.corridor_thickness
+        #     # self.pushed_stack.append((room_obj2.id, "top_left_y", direction2))
+        #     room_obj2.rel_push_T = min(room_obj2.rel_push_T, -0.5*self.corridor_thickness)
+
+        # elif(direction2 == "S" and coordinate2 == "B"):
+        #     # room_obj2.top_left_y -= 0.5*self.corridor_thickness
+        #     # self.pushed_stack.append((room_obj2.id, "bottom_right_y", direction2))
+        #     room_obj2.rel_push_B = min(room_obj2.rel_push_B, -0.5*self.corridor_thickness)
 
 
     def push_edges(self, room: Room) -> None:
