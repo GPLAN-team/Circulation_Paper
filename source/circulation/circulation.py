@@ -4,10 +4,9 @@ sys.path.append("..") # Adds higher directory to python modules path.
 from glob import glob1
 import networkx as nx
 import matplotlib.pyplot as plt
-from networkx.algorithms.components import connected
-from networkx.classes import graph
+# from networkx.algorithms.components import connected
+# from networkx.classes import graph
 import numpy as np
-from networkx.readwrite.json_graph import adjacency
 from copy import deepcopy
 import itertools
 # from ..trial.bdy import *
@@ -88,12 +87,11 @@ class circulation:
             adding a corridor vertex)
             graph (nx.Graph): The graph on which the corridor vertices are being added
             size (int): Initial size of graph (i.e., number of rooms)
-
         """
-
         s = queue.pop(0)
         m = size
         n = len(graph)
+        adjaceny = []
         # Note that from second function call, variable size != len(graph) since graph has
         # additional corridor vertices
 
@@ -121,10 +119,12 @@ class circulation:
                 corridor_counter += 1
                 queue1 = queue
                 queue2 = queue
+
+                # The possible choice 1
                 queue1.append((ne,s[1],n-1))
                 queue1.append((ne,s[0],n-1))
 
-                
+                # The possible choice 2
                 queue2.append((ne,s[0],n-1))
                 queue2.append((ne,s[1],n-1))
 
@@ -142,7 +142,7 @@ class circulation:
             # this will be done in its corresponding function call
             self.multiple_circ.append(graph)
     
-    def multiple_circulation(self):
+    def multiple_circulation(self) -> None:
 
         graph = deepcopy(self.graph)
         flag = -1 # variable to see if wheel graph is subgraph of given graph
@@ -160,7 +160,12 @@ class circulation:
             # then change flag to 1 and call multiple circ for given entry
             if(self.is_subgraph(nx.wheel_graph(i), graph,i)):
                 flag = 1
-                self.multiple_circulation_fixed_entry([],graph,len(graph))
+
+                # Inform user that multiple circulation for fixed edge is possible
+                print("Multiple circulation for fixed edge possible")
+                v1 = int(input("Please enter the first end of entry door: "))
+                v2 = int(input("Please enter the other end of entry door: "))
+                self.multiple_circulation_fixed_entry([(v1, v2, -1)],graph,len(graph))
                 break
         
         # If no wheel graph is subgraph of given graph then we jus generate
@@ -203,11 +208,6 @@ class circulation:
         n = len(graph)
         m = n
         s = (v1-1 ,v2-1 , -1)
-
-        # print("choose a door")
-        # i ,j = map(int, input().split())
-        # s[0] = i
-        # s[1] = j
 
         # This dictionary tracks the pair of rooms each corridor is adjacent to
         # (key is vertex corresponding to corridor and values are a pair of rooms)
@@ -584,16 +584,6 @@ def plot(graph: nx.Graph,m: int) -> None:
                         node_size=500,
                     alpha=1)
     plt.show()
-
-def is_subgraph(g1: nx.graph, k: int) -> bool:
-
-        for i in range(4,k+1):    
-            for SG in (g1.subgraph(s) for s in itertools.combinations(g1, k)):
-                # print(SG.nodes(), SG.edges())
-                if(nx.is_isomorphic(nx.wheel_graph(i),SG)):
-                    return True
-            
-        return False
 
 def main():
     def make_graph():

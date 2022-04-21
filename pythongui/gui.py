@@ -1610,6 +1610,18 @@ class gui_class:
         r_val.grid(row = 1, column = 1)
         ex = tk.Button(root,text = "Submit",command = self.entry_ender)
         ex.grid(row = 3)
+
+        # Added to handle when input door index is not integer
+        # # Make sure entered rooms are integers
+        # try:
+        #     int(self.l)
+        # except ValueError:
+        #     tk.messagebox.showerror("Error", "ERROR!! THE LEFT ROOM INDEX IS AN INTEGER")
+        
+        # try:
+        #     int(self.l)
+        # except ValueError:
+        #     tk.messagebox.showerror("Error", "ERROR!! THE RIGHT ROOM INDEX IS AN INTEGER")
     
     # def change_entry_gui(self) -> None:
     #     """This function takes user input for starting edge/door for the corridor
