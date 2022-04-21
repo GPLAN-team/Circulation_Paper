@@ -52,7 +52,7 @@ class Boundary:
         fpcnt: An integer indicating the count of floorplans.
         coordinates: A list containing the coordinates of each node.
     """
-    def __init__(self, nodecnt, edgecnt, edgeset):
+    def __init__(self, nodecnt, edgecnt, edgeset, node_coordinates):
         self.nodecnt = nodecnt
         self.edgecnt = edgecnt
         self.matrix = np.zeros((self.nodecnt, self.nodecnt), int)
@@ -76,7 +76,7 @@ class Boundary:
         self.rel_matrix_list = []
         self.floorplan_exist = False
         self.fpcnt = 0
-        # self.coordinates = [np.array(x) for x in node_coordinates]
+        self.coordinates = [np.array(x) for x in node_coordinates]
 
         # # Check if input has crossings
         # x_coord = [x[0] for x in node_coordinates]
@@ -107,9 +107,7 @@ class Boundary:
         bcn_edges_added = len(bcn_edges) > 0
 
         #Triangularity
-        trng_edges,positions,tri_faces = trng.triangulate(self.matrix
-                                                ,bcn_edges_added
-                                                ,self.coordinates)
+        trng_edges,positions,tri_faces = trng.triangulate(self.matrix,bcn_edges_added,self.coordinates)
         for edge in trng_edges:
             self.matrix[edge[0]][edge[1]] = 1
             self.matrix[edge[1]][edge[0]] = 1
@@ -121,23 +119,20 @@ class Boundary:
         #Edge to vertex transformation
         for edge in bcn_edges:
             self.extranodes.append(self.nodecnt)
-            self.matrix, tri_faces, positions, extra_edges_cnt = transform.transform_edges(
-                self.matrix, edge, tri_faces, positions)
+            self.matrix, tri_faces, positions, extra_edges_cnt = transform.transform_edges(self.matrix, edge, tri_faces, positions)
             self.nodecnt += 1  # Extra node added
             self.edgecnt += extra_edges_cnt
         
         for edge in trng_edges:
             self.extranodes.append(self.nodecnt)
-            self.matrix, tri_faces, positions, extra_edges_cnt = transform.transform_edges(
-                self.matrix, edge, tri_faces, positions)
+            self.matrix, tri_faces, positions, extra_edges_cnt = transform.transform_edges(self.matrix, edge, tri_faces, positions)
             self.nodecnt += 1  # Extra node added
             self.edgecnt += extra_edges_cnt
 
         
         #Separating Triangle Elimination
         if(self.nodecnt - self.edgecnt + len(opr.get_trngls(self.matrix)) != 1):
-            ptpg_matrices, extra_nodes = st.handle_STs(
-                self.matrix, positions, 1)
+            ptpg_matrices, extra_nodes = st.handle_STs(self.matrix, positions, 1)
             self.matrix = ptpg_matrices[0]
             self.nodecnt = self.matrix.shape[0]
             self.edgecnt = int(np.count_nonzero(self.matrix == 1)/2)

@@ -146,7 +146,7 @@ class circulation:
 
         graph1 = deepcopy(self.graph)
         adj = nx.to_numpy_matrix(graph)
-        edgecnt = np.sum(np.array(adj))/2
+        edgecnt = int(np.count_nonzero(adj == 1)/2)
         edgeset =[]
         for i in range(len(graph1)):
             for j in range(i, len(graph1)):
