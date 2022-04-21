@@ -61,6 +61,7 @@ class circulation:
         self.pushed_stack = []
         self.multiple_circ = []
         self.circulations_adjacency_list = []
+        self.exterior_edges = []
 
         # We are basically counting no of times multiple_circulation
         # function is called. Since it is called even when queue is empty (terminating condition)
@@ -91,11 +92,9 @@ class circulation:
         s = queue.pop(0)
         m = size
         n = len(graph)
-        adjaceny = []
+        adjacency = []
         # Note that from second function call, variable size != len(graph) since graph has
         # additional corridor vertices
-
-        corridor_counter = 0
         # self.count_of_multi_circ += 1
             
         for ne in list(nx.common_neighbors(graph,s[0],s[1])):
@@ -115,8 +114,7 @@ class circulation:
                 graph.add_edge(n,ne)
                 n+=1
                 # Adds the two tuples corresponding to the two triangles formed in the face considered
-                adjacency[corridor_counter] = [s[0],s[1]]
-                corridor_counter += 1
+                adjacency.append([s[0],s[1]])
                 queue1 = queue
                 queue2 = queue
 
@@ -129,8 +127,8 @@ class circulation:
                 queue2.append((ne,s[1],n-1))
 
                 graph1 = deepcopy(graph)
-                self.multiple_circulation(queue1, graph)
-                self.multiple_circulation(queue2, graph1)
+                self.multiple_circulation_fixed_entry(queue1, graph, size)
+                self.multiple_circulation_fixed_entry(queue2, graph1, size)
 
         
         # Terminating condition for the recursive fn calls
@@ -147,6 +145,25 @@ class circulation:
         graph = deepcopy(self.graph)
         flag = -1 # variable to see if wheel graph is subgraph of given graph
 
+        graph1 = deepcopy(self.graph)
+        adj = nx.to_numpy_matrix(graph)
+        edgecnt = np.sum(np.array(adj))/2
+        edgeset =[]
+        for i in range(len(graph1)):
+            for j in range(i, len(graph1)):
+                if(adj[i,j] == 1):
+                    edgeset.append([i,j])
+        bdy_obj = bdy.Boundary(len(graph1), edgecnt, edgeset)
+        bdy = bdy_obj.identify_bdy()
+        for x in bdy:
+            if len(x) == 2:
+                self.exterior_edges.append(x)
+            
+            else:
+                for i in range(len(x) - 1):
+                    self.exterior_edges.append([x[i], x[i+1]])
+        print(self.exterior_edges)
+
         # Steps:
         # (1) Run a for loop from 4 to size of graph
         # (2) For each k in above range, check if wheel graph of size k is contained in graph
@@ -162,35 +179,18 @@ class circulation:
                 flag = 1
 
                 # Inform user that multiple circulation for fixed edge is possible
-                print("Multiple circulation for fixed edge possible")
-                v1 = int(input("Please enter the first end of entry door: "))
-                v2 = int(input("Please enter the other end of entry door: "))
-                self.multiple_circulation_fixed_entry([(v1, v2, -1)],graph,len(graph))
+                print("Multiple circulation for fixed edge possible. These are the exterior edges: ")
+                # print(self.exterior_edges)              
+                # v1 = int(input("Please enter the first end of entry door: "))
+                # v2 = int(input("Please enter the other end of entry door: "))
+                # print([(v1,v2,-1)])
+                # self.multiple_circulation_fixed_entry([(v1, v2, -1)],graph,len(graph))
                 break
         
         # If no wheel graph is subgraph of given graph then we jus generate
         # circ for different exterior edges
-        if(flag == -1):
-            graph1 = deepcopy(self.graph)
-            adj = nx.adjacency_matrix(graph1)
-            edgecnt = np.sum(np.array(adj))/2
-            edgeset =[]
-            for i in range(len(graph1)):
-                for j in range(i+1, len(graph1)):
-                    if(adj[i][j] == 1):
-                        edgeset.append([i,j])
-            bdy_obj = bdy.Boundary(len(graph1), edgecnt, edgeset)
-            bdy = bdy_obj.identify_bdy()
-            exterior = []
-            for x in bdy:
-                if len(x) == 2:
-                    exterior.append(x)
-                
-                else:
-                    for i in range(len(x) - 1):
-                        exterior.append([x[i], x[i+1]])
-            
-            print(exterior)
+        if(flag == -1):           
+            print(self.exterior_edges)
 
 
 
@@ -215,7 +215,7 @@ class circulation:
         corridor_counter = 0
         queue = []
         queue.append(s)
-
+        print(queue)
         # Start of circulation algorithm
         while ( queue ):
             # Pops out the first element of the queue to subdivide the edge for V_n+1
@@ -840,6 +840,7 @@ def main():
         g1 = nx.wheel_graph(10)
 
         circ_obj1 = circulation(g1)
+        # plot(g1, len(g1))
         circ_obj1.multiple_circulation()
         print(len(circ_obj1.multiple_circ))
 
@@ -847,50 +848,23 @@ def main():
         g2 = nx.complete_graph(5)
 
         circ_obj2 = circulation(g2)
-        circ_obj2.multiple_circulation()
-        print(len(circ_obj2.multiple_circ))
+        # plot(g2, len(g2))
+        # circ_obj2.multiple_circulation()
+        # print(len(circ_obj2.multiple_circ))
 
         # Example3
         g3 = nx.complete_graph(4)
 
         circ_obj3 = circulation(g3)
-        circ_obj3.multiple_circulation()
-        print(len(circ_obj3.multiple_circ))
-
-    def test_is_subgraph():
-        # Example1
-        g1 = nx.wheel_graph(10)
-
-        if(is_subgraph(g1,len(g1))):
-            print("This graph contains wheel graph")
-        else:
-            print("This graph doesn't contain wheel graph")
-
-        # Example2
-        g2 = nx.complete_graph(5)
-
-        if(is_subgraph(g2,len(g2))):
-            print("This graph contains wheel graph")
-        else:
-            print("This graph doesn't contain wheel graph")
-
-        # Example3
-        g3 = nx.complete_graph(4)
-
-        if(is_subgraph(g3,len(g3))):
-            print("This graph contains wheel graph")
-        else:
-            print("This graph doesn't contain wheel graph")
-
-
-
+        # plot(g3, len(g3))
+        # circ_obj3.multiple_circulation()
+        # print(len(circ_obj3.multiple_circ))
 
     # test_circ()
     # test_comm_edges()
     # test_comm_neighbors()
     # test_move_edges()
     # test_adjust_RFP_to_circ()
-    # test_is_subgraph()
     test_multiple_circulation()
     
 

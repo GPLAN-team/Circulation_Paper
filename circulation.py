@@ -4,13 +4,11 @@ sys.path.append("..") # Adds higher directory to python modules path.
 from glob import glob1
 import networkx as nx
 import matplotlib.pyplot as plt
-from networkx.algorithms.components import connected
-from networkx.classes import graph
 import numpy as np
-from networkx.readwrite.json_graph import adjacency
 from copy import deepcopy
 import itertools
-from source.trial.bdy import *
+import source.trial.bdy as bdy
+from typing import Tuple
 
 class Point:
     def __init__(self, x: float, y: float):
@@ -62,6 +60,7 @@ class circulation:
         self.pushed_stack = []
         self.multiple_circ = []
         self.circulations_adjacency_list = []
+        self.exterior_edges = []
 
         # We are basically counting no of times multiple_circulation
         # function is called. Since it is called even when queue is empty (terminating condition)
@@ -88,16 +87,13 @@ class circulation:
             adding a corridor vertex)
             graph (nx.Graph): The graph on which the corridor vertices are being added
             size (int): Initial size of graph (i.e., number of rooms)
-
         """
-
         s = queue.pop(0)
         m = size
         n = len(graph)
+        adjacency = []
         # Note that from second function call, variable size != len(graph) since graph has
         # additional corridor vertices
-
-        corridor_counter = 0
         # self.count_of_multi_circ += 1
             
         for ne in list(nx.common_neighbors(graph,s[0],s[1])):
@@ -117,20 +113,21 @@ class circulation:
                 graph.add_edge(n,ne)
                 n+=1
                 # Adds the two tuples corresponding to the two triangles formed in the face considered
-                adjacency[corridor_counter] = [s[0],s[1]]
-                corridor_counter += 1
+                adjacency.append([s[0],s[1]])
                 queue1 = queue
                 queue2 = queue
+
+                # The possible choice 1
                 queue1.append((ne,s[1],n-1))
                 queue1.append((ne,s[0],n-1))
 
-                
+                # The possible choice 2
                 queue2.append((ne,s[0],n-1))
                 queue2.append((ne,s[1],n-1))
 
                 graph1 = deepcopy(graph)
-                self.multiple_circulation(queue1, graph)
-                self.multiple_circulation(queue2, graph1)
+                self.multiple_circulation_fixed_entry(queue1, graph, size)
+                self.multiple_circulation_fixed_entry(queue2, graph1, size)
 
         
         # Terminating condition for the recursive fn calls
@@ -142,10 +139,29 @@ class circulation:
             # this will be done in its corresponding function call
             self.multiple_circ.append(graph)
     
-    def multiple_circulation(self):
+    def multiple_circulation(self, coord: list) -> None:
 
         graph = deepcopy(self.graph)
         flag = -1 # variable to see if wheel graph is subgraph of given graph
+
+        graph1 = deepcopy(self.graph)
+        adj = nx.to_numpy_matrix(graph)
+        edgecnt = np.sum(np.array(adj))/2
+        edgeset =[]
+        for i in range(len(graph1)):
+            for j in range(i, len(graph1)):
+                if(adj[i,j] == 1):
+                    edgeset.append([i,j])
+        bdy_obj = bdy.Boundary(len(graph1), edgecnt, edgeset, coord)
+        boundary = bdy_obj.identify_bdy()
+        for x in boundary:
+            if len(x) == 2:
+                self.exterior_edges.append(x)
+            
+            else:
+                for i in range(len(x) - 1):
+                    self.exterior_edges.append([x[i], x[i+1]])
+        print(self.exterior_edges)
 
         # Steps:
         # (1) Run a for loop from 4 to size of graph
@@ -160,32 +176,20 @@ class circulation:
             # then change flag to 1 and call multiple circ for given entry
             if(self.is_subgraph(nx.wheel_graph(i), graph,i)):
                 flag = 1
-                self.multiple_circulation_fixed_entry([],graph,len(graph))
+
+                # Inform user that multiple circulation for fixed edge is possible
+                print("Multiple circulation for fixed edge possible. These are the exterior edges: ")
+                # print(self.exterior_edges)              
+                # v1 = int(input("Please enter the first end of entry door: "))
+                # v2 = int(input("Please enter the other end of entry door: "))
+                # print([(v1,v2,-1)])
+                # self.multiple_circulation_fixed_entry([(v1, v2, -1)],graph,len(graph))
                 break
         
         # If no wheel graph is subgraph of given graph then we jus generate
         # circ for different exterior edges
-        if(flag == -1):
-            graph1 = deepcopy(self.graph)
-            adj = nx.adjacency_matrix(graph1)
-            edgecnt = np.sum(np.array(adj))/2
-            edgeset =[]
-            for i in range(len(graph1)):
-                for j in range(i+1, len(graph1)):
-                    if(adj[i][j] == 1):
-                        edgeset.append([i,j])
-            bdy_obj = bdy.Boundary(len(graph1), edgecnt, edgeset)
-            bdy = bdy_obj.identify_bdy()
-            exterior = []
-            for x in bdy:
-                if len(x) == 2:
-                    exterior.append(x)
-                
-                else:
-                    for i in range(len(x) - 1):
-                        exterior.append([x[i], x[i+1]])
-            
-            print(exterior)
+        if(flag == -1):           
+            print(self.exterior_edges)
 
 
 
@@ -627,17 +631,22 @@ class circulation:
 
     # def remove_corridor_between_2_rooms(room1,room2):
 
-# def wheel_graph(n: int) -> nx.Graph:
+def wheel_graph(n: int) -> Tuple[nx.Graph, list]:
 
-#     A = np.zeros((n,n),dtype=int)
+    A = np.zeros((n,n),dtype=int)
     
-#     for i in range(1,n-1):
-#         A[0][i] = A[i][0] = A[i][i+1] = A[i+1][i] = 1
+    for i in range(1,n-1):
+        A[0][i] = A[i][0] = A[i][i+1] = A[i+1][i] = 1
 
-#     A[0][n-1] = A[n-1][0] = A[1][n-1] = A[n-1][0] = 1
+    A[0][n-1] = A[n-1][0] = A[1][n-1] = A[n-1][0] = 1
 
-#     G = nx.from_numpy_matrix(A)
-#     return G
+    coord = []
+    t = np.linspace(0, 2*np.pi, n, endpoint=False)
+    x = 10 * np.cos(t)
+    y = 10 * np.sin(t)
+    coord = [(x[i], y[i]) for i in range(len(t))]
+    G = nx.from_numpy_matrix(A)
+    return G, coord
 
 def plot(graph: nx.Graph,m: int) -> None:
     """Plots thr graph using matplotlib
@@ -916,28 +925,6 @@ def main():
             print(room.target)
             print('\n') 
 
-    def test_multiple_circulation():
-        # Example1
-        g1 = nx.wheel_graph(10)
-
-        circ_obj1 = circulation(g1)
-        circ_obj1.multiple_circulation()
-        print(len(circ_obj1.multiple_circ))
-
-        # Example2
-        g2 = nx.complete_graph(5)
-
-        circ_obj2 = circulation(g2)
-        circ_obj2.multiple_circulation()
-        print(len(circ_obj2.multiple_circ))
-
-        # Example3
-        g3 = nx.complete_graph(4)
-
-        circ_obj3 = circulation(g3)
-        circ_obj3.multiple_circulation()
-        print(len(circ_obj3.multiple_circ))
-
     def test_is_subgraph():
         # Example1
         g1 = nx.wheel_graph(10)
@@ -962,6 +949,28 @@ def main():
             print("This graph contains wheel graph")
         else:
             print("This graph doesn't contain wheel graph")
+    
+    def test_multiple_circulation():
+        # Example1
+        g1, coord1 = wheel_graph(10)
+
+        circ_obj1 = circulation(g1)
+        circ_obj1.multiple_circulation(coord1)
+        print(len(circ_obj1.multiple_circ))
+
+        # # Example2
+        # g2 = nx.complete_graph(5)
+
+        # circ_obj2 = circulation(g2)
+        # circ_obj2.multiple_circulation()
+        # print(len(circ_obj2.multiple_circ))
+
+        # # Example3
+        # g3 = nx.complete_graph(4)
+
+        # circ_obj3 = circulation(g3)
+        # circ_obj3.multiple_circulation()
+        # print(len(circ_obj3.multiple_circ))
 
 
 
