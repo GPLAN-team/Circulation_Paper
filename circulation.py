@@ -8,7 +8,7 @@ import numpy as np
 from copy import deepcopy
 import itertools
 import source.trial.bdy as bdy
-from typing import Tuple
+from typing import List, Tuple
 
 class Point:
     def __init__(self, x: float, y: float):
@@ -69,6 +69,16 @@ class circulation:
         self.count_of_multi_circ = -1
    
     def is_subgraph(self,g1: nx.graph, g2: nx.graph, k: int) -> bool:
+        """This function checks if g1 is a subgraph of g2
+
+        Args:
+            g1 (nx.graph): The first graph which we check is a subgraph
+            g2 (nx.graph): The other graph of which g1 maybe a subgraph of
+            k (int): The size of graph g1
+
+        Returns:
+            bool: True if g1 is a subgraph of g2
+        """
 
         for SG in (g2.subgraph(s) for s in itertools.combinations(g2, k)):
             # print(SG.nodes(), SG.edges())
@@ -77,10 +87,34 @@ class circulation:
         
         return False
     
+    def find_exterior_edges(self, coord: List) -> None:
+        """This function finds the exterior edges of the graph input by the user
+
+        Args:
+            coord (List): This is the list of coordinates of the vertices of the graph
+        """
+        graph1 = deepcopy(self.graph)
+        adj = nx.to_numpy_matrix(graph1)
+        edgecnt = int(np.count_nonzero(adj == 1)/2)
+        edgeset =[]
+        for i in range(len(graph1)):
+            for j in range(i, len(graph1)):
+                if(adj[i,j] == 1):
+                    edgeset.append([i,j])
+        bdy_obj = bdy.Boundary(len(graph1), edgecnt, edgeset, coord)
+        boundary = bdy_obj.identify_bdy()
+        for x in boundary:
+            if len(x) == 2:
+                self.exterior_edges.append(x)
+            
+            else:
+                for i in range(len(x) - 1):
+                    self.exterior_edges.append([x[i], x[i+1]])
+    
     def multiple_circulation_fixed_entry(self, queue: list, graph: nx.Graph, size: int) -> None:
         """        
         This function generates multiple spannig circulation by varying the choice of edge to be subdivided
-        at each step of the circulation alorithm
+        at each step of the circulation algorithm
 
         Args:
             queue (list): The list of faces after the last subdivision of an edge (i.e., the two triangular faces added
@@ -100,12 +134,13 @@ class circulation:
             if ne < m :
                 graph.add_edge(s[0],n)
                 graph.add_edge(s[1],n)
-                try:
-                    graph.remove_edge(s[0],s[1])
-                except:
-                    print("WARNING!! THE INITIAL CHOSEN ENTRY EDGE MUST BE EXTERIOR EDGE") # Warning displayed
-                    return 0
-                    # exit()
+                graph.remove_edge(s[0],s[1])
+                # try:
+                #     graph.remove_edge(s[0],s[1])
+                # except:
+                #     print("WARNING!! THE INITIAL CHOSEN ENTRY EDGE MUST BE EXTERIOR EDGE") # Warning displayed
+                #     return 0
+                #     # exit()
                 
                 if s[2]>0:
                     # If condition satisfied this adds edge between current corridor vertex and previous one
@@ -144,23 +179,7 @@ class circulation:
         graph = deepcopy(self.graph)
         flag = -1 # variable to see if wheel graph is subgraph of given graph
 
-        graph1 = deepcopy(self.graph)
-        adj = nx.to_numpy_matrix(graph)
-        edgecnt = int(np.count_nonzero(adj == 1)/2)
-        edgeset =[]
-        for i in range(len(graph1)):
-            for j in range(i, len(graph1)):
-                if(adj[i,j] == 1):
-                    edgeset.append([i,j])
-        bdy_obj = bdy.Boundary(len(graph1), edgecnt, edgeset, coord)
-        boundary = bdy_obj.identify_bdy()
-        for x in boundary:
-            if len(x) == 2:
-                self.exterior_edges.append(x)
-            
-            else:
-                for i in range(len(x) - 1):
-                    self.exterior_edges.append([x[i], x[i+1]])
+        self.find_exterior_edges(coord)
         # Steps:
         # (1) Run a for loop from 4 to size of graph
         # (2) For each k in above range, check if wheel graph of size k is contained in graph
@@ -180,8 +199,10 @@ class circulation:
                 print(self.exterior_edges)             
                 v1 = int(input("Please enter the first end of entry door: "))
                 v2 = int(input("Please enter the other end of entry door: "))
-                print([(v1,v2,-1)])
-                self.multiple_circulation_fixed_entry([(v1, v2, -1)],graph,len(graph))
+                if([v1,v2] in self.exterior_edges):
+                    print("Yay")
+                    self.multiple_circulation_fixed_entry([(v1, v2, -1)],graph,len(graph))
+                print("Oh no :(")
                 break
         
         # If no wheel graph is subgraph of given graph then we jus generate
