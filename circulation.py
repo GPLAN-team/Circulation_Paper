@@ -1,7 +1,6 @@
 import sys
 sys.path.append("...") # Adds higher directory to python modules path.
 sys.path.append("..") # Adds higher directory to python modules path.
-from glob import glob1
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
@@ -122,51 +121,60 @@ class circulation:
             graph (nx.Graph): The graph on which the corridor vertices are being added
             size (int): Initial size of graph (i.e., number of rooms)
         """
-        s = queue.pop(0)
         m = size
         n = len(graph)
-        adjacency = []
-        # Note that from second function call, variable size != len(graph) since graph has
-        # additional corridor vertices
-        # self.count_of_multi_circ += 1
-            
-        for ne in list(nx.common_neighbors(graph,s[0],s[1])):
-            if ne < m :
-                graph.add_edge(s[0],n)
-                graph.add_edge(s[1],n)
-                graph.remove_edge(s[0],s[1])
-                # try:
-                #     graph.remove_edge(s[0],s[1])
-                # except:
-                #     print("WARNING!! THE INITIAL CHOSEN ENTRY EDGE MUST BE EXTERIOR EDGE") # Warning displayed
-                #     return 0
-                #     # exit()
+        adjacency = {}
+        corridor_counter = 0
+
+        if len(queue) > 0:
+            print(queue)
+            s = queue.pop(0)
+            # Note that from second function call, variable size != len(graph) since graph has
+            # additional corridor vertices
+            self.count_of_multi_circ += 1
                 
-                if s[2]>0:
-                    # If condition satisfied this adds edge between current corridor vertex and previous one
-                    graph.add_edge(n,s[2])
-                graph.add_edge(n,ne)
-                n+=1
-                # Adds the two tuples corresponding to the two triangles formed in the face considered
-                adjacency.append([s[0],s[1]])
-                queue1 = queue
-                queue2 = queue
+            for ne in list(nx.common_neighbors(graph,s[0],s[1])):
+                if ne < m :
+                    graph.add_edge(s[0],n)
+                    graph.add_edge(s[1],n)
+                    # if(graph.has_edge(s[0], s[1])):
+                    #     graph.remove_edge(s[0],s[1])
+                    try:
+                        graph.remove_edge(s[0],s[1])
+                    except:
+                        print("WARNING!! THE INITIAL CHOSEN ENTRY EDGE MUST BE EXTERIOR EDGE") # Warning displayed
+                        return 0
+                        exit()
+                    
+                    if s[2]>0:
+                        # If condition satisfied this adds edge between current corridor vertex and previous one
+                        graph.add_edge(n,s[2])
+                    graph.add_edge(n,ne)
+                    n+=1
+                    # Adds the two tuples corresponding to the two triangles formed in the face considered
+                    adjacency[corridor_counter] = [s[0],s[1]]
+                    corridor_counter += 1
+                    queue1 = queue
+                    queue2 = queue
 
-                # The possible choice 1
-                queue1.append((ne,s[1],n-1))
-                queue1.append((ne,s[0],n-1))
+                    # The possible choice 1
+                    queue1.append((ne,s[1],n-1))
+                    queue1.append((ne,s[0],n-1))
 
-                # The possible choice 2
-                queue2.append((ne,s[0],n-1))
-                queue2.append((ne,s[1],n-1))
+                    # The possible choice 2
+                    queue2.append((ne,s[0],n-1))
+                    queue2.append((ne,s[1],n-1))
 
-                graph1 = deepcopy(graph)
-                self.multiple_circulation_fixed_entry(queue1, graph, size)
-                self.multiple_circulation_fixed_entry(queue2, graph1, size)
+                    graph1 = deepcopy(graph)
+                    q1, q2 = [], []
+                    [q1.append(x) for x in queue1 if x not in q1]
+                    [q2.append(x) for x in queue2 if x not in q1]
+                    self.multiple_circulation_fixed_entry(q1, graph, size)
+                    self.multiple_circulation_fixed_entry(q2, graph1, size)
 
         
         # Terminating condition for the recursive fn calls
-        if len(queue) == 0:
+        elif len(queue) == 0:
             
             corridor_vertices = [x+m for x in range(len(adjacency))]
             self.circulations_adjacency_list.append(dict(zip(corridor_vertices, list(adjacency.values()))))
@@ -202,7 +210,6 @@ class circulation:
                 if([v1,v2] in self.exterior_edges):
                     print("Yay")
                     self.multiple_circulation_fixed_entry([(v1, v2, -1)],graph,len(graph))
-                print("Oh no :(")
                 break
         
         # If no wheel graph is subgraph of given graph then we jus generate
@@ -974,10 +981,10 @@ def main():
     def test_multiple_circulation():
         # Example1
         g1, coord1 = wheel_graph(10)
-
+        print(len(coord1))
         circ_obj1 = circulation(g1)
         circ_obj1.multiple_circulation(coord1)
-        print(len(circ_obj1.multiple_circ))
+        print(circ_obj1.count_of_multi_circ)
 
         # # Example2
         # g2 = nx.complete_graph(5)
