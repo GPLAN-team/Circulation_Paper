@@ -86,6 +86,18 @@ class gui_class:
 
         self.entry_door = []
         
+        self.v1 = 0
+        self.v2 = 0 
+        self.vn = 0
+
+        self.v11 = tk.IntVar(None)
+        self.v11.set(0)
+        self.v22 = tk.IntVar(None)
+        self.v22.set(1)
+        self.vnn = tk.IntVar(None)
+        self.vnn.set(2)
+
+
         self.l = tk.IntVar(None)
         self.l.set(0)
         self.r = tk.IntVar(None)
@@ -1294,6 +1306,9 @@ class gui_class:
             
             b6 = tk.Button(master.frame1,width=15, text='Circulation',relief='flat',**button_details,command=master.change_entry_gui)
             b6.grid(row=6,column=0,padx=5,pady=5)
+
+            b7 = tk.Button(master.frame1,width=15, text='Polygonal Floorplans',relief='flat',**button_details,command=master.polygonal_inputbox)
+            b7.grid(row=7,column=0,padx=5,pady=5)
             # b3 = tk.Button(master.frame1,width=15, text='Circulation',relief='flat',**button_details,command=master.change_entry_gui)
             # b3.grid(row=4,column=0,padx=5,pady=5)
 
@@ -1311,7 +1326,7 @@ class gui_class:
             # b6.grid(row=6,column=0,padx=5,pady=5)
            
             b5 = tk.Button(master.frame1,width=15, text='EXIT',relief='flat', **button_details,command=master.exit)
-            b5.grid(row=7,column=0,padx=5,pady=5)
+            b5.grid(row=8,column=0,padx=5,pady=5)
 
     class menu:
         def __init__(self,master):
@@ -1489,7 +1504,17 @@ class gui_class:
         self.app.command="circulation"
         self.command = "circulation"
         self.end.set(self.end.get()+1)
-    
+
+    def polygonal(self):
+        self.v1 = self.v11.get()
+        self.v2 = self.v22.get()
+        self.vn = self.vnn.get()
+
+        self.top.destroy()
+        self.app.command="poly"
+        self.command = "poly"
+        self.end.set(self.end.get()+1)
+
     def checker(self):
         self.app.command="checker"
         self.command = "checker"
@@ -1596,6 +1621,25 @@ class gui_class:
             else:
                 generate_catalogue_dimensioned(self.app.edges, self.num_rfp, self.time_taken, self.output_data, self.dimensional_constraints, self.ptpg.fpcnt)
 
+    def polygonal_inputbox(self):
+        """This function takes user input for starting edge/door for the corridor
+        """
+        self.top = tk.Toplevel(self.root, width = 300, height = 300)
+        root = self.top
+        root.title('Outermost Nodes for Canonical Order')
+        main_text = tk.Label(root, text="Enter v1 , v2 and vn")
+        main_text.grid(row = 0, column = 0)
+        v1_val = tk.Entry(root, textvariable = self.v11)
+        v1_val.grid(row  = 1, column = 0)
+        v2_val = tk.Entry(root, textvariable = self.v22)
+        v2_val.grid(row = 1, column = 1)
+        vn_val = tk.Entry(root, textvariable = self.vnn)
+        vn_val.grid(row  = 1, column = 2)
+
+        ex = tk.Button(root,text = "Submit",command = self.polygonal)
+        ex.grid(row = 3)
+
+        
     def change_entry_gui(self):
         """This function takes user input for starting edge/door for the corridor
         """

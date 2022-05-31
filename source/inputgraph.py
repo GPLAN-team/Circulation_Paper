@@ -29,6 +29,7 @@ from source.dimensioning import floorplan_to_st as fpts
 from .floorplangen import flippable as flp
 from .irregular import septri as st
 from source.dimensioning import block_checker as bc
+from source.polygonal import canonical as cano
 
 class OCError(Exception):
     """One-connected Error
@@ -298,6 +299,10 @@ class InputGraph:
                 self.room_x.shape[0], self.room_width, self.room_height, self.extranodes, self.mergednodes, self.irreg_nodes1)
             
             break
+    
+    def polyonalinput(self,v1,v2,vn,edge_set):
+
+        cano.run(self.nodecnt,v1,v2,vn,self,edge_set)
 
     def irreg_multiple_dual(self):
         """Generates multiple irregular duals for a given input graph.
