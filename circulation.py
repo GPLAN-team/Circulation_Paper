@@ -127,6 +127,7 @@ class circulation:
         corridor_counter = 0
 
         if len(queue) > 0:
+            print("Queue: ",end=" ")
             print(queue)
             s = queue.pop(0)
             # Note that from second function call, variable size != len(graph) since graph has
@@ -214,7 +215,8 @@ class circulation:
         
         # If no wheel graph is subgraph of given graph then we jus generate
         # circ for different exterior edges
-        if(flag == -1):           
+        if(flag == -1):
+            print("Nah!")       
             print(self.exterior_edges)
 
 
@@ -658,6 +660,14 @@ class circulation:
     # def remove_corridor_between_2_rooms(room1,room2):
 
 def wheel_graph(n: int) -> Tuple[nx.Graph, list]:
+    """Returns a wheel graph of size n and its positional coordinates
+
+    Args:
+        n (int): Size of the wheel graph to be generated
+
+    Returns:
+        Tuple[nx.Graph, list]: Returns the wheel graph of size n and list has coordinates of vertices in the coordinate plane
+    """
 
     A = np.zeros((n,n),dtype=int)
     
@@ -674,6 +684,26 @@ def wheel_graph(n: int) -> Tuple[nx.Graph, list]:
     for i in range(len(t)):
         coord.append((x[i],y[i]))
     G = nx.from_numpy_matrix(A)
+    return G, coord
+
+def complete_graph(n: int) -> Tuple[nx.Graph, list]:
+    """Returns a complete graph of size n and its positional coordinates
+
+    Args:
+        n (int): Size of the complete graph to be generated
+
+    Returns:
+        Tuple[nx.Graph, list]: Returns the complete graph of size n and list has coordinates of vertices in the coordinate plane
+    """
+
+    G = nx.complete_graph(n)
+    coord = []
+    t = np.linspace(0, 2*np.pi, n + 1)
+    x = 10 * np.cos(t)
+    y = 10 * np.sin(t)
+
+    for i in range(len(t) - 1):
+        coord.append((x[i],y[i]))
     return G, coord
 
 def plot(graph: nx.Graph,m: int) -> None:
@@ -694,14 +724,23 @@ def plot(graph: nx.Graph,m: int) -> None:
     plt.show()
 
 def is_subgraph(g1: nx.graph, k: int) -> bool:
+    """This function checks if graph g1 contains a wheel graph of size <= k
 
-        for i in range(4,k+1):    
-            for SG in (g1.subgraph(s) for s in itertools.combinations(g1, k)):
-                # print(SG.nodes(), SG.edges())
-                if(nx.is_isomorphic(nx.wheel_graph(i),SG)):
-                    return True
-            
-        return False
+    Args:
+        g1 (nx.graph): Graph in which we want to check if it contains a wheel graph
+        k (int): Size of graph g1
+
+    Returns:
+        bool: true if g1 contains wheel graph of size <= k else false
+    """
+
+    for i in range(4,k+1):    
+        for SG in (g1.subgraph(s) for s in itertools.combinations(g1, k)):
+            # print(SG.nodes(), SG.edges())
+            if(nx.is_isomorphic(nx.wheel_graph(i),SG)):
+                return True
+        
+    return False
 
 def main():
     def make_graph():
@@ -981,25 +1020,26 @@ def main():
     def test_multiple_circulation():
         # Example1
         g1, coord1 = wheel_graph(10)
-        print(len(coord1))
         circ_obj1 = circulation(g1)
         circ_obj1.multiple_circulation(coord1)
+        print("Number of multiple circ: ",end=" ")
         print(circ_obj1.count_of_multi_circ)
 
         # # Example2
-        # g2 = nx.complete_graph(5)
-
+        # g2,coord2 = complete_graph(5)
+        # print(len(coord2))
+        # print(coord2)
         # circ_obj2 = circulation(g2)
-        # circ_obj2.multiple_circulation()
+        # circ_obj2.multiple_circulation(coord2)
         # print(len(circ_obj2.multiple_circ))
 
-        # # Example3
-        # g3 = nx.complete_graph(4)
-
-        # circ_obj3 = circulation(g3)
-        # circ_obj3.multiple_circulation()
-        # print(len(circ_obj3.multiple_circ))
-
+        # Example3
+        g3, coord3 = complete_graph(4)
+        print(len(coord3))
+        print(coord3)
+        circ_obj3 = circulation(g3)
+        circ_obj3.multiple_circulation(coord3)
+        print(len(circ_obj3.multiple_circ))
 
 
 
