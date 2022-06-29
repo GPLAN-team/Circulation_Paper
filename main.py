@@ -48,7 +48,7 @@ def run():
 
     warnings.filterwarnings("ignore")
     gclass = gui.gui_class() 
-
+    
     while (gclass.command!="end"):
         if(gclass.command=="dissection"):
             make_dissection_corridor(gclass)

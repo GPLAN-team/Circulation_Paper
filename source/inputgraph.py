@@ -301,8 +301,7 @@ class InputGraph:
             break
     
     def polyonalinput(self,v1,v2,vn,edge_set):
-
-        cano.run(self.nodecnt,v1,v2,vn,self,edge_set)
+        cano.runWithArguments(self.nodecnt,v1,v2,vn,self,edge_set)
 
     def irreg_multiple_dual(self):
         """Generates multiple irregular duals for a given input graph.

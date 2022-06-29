@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 graphs = []
+G = nx.Graph()
+adjacencies = []
 
 def run():
     
@@ -28,16 +30,7 @@ def run():
     canord = np.zeros(n, dtype= int)
     canonical_order(G,canord, v1,v2,vn, n)   # TODO find v1,v2,vn
 
-
-def run(noOfNodes,v1,v2,vn,graph,edge_set):
-    
-    # print("v1 : {}".format(v1))
-    # print("v1 : {}".format(v2))
-    # print("v1 : {}".format(vn))
-
-    #inputting te graph
-    G = nx.Graph()
-    adjacencies = []
+def displayInputGraph(noOfNodes,edge_set):
     for i in range(noOfNodes):
         G.add_node(i, id = -1, chord = 0, mark = False, out = False)
     # t = list(tuple(map(int,input().split())) for r in range(graph.edgecnt))
@@ -51,7 +44,15 @@ def run(noOfNodes,v1,v2,vn,graph,edge_set):
     nx.draw_planar(G,with_labels=True, font_weight='bold')
     plt.savefig("inputgraph.png")
     plt.show()    #DEBUG TODO
-           
+
+def runWithArguments(noOfNodes,v1,v2,vn,graph,edge_set):
+    
+    # print("v1 : {}".format(v1))
+    # print("v1 : {}".format(v2))
+    # print("v1 : {}".format(vn))
+    
+    # G.add_edges_from(t) 
+    
     #initialisations
     canord = np.zeros(noOfNodes, dtype= int)
     canonical_order(G,canord, v1,v2,vn, noOfNodes)   # TODO find v1,v2,vn
@@ -109,13 +110,13 @@ def canonical_order(G,canord, v1,v2,vn, n):
     # plt.show()    #DEBUG TODO
     
 
-    fig, axes = plt.subplots(nrows=1, ncols=2)
-    ax = axes.flatten()
-    for i in range(2):
-        nx.draw_planar(graphs[i],with_labels=True, font_weight='bold', ax=ax[i])
-        ax[i].set_axis_off()
-
+    # fig, axes = plt.subplots(nrows=1, ncols=2)
+    # ax = axes.flatten()
+    # for i in range(2):
+    #     nx.draw_planar(graphs[i],with_labels=True, font_weight='bold', ax=ax[i])
+    #     ax[i].set_axis_off()
     plt.show()
+
 
     
 def displayGraph(G,canord,n):

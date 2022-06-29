@@ -24,6 +24,7 @@ import numpy as np
 import datetime
 from fpdf import FPDF
 from .catalogue_maker import generate_catalogue, generate_catalogue_dimensioned
+from source.polygonal import canonical as cano
 
 done = True
 col = ["white","#9A8C98","light grey","white"]
@@ -1612,7 +1613,7 @@ class gui_class:
             fauto.close()
             f.close()
 
-    def download_catalogue(self):
+    def download_catalogue(self):   
         if not self.multiple_output_found:
             tk.messagebox.showinfo("error","Output not yet found")
         else:
@@ -1624,6 +1625,7 @@ class gui_class:
     def polygonal_inputbox(self):
         """This function takes user input for starting edge/door for the corridor
         """
+        cano.displayInputGraph(len(self.app.nodes_data),self.app.edges)
         self.top = tk.Toplevel(self.root, width = 300, height = 300)
         root = self.top
         root.title('Outermost Nodes for Canonical Order')
