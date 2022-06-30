@@ -7,7 +7,7 @@ import turtle
 # import ptpg
 import source.floorplangen.dual as dual
 import math
-
+import source.polygonal.poly as poly
 scale = 300
 origin = {'x': 300, 'y': -150}
 
@@ -165,3 +165,5 @@ def draw_rdg(graph_data,count,pen,mode,color_list,room_names,origin):
             pen.penup()
             value+=1
 
+def draw_poly(count,pen,mode,color_list,room_names,origin):
+    db = poly.dissected(pen) 

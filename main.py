@@ -360,13 +360,12 @@ def run():
                 #         'irreg_nodes': graph.irreg_nodes1
                 #     }
                 # gclass.output_data.append(graph_data)
-                # draw.draw_rdg(graph_data
-                #         ,1
-                #         ,gclass.pen
-                #         ,1
-                #         ,gclass.value[6]
-                #         ,[]
-                #         ,origin)
+                draw.draw_poly(1
+                        ,gclass.pen
+                        ,1
+                        ,gclass.value[6]
+                        ,[]
+                        ,origin)
             else:
                 old_dims = [[0] * gclass.value[0]
                             , [0] * gclass.value[0]

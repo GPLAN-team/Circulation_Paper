@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
+import tkinter as tk
 
 graphs = []
 G = nx.Graph()
@@ -40,10 +41,14 @@ def displayInputGraph(noOfNodes,edge_set):
     
     # G.add_edges_from(t) 
     graphs.append(G)
-    
+    is_planar, G2 = nx.check_planarity(G, False)
+    if(not is_planar):
+        return False;
+
     nx.draw_planar(G,with_labels=True, font_weight='bold')
     plt.savefig("inputgraph.png")
     plt.show()    #DEBUG TODO
+    return True
 
 def runWithArguments(noOfNodes,v1,v2,vn,graph,edge_set):
     

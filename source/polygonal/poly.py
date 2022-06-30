@@ -14,22 +14,25 @@ class treenode:
 
 class dissected:
 
-    def __init__(self):
-
+    def __init__(self,pen):
+        self.pen = pen
+        self.scale = 0.3
         rootnode = treenode(None, None, None, None) 
         self.displayTurtle()
 
     def displayTurtle(self):
-        top = tk.Tk()  
-        self.c = tk.Canvas(top,bg = "white",height = "800",width= "800")  
-        self.c.pack(side=tk.LEFT)
-
-        screen = turtle.TurtleScreen(self.c)
+#  UNCOMMENT TO WORK INDIVIDUALLY
+        # top = tk.Tk()   
+        # self.c = tk.Canvas(top,bg = "white",height = "800",width= "800")  
+        # self.c.pack(side=tk.LEFT)
+        # screen = turtle.TurtleScreen(self.c)
+        # self.pen = turtle.RawTurtle(screen)
+# 
         # self.canvas = screen.getcanvas()
 
         # button = tk.Button(canvas.master, text="Press me", command=press)
         # button.pack()
-        self.tur = turtle.RawTurtle(screen)
+        
 
         # canvas.create_window(-200, -200, window=button)
         
@@ -39,42 +42,42 @@ class dissected:
         self.createPentagon()
         self.createInitalRooms()
 
-        self.tur.hideturtle()
+        self.pen.hideturtle()
 
-        top.mainloop()
+        # top.mainloop()
 
     def createPentagon(self):
-        initial_coord = (-200,300) #IMP
-        self.tur.penup()
-        self.tur.goto(initial_coord)
-        self.tur.pendown()
+        initial_coord = (-200*self.scale,300*self.scale) #IMP
+        self.pen.penup()
+        self.pen.goto(initial_coord)
+        self.pen.pendown()
         for i in range(5):
-            self.tur.forward(400) #Assuming the side of a pentagon is 400 units 
-            self.tur.right(72) #Turning the turtle by 72 degree
+            self.pen.forward(400*self.scale) #Assuming the side of a pentagon is 400 units 
+            self.pen.right(72) #Turning the turtle by 72 degree
 
     def createInitalRooms(self):
-        initial_coord = (150,300)
-        self.tur.penup()
-        self.tur.goto(initial_coord)
-        self.tur.pendown()
+        initial_coord = (150*self.scale,300*self.scale)
+        self.pen.penup()
+        self.pen.goto(initial_coord)
+        self.pen.pendown()
 
-        self.tur.right(72) #Turning the turtle by 72 degree
-        self.tur.forward(400) #Assuming the side of a pentagon is 400 units
-        self.tur.right(72) #Turning the turtle by 72 degree
-        self.tur.forward(337) #Assuming the side of a pentagon is 400 units
+        self.pen.right(72) #Turning the turtle by 72 degree
+        self.pen.forward(400*self.scale) #Assuming the side of a pentagon is 400 units
+        self.pen.right(72) #Turning the turtle by 72 degree
+        self.pen.forward(337*self.scale) #Assuming the side of a pentagon is 400 units
 
         
          
-        initial_coord = (-150,300)
-        self.tur.penup()
-        self.tur.goto(initial_coord)
-        self.tur.pendown()
-        self.tur.left(144)
+        initial_coord = (-150*self.scale,300*self.scale)
+        self.pen.penup()
+        self.pen.goto(initial_coord)
+        self.pen.pendown()
+        self.pen.left(144)
 
-        self.tur.left(72) #Turning the turtle by 72 degree
-        self.tur.backward(400) #Assuming the side of a pentagon is 400 units 
-        self.tur.left(72) #Turning the turtle by 72 degree
-        self.tur.backward(368) #Assuming the side of a pentagon is 400 units 
+        self.pen.left(72) #Turning the turtle by 72 degree
+        self.pen.backward(400*self.scale) #Assuming the side of a pentagon is 400 units 
+        self.pen.left(72) #Turning the turtle by 72 degree
+        self.pen.backward(368*self.scale) #Assuming the side of a pentagon is 400 units 
         
 
 
@@ -83,10 +86,10 @@ class dissected:
         x = (x1, height)
         y = (x2, height)
 
-        self.tur.penup()
-        self.tur.goto(x)
-        self.tur.pendown()
-        self.tur.goto(y)
+        self.pen.penup()
+        self.pen.goto(x)
+        self.pen.pendown()
+        self.pen.goto(y)
 
 
     def vline(self, y1, y2 ,width): #To create Vertical Line
@@ -94,10 +97,10 @@ class dissected:
         x = (width, y1)
         y = (width, y2)
 
-        self.tur.penup()
-        self.tur.goto(x)
-        self.tur.pendown()
-        self.tur.goto(y)
+        self.pen.penup()
+        self.pen.goto(x)
+        self.pen.pendown()
+        self.pen.goto(y)
 
     def lshape(self, top, end): #To create L Shaped Line
 

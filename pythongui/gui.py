@@ -23,6 +23,8 @@ import pythongui.final as final
 import numpy as np
 import datetime
 from fpdf import FPDF
+
+from source import polygonal
 from .catalogue_maker import generate_catalogue, generate_catalogue_dimensioned
 from source.polygonal import canonical as cano
 
@@ -1625,21 +1627,30 @@ class gui_class:
     def polygonal_inputbox(self):
         """This function takes user input for starting edge/door for the corridor
         """
-        cano.displayInputGraph(len(self.app.nodes_data),self.app.edges)
-        self.top = tk.Toplevel(self.root, width = 300, height = 300)
-        root = self.top
-        root.title('Outermost Nodes for Canonical Order')
-        main_text = tk.Label(root, text="Enter v1 , v2 and vn")
-        main_text.grid(row = 0, column = 0)
-        v1_val = tk.Entry(root, textvariable = self.v11)
-        v1_val.grid(row  = 1, column = 0)
-        v2_val = tk.Entry(root, textvariable = self.v22)
-        v2_val.grid(row = 1, column = 1)
-        vn_val = tk.Entry(root, textvariable = self.vnn)
-        vn_val.grid(row  = 1, column = 2)
+        if(cano.displayInputGraph(len(self.app.nodes_data),self.app.edges)):
+            
+            self.top = tk.Toplevel(self.root, width = 300, height = 300)
+            root = self.top
+            root.title('Outermost Nodes for Canonical Order')
+            main_text = tk.Label(root, text="Enter v1 , v2 and vn")
+            main_text.grid(row = 0, column = 0)
+            v1_val = tk.Entry(root, textvariable = self.v11)
+            v1_val.grid(row  = 1, column = 0)
+            v2_val = tk.Entry(root, textvariable = self.v22)
+            v2_val.grid(row = 1, column = 1)
+            vn_val = tk.Entry(root, textvariable = self.vnn)
+            vn_val.grid(row  = 1, column = 2)
 
-        ex = tk.Button(root,text = "Submit",command = self.polygonal)
-        ex.grid(row = 3)
+            ex = tk.Button(root,text = "Submit",command = self.polygonal)
+            ex.grid(row = 3)
+        else: 
+            self.canvas.destroy()
+            self.edges = []
+            self.output_data = []
+            self.createCanvas()
+            tk.messagebox.showerror("Error", "ERROR!! THE INITIAL GRAPH IS NON PLANAR")
+            # TODO NOt working if error
+
 
         
     def change_entry_gui(self):
