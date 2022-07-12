@@ -94,13 +94,15 @@ class circulation:
         """
         graph1 = deepcopy(self.graph)
         adj = nx.to_numpy_matrix(graph1)
-        edgecnt = int(np.count_nonzero(adj == 1)/2)
+        edgecnt = adj.sum()/2
         edgeset =[]
         for i in range(len(graph1)):
-            for j in range(i, len(graph1)):
+            for j in range(i+1, len(graph1)):
                 if(adj[i,j] == 1):
-                    edgeset.append([i,j])
+                    edgeset.append((i,j))
         bdy_obj = bdy.Boundary(len(graph1), edgecnt, edgeset, coord)
+        # print("Len of coord: ", len(coord))
+        # print("Order of graph: ", len(graph1))
         boundary = bdy_obj.identify_bdy()
         for x in boundary:
             if len(x) == 2:
@@ -196,11 +198,14 @@ class circulation:
         # (4) Else, multiple circulations can be generated only by varying entry edge and so the number of
         #     circulations in that case will be <= number of exterior edges
 
+        # Step 1
         for i in range(4,len(graph) + 1):
             
+            # Step 2
             # If wheel graph any valid size is subgraph of given graph
             # then change flag to 1 and call multiple circ for given entry
             if(self.is_subgraph(nx.wheel_graph(i), graph,i)):
+                # Step 3
                 flag = 1
 
                 # Inform user that multiple circulation for fixed edge is possible
@@ -213,6 +218,7 @@ class circulation:
                     self.multiple_circulation_fixed_entry([(v1, v2, -1)],graph,len(graph))
                 break
         
+        # Step 4
         # If no wheel graph is subgraph of given graph then we jus generate
         # circ for different exterior edges
         if(flag == -1):
@@ -698,11 +704,11 @@ def complete_graph(n: int) -> Tuple[nx.Graph, list]:
 
     G = nx.complete_graph(n)
     coord = []
-    t = np.linspace(0, 2*np.pi, n + 1)
+    t = np.linspace(0, 2*np.pi, n, endpoint=False)
     x = 10 * np.cos(t)
     y = 10 * np.sin(t)
 
-    for i in range(len(t) - 1):
+    for i in range(len(t)):
         coord.append((x[i],y[i]))
     return G, coord
 
@@ -1018,19 +1024,19 @@ def main():
             print("This graph doesn't contain wheel graph")
     
     def test_multiple_circulation():
-        # Example1
-        g1, coord1 = wheel_graph(10)
-        circ_obj1 = circulation(g1)
-        circ_obj1.multiple_circulation(coord1)
-        print("Number of multiple circ: ",end=" ")
-        print(circ_obj1.count_of_multi_circ)
+        # # Example1
+        # g1, coord1 = wheel_graph(10)
+        # circ_obj1 = circulation(g1)
+        # circ_obj1.multiple_circulation(coord1)
+        # print(coord1)
+        # print("Number of multiple circ: ",end=" ")
+        # print(circ_obj1.count_of_multi_circ)
 
         # # Example2
-        # g2,coord2 = complete_graph(5)
-        # print(len(coord2))
-        # print(coord2)
+        # g2,coord2 = complete_graph(4)
         # circ_obj2 = circulation(g2)
         # circ_obj2.multiple_circulation(coord2)
+        # print(coord2)        
         # print(len(circ_obj2.multiple_circ))
 
         # Example3
