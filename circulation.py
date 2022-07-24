@@ -1,6 +1,3 @@
-import sys
-sys.path.append("...") # Adds higher directory to python modules path.
-sys.path.append("..") # Adds higher directory to python modules path.
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
@@ -227,6 +224,7 @@ class circulation:
 
 
 
+# Single circulation functions
     def circulation_algorithm(self,v1: int = 1,v2: int = 2) -> int:
         """
         Applies the circulation algorithm on the PTPG graph
@@ -241,11 +239,6 @@ class circulation:
         n = len(graph)
         m = n
         s = (v1-1 ,v2-1 , -1)
-
-        # print("choose a door")
-        # i ,j = map(int, input().split())
-        # s[0] = i
-        # s[1] = j
 
         # This dictionary tracks the pair of rooms each corridor is adjacent to
         # (key is vertex corresponding to corridor and values are a pair of rooms)
@@ -267,7 +260,6 @@ class circulation:
                     except:
                         print("WARNING!! THE INITIAL CHOSEN ENTRY EDGE MUST BE EXTERIOR EDGE") # Warning displayed
                         return 0
-                        # exit()
                     
                     if s[2]>0:
                         # If condition satisfied this adds edge between current corridor vertex and previous one
@@ -295,8 +287,6 @@ class circulation:
 
         self.circulation_graph = graph
         self.adjacency = final_adjacency
-        # print(self.graph, self.circulation_graph)
-        # print(self.adjacency)
         return 1
 
     def corridor_boundary_rooms(self,corridor_vertex: nx.Graph.nodes) -> list:
