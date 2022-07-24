@@ -1,3 +1,5 @@
+"""This file is the code to insert multiple spanning circulations for a given planar graph input
+"""
 from typing import List, Tuple
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -150,8 +152,6 @@ def find_exterior_edges(self, coord: List) -> None:
             if(adj[i,j] == 1):
                 edgeset.append((i,j))
     bdy_obj = bdy.Boundary(len(graph1), edgecnt, edgeset, coord)
-    # print("Len of coord: ", len(coord))
-    # print("Order of graph: ", len(graph1))
     boundary = bdy_obj.identify_bdy()
     for x in boundary:
         if len(x) == 2:
@@ -246,7 +246,11 @@ def plot(graph: nx.Graph,m: int) -> None:
 
 # Main function
 def main():
+    """Used for testing the above functions
+    """
     def test_is_subgraph():
+        """Used to test is_subgraph function
+        """
         # Example1
         g1 = nx.wheel_graph(10)
 
@@ -272,6 +276,8 @@ def main():
             print("This graph doesn't contain wheel graph")
     
     def test_multiple_circulation():
+        """Used to test multiple circulation function
+        """
         # # Example1
         # g1, coord1 = wheel_graph(10)
         # circ_obj1 = circulation(g1)
