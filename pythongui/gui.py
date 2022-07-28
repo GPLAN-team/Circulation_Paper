@@ -24,7 +24,6 @@ import numpy as np
 import datetime
 from fpdf import FPDF
 
-from source import polygonal
 from .catalogue_maker import generate_catalogue, generate_catalogue_dimensioned
 from source.polygonal import canonical as cano
 
@@ -86,7 +85,7 @@ class gui_class:
         self.command = "Null"
         self.value = []
         self.root =tk.Tk()
-
+        self.canonicalObject = cano.canonical()
         self.entry_door = []
         
         self.v1 = 0
@@ -154,7 +153,6 @@ class gui_class:
         self.root_window = self.ocan.getroot()   
         self.root.wait_variable(self.end)
         self.graph_ret()
-
         self.cir_graph = nx.Graph()
         self.cir_dim_mat = []
         self.output_data = []
@@ -1627,28 +1625,25 @@ class gui_class:
     def polygonal_inputbox(self):
         """This function takes user input for starting edge/door for the corridor
         """
-        if(cano.displayInputGraph(len(self.app.nodes_data),self.app.edges)):
-            
-            self.top = tk.Toplevel(self.root, width = 300, height = 300)
-            root = self.top
-            root.title('Outermost Nodes for Canonical Order')
-            main_text = tk.Label(root, text="Enter v1 , v2 and vn")
-            main_text.grid(row = 0, column = 0)
-            v1_val = tk.Entry(root, textvariable = self.v11)
-            v1_val.grid(row  = 1, column = 0)
-            v2_val = tk.Entry(root, textvariable = self.v22)
-            v2_val.grid(row = 1, column = 1)
-            vn_val = tk.Entry(root, textvariable = self.vnn)
-            vn_val.grid(row  = 1, column = 2)
+        self.canonicalObject = cano.canonical()
+        self.canonicalObject.displayInputGraph(len(self.app.nodes_data),self.app.edges)
 
-            ex = tk.Button(root,text = "Submit",command = self.polygonal)
-            ex.grid(row = 3)
-        else: 
-            self.canvas.destroy()
-            self.edges = []
-            self.output_data = []
-            self.createCanvas()
-            tk.messagebox.showerror("Error", "ERROR!! THE INITIAL GRAPH IS NON PLANAR")
+        self.top = tk.Toplevel(self.root, width = 300, height = 300)
+        root = self.top
+        root.title('Outermost Nodes for Canonical Order')
+        main_text = tk.Label(root, text="Enter v1 , v2 and vn")
+        main_text.grid(row = 0, column = 0)
+        v1_val = tk.Entry(root, textvariable = self.v11)
+        v1_val.grid(row  = 1, column = 0)
+        v2_val = tk.Entry(root, textvariable = self.v22)
+        v2_val.grid(row = 1, column = 1)
+        vn_val = tk.Entry(root, textvariable = self.vnn)
+        vn_val.grid(row  = 1, column = 2)
+
+        ex = tk.Button(root,text = "Submit",command = self.polygonal)
+        ex.grid(row = 3)
+        # else: 
+        #     tk.messagebox.showerror("Error", "ERROR!! THE INITIAL GRAPH IS NON PLANAR, START AGAIN")
             # TODO NOt working if error
 
 

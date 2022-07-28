@@ -17,6 +17,7 @@ import source.inputgraph as inputgraph
 import pythongui.drawing as draw
 import pythongui.dimensiongui as dimgui
 import source.circulation.circulation as cir
+
 # import checker
 # from tkinter import messagebox
 # import dimension_gui as dimgui
@@ -346,8 +347,9 @@ def run():
             elif(gclass.command == "poly"): #Polygonal Floorplan
                 start = time.time()
                 # graph.irreg_single_dual()
-                graph.polyonalinput(gclass.v1,gclass.v2,gclass.vn,gclass.value[2])
+                graph.polyonalinput(gclass.canonicalObject,gclass.v1,gclass.v2,gclass.vn,gclass.value[2])
                 end = time.time()
+
                 # printe("Time taken: " + str((end-start)*1000) + " ms")
                 # graph_data = {
                 #         'room_x': graph.room_x,
@@ -360,7 +362,7 @@ def run():
                 #         'irreg_nodes': graph.irreg_nodes1
                 #     }
                 # gclass.output_data.append(graph_data)
-                draw.draw_poly(1
+                draw.draw_poly(gclass.canonicalObject.graph_data,1
                         ,gclass.pen
                         ,1
                         ,gclass.value[6]
