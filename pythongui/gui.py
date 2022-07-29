@@ -1626,7 +1626,7 @@ class gui_class:
         """This function takes user input for starting edge/door for the corridor
         """
         self.canonicalObject = cano.canonical()
-        self.canonicalObject.displayInputGraph(len(self.app.nodes_data),self.app.edges)
+        self.canonicalObject.displayInputGraph(len(self.app.nodes_data),self.app.edges,self.app.nodes_data)
 
         self.top = tk.Toplevel(self.root, width = 300, height = 300)
         root = self.top

@@ -11,6 +11,8 @@ class canonical:
         self.adjacencies = []
         # self.graph_data = dict.fromkeys(['iteration','marked','neighbors','currentCanonicalOrder'])
         self.graph_data = {}
+        self.node_coordinate = [] 
+        self.new_node_coordinate = {}
     def run(self):
         
         #inputting te graph
@@ -35,7 +37,13 @@ class canonical:
         canord = np.zeros(n, dtype= int)
         self.canonical_order(canord, v1,v2,vn, n)   # TODO find v1,v2,vn
 
-    def displayInputGraph(self,noOfNodes,edge_set):
+    def displayInputGraph(self,noOfNodes,edge_set,nodes_data):
+        for i in nodes_data: #To get the Coordinates of the nodes 
+            temp_node_data = []
+            temp_node_data.append(i.pos_x)
+            temp_node_data.append(i.pos_y)
+            self.node_coordinate.append(temp_node_data)
+    
         self.graph_data = {'iteration':np.zeros(noOfNodes),'marked': np.zeros(noOfNodes),'neighbors': [],'currentCanonicalOrder': np.zeros(noOfNodes*noOfNodes).reshape(noOfNodes,noOfNodes)}
         for i in range(noOfNodes):
             self.G.add_node(i, id = -1, chord = 0, mark = False, out = False)
@@ -50,8 +58,10 @@ class canonical:
         if(not is_planar):
             return False;
 
-        nx.draw_planar(self.G,with_labels=True, font_weight='bold')
+        nx.draw(self.G,self.node_coordinate,with_labels=True, font_weight='bold')
+        plt.gca().invert_yaxis()
         plt.savefig("inputgraph.png")
+
         plt.show()    #DEBUG TODO ON
         return True
 
@@ -106,6 +116,7 @@ class canonical:
 
         for i in range(n-1, 1, -1):
             print("\n\nIteration {}".format(n+2-i))
+            print("Chords : {}".format(chord))
             temp_array = np.logical_and(np.logical_and(np.logical_not(mark), out), np.logical_not(chord))
             # print(temp_array)
             poss_vertex = np.where(temp_array == True)[0].flatten()
@@ -119,9 +130,9 @@ class canonical:
             print ("Neighbors of vk: {} ".format(neighbors))
             for j in neighbors:
                 out[j] = True
-            self.updatechord(chord, mark,out, n)
+            self.updatechord(chord, mark,out, v1,v2)
             print("Canonical Order: {}".format(canord))
-            # displayGraph(canord,n)
+            # self.displayGraph(canord,n)
             self.updateGraphData(n,i,vk,neighbors,canord)
      
         print("\nFinal Canonical Order: {}".format(canord))
@@ -148,30 +159,32 @@ class canonical:
         int2label ={}
         for i in range(n):
             int2label[i] = canord[i]
+            self.new_node_coordinate[canord[i]] = self.node_coordinate[i]
         self.G = nx.relabel_nodes(self.G, int2label)
-        nx.draw_planar(self.G,with_labels=True, font_weight='bold')
+        nx.draw(self.G,self.new_node_coordinate,with_labels=True, font_weight='bold')
+        plt.gca().invert_yaxis()
         plt.savefig("outputCanonicalOrder.png")
         self.graphs.append(self.G)
 
-    def updatechord(self,chord, mark,out, n):
+    def updatechord(self,chord, mark,out,v1,v2):
 
-        chord
         outer = np.logical_and(out, np.logical_not(mark))
-        outer[0] = True
-        outer[1] = True
+        outer[v1] = True
+        outer[v2] = True
         outer_surface = np.where(outer == True)[0]
-        # print(outer_surface)
-        out_neighbor_count = np.zeros(np.size(outer_surface))
+        # print("Outer Surface {}".format(outer_surface)) #On For Debug
+        out_neighbor_count = np.zeros(np.size(outer_surface), dtype= int)
 
         for i in range(0, np.size(outer_surface)):
             for j in range(0, np.size(outer_surface)):
-                if(self.G.has_edge(outer_surface[i],outer_surface[j])) :
+                if(i!=j and self.G.has_edge(outer_surface[i],outer_surface[j])) :
                     out_neighbor_count[i] += 1
             if(out_neighbor_count[i]>2) :
                 chord[outer_surface[i]] = True
             else :
                 chord[outer_surface[i]] = False
-                # print (outer_surface[i])
+        
+        # print("Outer Neighbor Count {}".format(out_neighbor_count)) #On For Debug
         
         return 
 
