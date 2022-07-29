@@ -248,7 +248,6 @@ class circulation:
         for tuple_list in self.temp_push_states:
             for each_tuple in tuple_list:
 
-                # print(x)
                 self.calculate_edge_move(self.RFP.rooms[each_tuple[0]], each_tuple[1], each_tuple[2])
                 self.calculate_edge_move(self.RFP.rooms[each_tuple[3]], each_tuple[4], each_tuple[5])
 
@@ -313,13 +312,15 @@ class circulation:
         neighbors_room2 = []
         orientation = 'x'
         height = 0
+        # Common edge is parallel to x axis
         if(common_edge[1] == common_edge[3]):
             height = common_edge[1]
-            orientation = 'x' #Common edge is parallel to x axis
+            orientation = 'x'
         
+        # Common edge is parallel to y axis
         elif(common_edge[0] == common_edge[2]):
             height = common_edge[0]
-            orientation = 'y' #Common edge is parallel to y axis
+            orientation = 'y'
         
         # The axis wrt which we shift the room edges to form corridor
         axis = (orientation, height)
