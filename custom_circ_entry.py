@@ -103,18 +103,7 @@ class custom_circ:
     
         # Step 3
 
-        # # We collect the indices that need to be removed
-        # indices = [x for x in range(len(self.graph),min)]
-        # for i in range(max + 1, len(self.span_circ)):
-        #     indices.append(i)
-        
-        # # Contracting the edges to modify the circulation
-        # for i in indices:
-        #     [a,b] = self.adjacency.get(i)
-        #     mod_circ = nx.contracted_edge(self.span_circ, (a,i), False)
-        # self.modified_circ = mod_circ
-
-        # Trying to find shortest path:
+        # Finding path via corridor vertices between required start and end
         self.corridor_tree = nx.induced_subgraph(self.span_circ, range(len(self.graph), len(self.span_circ)))
 
         # Since we find simple path in a tree, we get a single path
@@ -130,9 +119,10 @@ class custom_circ:
         print(indices)
 
         # Contracting the edges to modify the circulation
+        mod_circ = self.span_circ
         for i in indices:
             [a,b] = self.adjacency.get(i)
-            mod_circ = nx.contracted_edge(self.span_circ, (a,i), False)
+            mod_circ = nx.contracted_edge(mod_circ, (a,i), False)
         self.modified_circ = mod_circ
     
 def plot(graph: nx.Graph,m: int) -> None:
@@ -172,12 +162,11 @@ def main():
 
     def test_custom_circ():
         g = make_graph()
-        plot(g,len(g))
         custom_obj = custom_circ(g)
         custom_obj.custom_circ(3,4,1,2)
-        # plot(custom_obj.span_circ, len(custom_obj.span_circ))
+        plot(custom_obj.span_circ, len(custom_obj.span_circ))
         # plot(custom_obj.corridor_tree, len(custom_obj.corridor_tree))
-        # plot(custom_obj.modified_circ, len(custom_obj.modified_circ))
+        plot(custom_obj.modified_circ, len(custom_obj.modified_circ))
     
     test_custom_circ()
 
