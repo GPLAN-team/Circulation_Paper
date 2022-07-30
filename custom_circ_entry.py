@@ -31,7 +31,8 @@ class custom_circ:
         # Steps involved:
         # Step 1: Find spanning circulation
         # Step 2: Find corridor vertex on the edge s1--s2 and similarly f1--f2
-        # Step 3: Contract the edges having unnecessary corridor vertices
+        # Step 3: Find the path through corridor vertices between the start and end corridor vertex
+        # Step 4: Remove and contract the edges having unnecessary corridor vertices
 
         # Step 1 (Note: later call the circ_algo from circulation.py instead of repeating code)
 
@@ -117,6 +118,8 @@ class custom_circ:
             for idx in i:
                 indices.remove(idx)
                 reqd_corridors.append(idx)
+        
+        # Step 4
         
         # Contracting the edges to modify the circulation
         mod_circ = deepcopy(self.span_circ)
