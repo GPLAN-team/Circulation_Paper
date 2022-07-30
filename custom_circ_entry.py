@@ -112,18 +112,22 @@ class custom_circ:
         # We get the indices that are need to be removed from the spanning circulation
         indices = [x for x in range(len(self.graph), len(self.span_circ))]
 
+        reqd_corridors = []
         for i in path:
             for idx in i:
                 indices.remove(idx)
+                reqd_corridors.append(idx)
         
-        print(indices)
-
         # Contracting the edges to modify the circulation
-        mod_circ = self.span_circ
+        mod_circ = deepcopy(self.span_circ)
         for i in indices:
+            for j in reqd_corridors:
+                if mod_circ.has_edge(i,j):
+                    mod_circ.remove_edge(i,j)
             [a,b] = self.adjacency.get(i)
             mod_circ = nx.contracted_edge(mod_circ, (a,i), False)
         self.modified_circ = mod_circ
+    
     
 def plot(graph: nx.Graph,m: int) -> None:
     """Plots thr graph using matplotlib
