@@ -16,7 +16,17 @@ class custom_circ:
         self.modified_circ = nx.Graph()
         self.corridor_tree = nx.Graph()
 
-    def custom_circ(self,f1: int, f2: int,s1: int = 1,s2: int = 2,v1: int = 0,v2: int = 1) -> nx.Graph:
+    def nearest_exterior_edge(self,f1: int, f2: int,s1: int,s2: int) -> list:
+        """User wants corridor space starting between edge s1--s2 till f1--f2. So, we use this function to
+           get the nearest exterior edge to first find the spanning circulation. 
+
+        Args:
+            f1 (int): First endpoint of the target edge to end the circulation (maybe interior).
+            f2 (int): Second endpoint of the target edge to end the circulation (maybe interior).
+            s1 (int): First endpoint of the target edge to start the circulation (maybe interior).
+            s2 (int): Second endpoint of the target edge to start the circulation (maybe interior).
+        """
+    def custom_circ(self,f1: int, f2: int,s1: int = 1,s2: int = 2,v1: int = 0,v2: int = 1) -> None:
         """
         Modifies the circulation graph having the spanning circulation to restrict it to user choice
     
@@ -120,7 +130,7 @@ class custom_circ:
                 reqd_corridors.append(idx)
         
         # Step 4
-        
+
         # Contracting the edges to modify the circulation
         mod_circ = deepcopy(self.span_circ)
         for i in indices:
@@ -130,8 +140,7 @@ class custom_circ:
             [a,b] = self.adjacency.get(i)
             mod_circ = nx.contracted_edge(mod_circ, (a,i), False)
         self.modified_circ = mod_circ
-    
-    
+
 def plot(graph: nx.Graph,m: int) -> None:
     """Plots thr graph using matplotlib
 
