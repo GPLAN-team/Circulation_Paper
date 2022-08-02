@@ -91,6 +91,7 @@ class gui_class:
         self.v1 = 0
         self.v2 = 0 
         self.vn = 0
+        self.po = ""
 
         self.v11 = tk.IntVar(None)
         self.v11.set(0)
@@ -98,6 +99,8 @@ class gui_class:
         self.v22.set(1)
         self.vnn = tk.IntVar(None)
         self.vnn.set(2)
+        self.priority_order = tk.StringVar(None)
+        self.priority_order.set("")
 
 
         self.l = tk.IntVar(None)
@@ -1510,7 +1513,7 @@ class gui_class:
         self.v1 = self.v11.get()
         self.v2 = self.v22.get()
         self.vn = self.vnn.get()
-
+        self.po = self.priority_order.get()
         self.top.destroy()
         self.app.command="poly"
         self.command = "poly"
@@ -1631,14 +1634,16 @@ class gui_class:
         self.top = tk.Toplevel(self.root, width = 300, height = 300)
         root = self.top
         root.title('Outermost Nodes for Canonical Order')
-        main_text = tk.Label(root, text="Enter v1 , v2 and vn")
+        main_text = tk.Label(root, text="Enter priority order(if any) v1 , v2, vn.")
         main_text.grid(row = 0, column = 0)
         v1_val = tk.Entry(root, textvariable = self.v11)
-        v1_val.grid(row  = 1, column = 0)
+        v1_val.grid(row  = 1, column = 1)
         v2_val = tk.Entry(root, textvariable = self.v22)
-        v2_val.grid(row = 1, column = 1)
+        v2_val.grid(row = 1, column = 2)
         vn_val = tk.Entry(root, textvariable = self.vnn)
-        vn_val.grid(row  = 1, column = 2)
+        vn_val.grid(row  = 1, column = 3)
+        priority_order = tk.Entry(root, textvariable = self.priority_order)
+        priority_order.grid(row  = 1, column = 0)
 
         ex = tk.Button(root,text = "Submit",command = self.polygonal)
         ex.grid(row = 3)

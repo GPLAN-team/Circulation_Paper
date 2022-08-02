@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tkinter as tk
 import numpy as np
+import re
 class canonical:
    
     def __init__(self):
@@ -13,6 +14,7 @@ class canonical:
         self.graph_data = {}
         self.node_coordinate = [] 
         self.new_node_coordinate = {}
+        self.priority_order = []
     def run(self):
         
         #inputting te graph
@@ -31,7 +33,7 @@ class canonical:
         
         nx.draw_planar(self.G,with_labels=True, font_weight='bold')
         plt.savefig("inputgraph.png")
-        plt.show()    #DEBUG TODO
+        plt.show()    #DEBUG TODOs
             
         #initialisations
         canord = np.zeros(n, dtype= int)
@@ -58,14 +60,13 @@ class canonical:
         if(not is_planar):
             return False;
 
-        nx.draw(self.G,self.node_coordinate,with_labels=True, font_weight='bold')
-        plt.gca().invert_yaxis()
-        plt.savefig("inputgraph.png")
-
-        plt.show()    #DEBUG TODO ON
+        # nx.draw(self.G,self.node_coordinate,with_labels=True, font_weight='bold')
+        # plt.gca().invert_yaxis()
+        # plt.savefig("inputgraph.png")
+        # plt.show()    #Uncomment above 4 lines to see input graph
         return True
 
-    def runWithArguments(self,noOfNodes,v1,v2,vn,graph,edge_set):
+    def runWithArguments(self,noOfNodes,v1,v2,vn,priority_order,graph,edge_set):
         
         # print("v1 : {}".format(v1))
         # print("v1 : {}".format(v2))
@@ -75,16 +76,23 @@ class canonical:
         
         #initialisations
         canord = np.zeros(noOfNodes, dtype= int)
-        self.canonical_order(canord, v1,v2,vn, noOfNodes)   # TODO find v1,v2,vn
+        if(priority_order!=""):
+            self.priority_order = list(map(int, re.findall(r'\d+', priority_order)))
+            if v1 in self.priority_order:
+                self.priority_order.remove(v1)
+            if v2 in self.priority_order: 
+                self.priority_order.remove(v2)
+
+        self.canonical_order(canord, v1,v2,vn,noOfNodes)   # TODO find v1,v2,vn
 
 
-    def canonical_order(self,canord, v1,v2,vn, n):
+    def canonical_order(self,canord, v1,v2,vn,n):
         n = int(n)
-
+        print("Priority_Order : {}".format(self.priority_order))
         mark = np.zeros((n,), dtype= bool)
         chord = np.zeros((n,), dtype= bool)
         out = np.zeros((n,), dtype= bool)
-        
+
         canord[v1] = 0;
         
         mark[v1] = True
@@ -121,8 +129,14 @@ class canonical:
             # print(temp_array)
             poss_vertex = np.where(temp_array == True)[0].flatten()
             # print(poss_vertex)
-            print("Options for Next Iteration: {}".format(poss_vertex))
-            vk = poss_vertex[0]
+            print("Options for Next Iteration: {}".format(poss_vertex)) 
+            if len(self.priority_order)>0 and self.priority_order[0] in poss_vertex:
+                vk = self.priority_order[0]
+                self.priority_order.remove(self.priority_order[0])
+            else:
+                vk = poss_vertex[0]
+                if vk in self.priority_order:
+                    self.priority_order.remove(vk)
             canord[vk] = i
             mark[vk] = True
             print("Marked: {}".format(vk))
@@ -137,16 +151,24 @@ class canonical:
      
         print("\nFinal Canonical Order: {}".format(canord))
         self.displayGraph(canord,n)
-        plt.show()    #DEBUG TODO
+        # plt.show()    #DEBUG TODO
         
 
-        # fig, axes = plt.subplots(nrows=1, ncols=2)
-        # ax = axes.flatten()
-        # for i in range(2):
-        #     nx.draw_planar(self.graphs[i],with_labels=True, font_weight='bold', ax=ax[i])
-        #     ax[i].set_axis_off()
-        # plt.show() #ON
+        fig, axes = plt.subplots(nrows=1, ncols=2)
+        ax = axes.flatten()
+        fig.set_size_inches(15.0, 5.25)
+        ax[0].invert_yaxis()
+        ax[0].set_title('Input Graph')
+        ax[1].invert_yaxis()
+        ax[1].set_title('Output Graph after Canonical Order')
 
+        # plt.gca().invert_yaxis()
+        nx.draw(self.graphs[0],self.node_coordinate,with_labels=True, font_weight='bold',ax = ax[0])
+        ax[0].set_axis_off()
+        nx.draw(self.graphs[1],self.new_node_coordinate,with_labels=True, font_weight='bold',ax = ax[1])
+        ax[1].set_axis_off()
+        # plt.gca().invert_yaxis()
+        plt.show() #ON
 
     def updateGraphData(self,n,i,vk,neighbors,canord):
         self.graph_data['iteration'][n+2-i-1] = n+2-i
@@ -161,10 +183,10 @@ class canonical:
             int2label[i] = canord[i]
             self.new_node_coordinate[canord[i]] = self.node_coordinate[i]
         self.G = nx.relabel_nodes(self.G, int2label)
-        nx.draw(self.G,self.new_node_coordinate,with_labels=True, font_weight='bold')
-        plt.gca().invert_yaxis()
-        plt.savefig("outputCanonicalOrder.png")
         self.graphs.append(self.G)
+        # nx.draw(self.G,self.new_node_coordinate,with_labels=True, font_weight='bold') #Uncomment these 3 lines to see output graph
+        # plt.gca().invert_yaxis()
+        # plt.savefig("outputCanonicalOrder.png")
 
     def updatechord(self,chord, mark,out,v1,v2):
 
