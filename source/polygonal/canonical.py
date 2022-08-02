@@ -162,12 +162,12 @@ class canonical:
         ax[1].invert_yaxis()
         ax[1].set_title('Output Graph after Canonical Order')
 
-        # plt.gca().invert_yaxis()
+
         nx.draw(self.graphs[0],self.node_coordinate,with_labels=True, font_weight='bold',ax = ax[0])
         ax[0].set_axis_off()
         nx.draw(self.graphs[1],self.new_node_coordinate,with_labels=True, font_weight='bold',ax = ax[1])
         ax[1].set_axis_off()
-        # plt.gca().invert_yaxis()
+        plt.savefig("./source/polygonal/lastcanonicalorder.png")
         plt.show() #ON
 
     def updateGraphData(self,n,i,vk,neighbors,canord):
@@ -186,7 +186,6 @@ class canonical:
         self.graphs.append(self.G)
         # nx.draw(self.G,self.new_node_coordinate,with_labels=True, font_weight='bold') #Uncomment these 3 lines to see output graph
         # plt.gca().invert_yaxis()
-        # plt.savefig("outputCanonicalOrder.png")
 
     def updatechord(self,chord, mark,out,v1,v2):
 
