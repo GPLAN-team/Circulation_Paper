@@ -72,8 +72,7 @@ class custom_circ:
             self.add_corridor(self.modified_circ,x[0],x[1])
 
     # Getting custom circulation from spanning circulation
-    """ Note: Find a way to find the exterior edge that has corridor vertex
-        on both s1--s2 and f1--f2"""
+    """ Note: Find a way to find the exterior edge that has corridor vertex on both s1--s2 and f1--f2"""
     def custom_circ2(self,f1: int, f2: int,s1: int = 1,s2: int = 2,v1: int = 0,v2: int = 1) -> None:
         """
         Modifies the circulation graph having the spanning circulation to restrict it to user choice
