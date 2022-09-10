@@ -13,8 +13,38 @@ class custom_circ:
         self.graph = graph
         self.span_circ = nx.Graph()
         self.adjacency = {}
-        self.modified_circ = nx.Graph()
+        self.modified_circ = self.graph
         self.corridor_tree = nx.Graph()
+
+    def add_corridor(self, graph: nx.Graph, v1: int, v2:int) -> None:
+        """Adding a corridor vertex between vertices v1 and v2 if the edge exists
+
+        Args:
+            graph (nx.Graph): Graph to be modified
+            v1 (int): First endpoint of the target edge to add corridor vertex
+            v2 (int): First endpoint of the target edge to add corridor vertex
+        """
+        self.modified_circ = deepcopy(graph)
+        n = len(self.modified_circ)
+        m = len(self.graph)
+
+        if(v1 < m and v2 < m):
+            if(self.modified_circ.has_edge(v1,v2)):
+
+                # Added to keep the grah triangulated
+                for ne in list(nx.common_neighbors(self.modified_circ,v1,v2)):
+                    self.modified_circ.add_edge(n,ne)
+                
+                # Subdividing the edge to add the corridor vertex in its place
+                self.modified_circ.add_edge(v1,n)
+                self.modified_circ.add_edge(v2,n)
+                self.modified_circ.remove_edge(v1,v2)
+            
+            else:
+                print("The edge " + str((v1,v2)) + "does not exist in the graph")
+        
+        else:
+            print("You cannot add corridor vertex between a room vertex and another corridor vertex")
 
     def nearest_exterior_edge(self,f1: int, f2: int,s1: int,s2: int) -> list:
         """User wants corridor space starting between edge s1--s2 till f1--f2. So, we use this function to
@@ -26,7 +56,25 @@ class custom_circ:
             s1 (int): First endpoint of the target edge to start the circulation (maybe interior).
             s2 (int): Second endpoint of the target edge to start the circulation (maybe interior).
         """
-    def custom_circ(self,f1: int, f2: int,s1: int = 1,s2: int = 2,v1: int = 0,v2: int = 1) -> None:
+        # Note: Find a way to find the exterior edge that has corridor vertex
+        # on both s1--s2 and f1--f2
+
+
+    # Getting custom circulation by adding corridors to input graph
+    def custom_circ1(self, edges: List):
+        """Adds corridor on the edges passed as parameter (user's choice)
+
+        Args:
+            edges (List): The set of edges on which we want to add corridor vertices
+        """
+
+        for x in edges:
+            self.add_corridor(self.modified_circ,x[0],x[1])
+
+    # Getting custom circulation from spanning circulation
+    """ Note: Find a way to find the exterior edge that has corridor vertex
+        on both s1--s2 and f1--f2"""
+    def custom_circ2(self,f1: int, f2: int,s1: int = 1,s2: int = 2,v1: int = 0,v2: int = 1) -> None:
         """
         Modifies the circulation graph having the spanning circulation to restrict it to user choice
     
@@ -176,16 +224,26 @@ def main():
 
         return g
 
-    def test_custom_circ():
+    """ Note: Find a way to find the exterior edge that has corridor vertex
+        on both s1--s2 and f1--f2"""
+    def test_custom_circ1():
         g = make_graph()
         custom_obj = custom_circ(g)
         # custom_obj.custom_circ(3,4,1,2,0,1)
-        custom_obj.custom_circ(3,4,1,2,1,3)
+        custom_obj.custom_circ2(3,4,1,2,1,3)
         plot(custom_obj.span_circ, len(custom_obj.span_circ))
         plot(custom_obj.corridor_tree, len(custom_obj.corridor_tree))
         plot(custom_obj.modified_circ, len(custom_obj.modified_circ))
     
-    test_custom_circ()
+    def test_custom_circ2():
+        g =make_graph()
+        custom_obj = custom_circ(g)
+        custom_obj.custom_circ1([(1,2), (1,4),(3,4)])
+        plot(custom_obj.graph, len(custom_obj.graph))
+        plot(custom_obj.modified_circ, len(custom_obj.modified_circ))
+    
+    test_custom_circ1()
+    # test_custom_circ2()
 
 if __name__ == "__main__":
     main()
