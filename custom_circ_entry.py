@@ -179,9 +179,10 @@ def main():
     def test_custom_circ():
         g = make_graph()
         custom_obj = custom_circ(g)
-        custom_obj.custom_circ(3,4,1,2)
+        # custom_obj.custom_circ(3,4,1,2,0,1)
+        custom_obj.custom_circ(3,4,1,2,1,3)
         plot(custom_obj.span_circ, len(custom_obj.span_circ))
-        # plot(custom_obj.corridor_tree, len(custom_obj.corridor_tree))
+        plot(custom_obj.corridor_tree, len(custom_obj.corridor_tree))
         plot(custom_obj.modified_circ, len(custom_obj.modified_circ))
     
     test_custom_circ()
