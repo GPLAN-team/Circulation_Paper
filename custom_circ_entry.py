@@ -22,7 +22,7 @@ class custom_circ:
         Args:
             graph (nx.Graph): Graph to be modified
             v1 (int): First endpoint of the target edge to add corridor vertex
-            v2 (int): First endpoint of the target edge to add corridor vertex
+            v2 (int): Second endpoint of the target edge to add corridor vertex
         """
         self.modified_circ = deepcopy(graph)
         n = len(self.modified_circ)
@@ -39,12 +39,53 @@ class custom_circ:
                 self.modified_circ.add_edge(v1,n)
                 self.modified_circ.add_edge(v2,n)
                 self.modified_circ.remove_edge(v1,v2)
-            
+                
+                # Adding to dictionary the corridor vertex and the rooms that it connects
+                self.adjacency[n] = [v1,v2]
+                # print(self.adjacency)
             else:
                 print("The edge " + str((v1,v2)) + "does not exist in the graph")
         
         else:
             print("You cannot add corridor vertex between a room vertex and another corridor vertex")
+
+    def remove_corridor(self,graph:nx.Graph,v1:int,v2:int)->None:
+        """To remove corridor vertex between v1 and v2 if exists
+
+        Args:
+            graph (nx.Graph): Graph to be modified
+            v1 (int): First endpoint of the target edge from which we remove corridor vertex
+            v2 (int): Second endpoint of the target edge from which we remove corridor vertex
+        """
+        self.modified_circ = deepcopy(graph)
+        n = len(self.modified_circ)
+        m = len(self.graph)
+
+        # To ensure both the vertices are rooms
+        if(v1 < m and v2 < m):
+            # To ensure the rooms are adjacent
+            if(self.graph.has_edge(v1,v2)):
+                # To check if there is a corridor vertex between the rooms
+                if([v1,v2] in self.adjacency.values()):
+                    # Get the corridor vertex
+                    i = list(self.adjacency.keys())[list(self.adjacency.values()).index([v1,v2])]
+                    # Contracting one endpoint and the corridor to reverse the subdivision
+                    mod_circ = nx.contracted_edge(self.modified_circ,(v1,i),False)
+                    self.modified_circ = mod_circ
+                
+                elif([v2,v1] in self.adjacency.values()):
+                    # Get the corridor vertex
+                    i = list(self.adjacency.keys())[list(self.adjacency.values()).index([v2,v1])]
+                    # Contracting one endpoint and the corridor to reverse the subdivision
+                    mod_circ = nx.contracted_edge(self.modified_circ,(v1,i),False)
+                    self.modified_circ = mod_circ
+                
+                else:
+                    print("There is no corridor vertex between these rooms")
+            else:
+                print("The rooms are not adjacent")
+        else:
+            print("The two vertices passed must correspond to rooms")
 
     def nearest_exterior_edge(self,f1: int, f2: int,s1: int,s2: int) -> list:
         """User wants corridor space starting between edge s1--s2 till f1--f2. So, we use this function to
@@ -241,8 +282,18 @@ def main():
         plot(custom_obj.graph, len(custom_obj.graph))
         plot(custom_obj.modified_circ, len(custom_obj.modified_circ))
     
-    test_custom_circ1()
+    def test_remove_corridor():
+        g =make_graph()
+        custom_obj = custom_circ(g)
+        custom_obj.add_corridor(g,1,2)
+        custom_obj.add_corridor(custom_obj.modified_circ,1,4)
+        custom_obj.add_corridor(custom_obj.modified_circ,3,4)
+        custom_obj.remove_corridor(custom_obj.modified_circ,1,4)
+        plot(custom_obj.modified_circ, len(custom_obj.modified_circ))
+    
+    # test_custom_circ1()
     # test_custom_circ2()
+    test_remove_corridor()
 
 if __name__ == "__main__":
     main()
