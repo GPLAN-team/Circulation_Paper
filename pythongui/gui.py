@@ -92,6 +92,10 @@ class gui_class:
         self.r.set(1)
         self.left = 0
         self.right = 1
+        # To get user input for corridor thickness
+        self.ct = tk.DoubleVar(None)
+        self.ct.set(0.1)
+        self.corridor_thickness=0.1
         self.entry_door.append(self.l)
         self.entry_door.append(self.r)
 
@@ -1602,12 +1606,14 @@ class gui_class:
         self.top = tk.Toplevel(self.root, width = 300, height = 300)
         root = self.top
         root.title('Circulation Entry Changer')
-        main_text = tk.Label(root, text="Enter the two rooms adjacent to the new entry door")
+        main_text = tk.Label(root, text="Enter the two rooms adjacent to the new entry door and the corridor thickness")
         main_text.grid(row = 0, column = 0)
         l_val = tk.Entry(root, textvariable = self.l)
         l_val.grid(row  = 1, column = 0)
         r_val = tk.Entry(root, textvariable = self.r)
         r_val.grid(row = 1, column = 1)
+        thickness = tk.Entry(root, textvariable=self.ct)
+        thickness.grid(row  = 2, column = 1)
         ex = tk.Button(root,text = "Submit",command = self.entry_ender)
         ex.grid(row = 3)
 
@@ -1642,6 +1648,7 @@ class gui_class:
         self.left = self.l.get() + 1
         self.right = self.r.get() + 1
         self.entry_door = [self.left, self.right]
+        self.corridor_thickness = self.ct.get()
         self.end.set(self.end.get()+1)
         self.top.destroy()
         

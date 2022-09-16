@@ -47,13 +47,13 @@ class RFP:
     #Functions to create RFP from the graph
 
 class circulation:
-    def __init__(self,graph: nx.Graph, rfp: RFP = None) -> None:
+    def __init__(self,graph: nx.Graph, thickness:float = 0.1, rfp: RFP = None) -> None:
         self.graph = graph
         self.adjacency = {}
         self.circulation_graph = nx.Graph() 
         self.RFP = rfp
         self.temp_push_states = []
-        self.corridor_thickness = 0.1
+        self.corridor_thickness = thickness
         self.pushed_stack = []
         self.circulations_adjacency_list = []
 

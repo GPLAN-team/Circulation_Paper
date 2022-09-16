@@ -11,7 +11,7 @@ import pythongui.gui as gui
 import source.inputgraph as inputgraph
 import pythongui.drawing as draw
 import pythongui.dimensiongui as dimgui
-import source.circulation.circulation as cir
+import circulation as cir
 # import checker
 # from tkinter import messagebox
 # import dimension_gui as dimgui
@@ -80,7 +80,7 @@ def run():
                         'irreg_nodes': graph.irreg_nodes1
                     }
     
-                new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door)
+                new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
                 # If there was some error in algorithm execution new_graph_data will be empty
                 # we display the pop-up error message
                 if new_graph_data == None:
@@ -443,7 +443,7 @@ def make_dissection_corridor(gclass):
 #     # draw.draw_rdg(G,1,gclass.pen,G.to_be_merged_vertices,G.rdg_vertices,0,gclass.value[6],gclass.value[5])
 #     G.circulation(gclass.pen,gclass.ocan.canvas, C, 1, 2)
 
-def call_circulation(graph_data, edge_set, entry):
+def call_circulation(graph_data, edge_set, entry, thickness):
 
     g = nx.Graph()
     
@@ -459,7 +459,7 @@ def call_circulation(graph_data, edge_set, entry):
     # cir.plot(g,n)
     rfp = cir.RFP(g, rooms)
 
-    circulation_obj = cir.circulation(g, rfp)
+    circulation_obj = cir.circulation(g, thickness, rfp)
     circulation_result = circulation_obj.circulation_algorithm(entry[0], entry[1])
     if circulation_result == 0:
         return None 
