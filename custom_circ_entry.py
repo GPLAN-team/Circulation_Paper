@@ -285,9 +285,11 @@ def main():
     def test_remove_corridor():
         g =make_graph()
         custom_obj = custom_circ(g)
+        plot(custom_obj.graph, len(custom_obj.graph))
         custom_obj.add_corridor(g,1,2)
         custom_obj.add_corridor(custom_obj.modified_circ,1,4)
         custom_obj.add_corridor(custom_obj.modified_circ,3,4)
+        plot(custom_obj.modified_circ, len(custom_obj.modified_circ))
         custom_obj.remove_corridor(custom_obj.modified_circ,1,4)
         plot(custom_obj.modified_circ, len(custom_obj.modified_circ))
     
