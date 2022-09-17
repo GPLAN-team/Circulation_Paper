@@ -464,12 +464,9 @@ def call_circulation(graph_data, edge_set, entry, thickness):
     circulation_result = circulation_obj.circulation_algorithm(entry[0], entry[1])
     if circulation_result == 0:
         return None
-    plot(circulation_obj.circulation_graph, len(circulation_obj.circulation_graph))
     
-    # Since the entry values are shifted by 1 to match with the parameters of circ_algo fn
-    door = [x-1 for x in entry]
-    circulation_obj.remove_corridor(circulation_obj.circulation_graph,door[0],door[1])
-    plot(circulation_obj.circulation_graph, len(circulation_obj.circulation_graph))
+    # To remove entry corridor alone we are just shifting rooms by looking at second corridor vertex
+    # Done by shifting the range left bound in for loop of adjust_RFP_to_circulation()
     circulation_obj.adjust_RFP_to_circulation()
 
     for room in circulation_obj.RFP.rooms:

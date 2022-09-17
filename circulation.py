@@ -98,14 +98,20 @@ class circulation:
                     i = list(self.adjacency.keys())[list(self.adjacency.values()).index([v1,v2])]
                     # Contracting one endpoint and the corridor to reverse the subdivision
                     mod_circ = nx.contracted_edge(self.circulation_graph,(v1,i),False)
+                    print("Before deletion:", self.adjacency)
                     self.circulation_graph = mod_circ
+                    del self.adjacency[i]
+                    print("After deletion:", self.adjacency)
                 
                 elif([v2,v1] in self.adjacency.values()):
                     # Get the corridor vertex
                     i = list(self.adjacency.keys())[list(self.adjacency.values()).index([v2,v1])]
                     # Contracting one endpoint and the corridor to reverse the subdivision
                     mod_circ = nx.contracted_edge(self.circulation_graph,(v1,i),False)
+                    print("Before deletion:", self.adjacency)
                     self.circulation_graph = mod_circ
+                    del self.adjacency[i]
+                    print("After deletion:", self.adjacency)
                 
                 else:
                     print("There is no corridor vertex between these rooms")
@@ -205,7 +211,8 @@ class circulation:
             None
         """       
         # For each corridor vertex we find the pair of rooms that this corridor connects
-        for corridor in range(len(self.graph), len(self.circulation_graph)):
+        # Shifted left bound by 1 to shift the boundary only from the second corridor vertex
+        for corridor in range(len(self.graph) + 1, len(self.circulation_graph)):
             [room1, room2] = self.corridor_boundary_rooms(corridor)
             self.add_corridor_between_2_rooms(self.RFP.rooms[room1],self.RFP.rooms[room2])
         
