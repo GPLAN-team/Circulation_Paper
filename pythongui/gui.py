@@ -1603,19 +1603,22 @@ class gui_class:
     def change_entry_gui(self):
         """This function takes user input for starting edge/door for the corridor
         """
-        self.top = tk.Toplevel(self.root, width = 300, height = 300)
+        self.top = tk.Toplevel(self.root, width=800, height=400)
         root = self.top
-        root.title('Circulation Entry Changer')
-        main_text = tk.Label(root, text="Enter the two rooms adjacent to the new entry door and the corridor thickness")
-        main_text.grid(row = 0, column = 0)
+        root.geometry("550x80")
+        root.title('Circulation Entry Changer and Corridor thickness')
+        entry_text = tk.Label(root, text="Enter the two rooms adjacent to the new entry door")
+        entry_text.grid(row = 3, column = 0)
         l_val = tk.Entry(root, textvariable = self.l)
-        l_val.grid(row  = 1, column = 0)
+        l_val.grid(row  = 3, column = 1)
         r_val = tk.Entry(root, textvariable = self.r)
-        r_val.grid(row = 1, column = 1)
+        r_val.grid(row = 3, column = 2)
+        corridor_text = tk.Label(root,text="Enter the corridor thickness")
+        corridor_text.grid(row= 0, column= 0)
         thickness = tk.Entry(root, textvariable=self.ct)
-        thickness.grid(row  = 2, column = 1)
+        thickness.grid(row  = 0, column = 1)
         ex = tk.Button(root,text = "Submit",command = self.entry_ender)
-        ex.grid(row = 3)
+        ex.grid(row = 5, column= 1)
 
         # Added to handle when input door index is not integer
         # # Make sure entered rooms are integers
