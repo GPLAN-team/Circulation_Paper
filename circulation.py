@@ -76,6 +76,43 @@ class circulation:
     #             return True
         
     #     return False
+    def remove_corridor(self,graph:nx.Graph,v1:int = 0,v2:int = 1)->None:
+        """To remove corridor vertex between v1 and v2 if exists
+
+        Args:
+            graph (nx.Graph): Graph to be modified
+            v1 (int): First endpoint of the target edge from which we remove corridor vertex
+            v2 (int): Second endpoint of the target edge from which we remove corridor vertex
+        """
+        self.circulation_graph = deepcopy(graph)
+        # n = len(self.circulation_graph)
+        m = len(self.graph)
+        
+        # To ensure both the vertices are rooms
+        if(v1 < m and v2 < m):
+            # To ensure the rooms are adjacent
+            if(self.graph.has_edge(v1,v2)):
+                # To check if there is a corridor vertex between the rooms
+                if([v1,v2] in self.adjacency.values()):
+                    # Get the corridor vertex
+                    i = list(self.adjacency.keys())[list(self.adjacency.values()).index([v1,v2])]
+                    # Contracting one endpoint and the corridor to reverse the subdivision
+                    mod_circ = nx.contracted_edge(self.circulation_graph,(v1,i),False)
+                    self.circulation_graph = mod_circ
+                
+                elif([v2,v1] in self.adjacency.values()):
+                    # Get the corridor vertex
+                    i = list(self.adjacency.keys())[list(self.adjacency.values()).index([v2,v1])]
+                    # Contracting one endpoint and the corridor to reverse the subdivision
+                    mod_circ = nx.contracted_edge(self.circulation_graph,(v1,i),False)
+                    self.circulation_graph = mod_circ
+                
+                else:
+                    print("There is no corridor vertex between these rooms")
+            else:
+                print("The rooms are not adjacent")
+        else:
+            print("The two vertices passed must correspond to rooms")
 
     def circulation_algorithm(self,v1: int = 1,v2: int = 2) -> int:
         """
@@ -757,13 +794,52 @@ def main():
             print("Push left edge by: ", room.rel_push_L)
             print("Push right edge by: ", room.rel_push_R)
             print(room.target)
-            print('\n') 
+            print('\n')
+    
+    def test_remove_corridor():
+        g = make_graph()
+        n = len(g)
+        plot(g,n)
+
+        tl_x1 = 0.0
+        br_x1 = 10.0
+        br_y1 = 0.0
+        tl_y1 = 30.0
+
+        tl_x2 = 10.0
+        tl_y2 = 30.0
+        br_x2 = 20.0
+        br_y2 = 20.0
+
+        tl_x3 = 10.0
+        tl_y3 = 20.0
+        br_x3 = 20.0
+        br_y3 = 10.0
+
+        tl_x4 = 10.0
+        tl_y4 = 10.0
+        br_x4 = 20.0
+        br_y4 = 0.0
+
+        room1 = Room(0, tl_x1, tl_y1, br_x1, br_y1)
+        room2 = Room(1, tl_x2, tl_y2, br_x2, br_y2)
+        room3 = Room(2, tl_x3, tl_y3, br_x3, br_y3)
+        room4 = Room(3, tl_x4, tl_y4, br_x4, br_y4)
+
+        rfp = RFP(g, [room1, room2, room3, room4])
+        circulation_obj = circulation(g, 0.1, rfp)
+        rooms = []
+        circulation_obj.circulation_algorithm()
+        plot(circulation_obj.circulation_graph, len(circulation_obj.circulation_graph))
+        circulation_obj.remove_corridor(circulation_obj.circulation_graph)
+        plot(circulation_obj.circulation_graph, len(circulation_obj.circulation_graph))
 
     # test_circ()
     # test_comm_edges()
     # test_comm_neighbors()
     # test_move_edges()
     # test_adjust_RFP_to_circ()
+    test_remove_corridor()
     
 
 if __name__ == "__main__":

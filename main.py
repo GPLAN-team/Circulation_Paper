@@ -12,6 +12,7 @@ import source.inputgraph as inputgraph
 import pythongui.drawing as draw
 import pythongui.dimensiongui as dimgui
 import circulation as cir
+import matplotlib.pyplot as plt
 # import checker
 # from tkinter import messagebox
 # import dimension_gui as dimgui
@@ -88,7 +89,7 @@ def run():
                 
                 # If no issues we continue to draw the corridor
                 else :
-                    draw_circulation(new_graph_data, gclass.ocan.canvas)
+                    draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6], gclass.entry_door)
 
             elif(gclass.command == "single"): #Single Irregular Dual/Floorplan
                 if(gclass.value[4] == 0): #Non-Dimensioned single dual
@@ -462,7 +463,13 @@ def call_circulation(graph_data, edge_set, entry, thickness):
     circulation_obj = cir.circulation(g, thickness, rfp)
     circulation_result = circulation_obj.circulation_algorithm(entry[0], entry[1])
     if circulation_result == 0:
-        return None 
+        return None
+    plot(circulation_obj.circulation_graph, len(circulation_obj.circulation_graph))
+    
+    # Since the entry values are shifted by 1 to match with the parameters of circ_algo fn
+    door = [x-1 for x in entry]
+    circulation_obj.remove_corridor(circulation_obj.circulation_graph,door[0],door[1])
+    plot(circulation_obj.circulation_graph, len(circulation_obj.circulation_graph))
     circulation_obj.adjust_RFP_to_circulation()
 
     for room in circulation_obj.RFP.rooms:
@@ -496,7 +503,24 @@ def call_circulation(graph_data, edge_set, entry, thickness):
 
     return graph_data
 
-def draw_circulation(graph_data, canvas):
+def plot(graph: nx.Graph,m: int) -> None:
+    """Plots thr graph using matplotlib
+
+    Args:
+        graph (Networkx graph): The graph to plot
+        m (integer): Number of vertices in the graph
+    """
+    pos=nx.spring_layout(graph) # positions for all nodes
+    nx.draw_networkx(graph,pos, label=None,node_size=400 ,node_color='#4b8bc8',font_size=12, font_color='k', font_family='sans-serif', font_weight='normal', alpha=1, bbox=None, ax=None)
+    nx.draw_networkx_edges(graph,pos)
+    nx.draw_networkx_nodes(graph,pos,
+                        nodelist=list(range(m,len(graph))),
+                        node_color='r',
+                        node_size=500,
+                    alpha=1)
+    plt.show()
+
+def draw_circulation(graph_data, canvas, color_list, entry):
     
     origin_x, origin_y = -200,-100
     scale = 50
@@ -505,8 +529,11 @@ def draw_circulation(graph_data, canvas):
     room_height = graph_data["room_height"]
     room_width = graph_data["room_width"]
     for i in range(len(room_x)):
-        canvas.create_rectangle(origin_x + scale*room_x[i], origin_y + scale*room_y[i], origin_x + scale*(room_x[i] + room_width[i]), origin_y + scale*(room_y[i] + room_height[i]), fill = "#4BC0D9")
+        canvas.create_rectangle(origin_x + scale*room_x[i], origin_y + scale*room_y[i], origin_x + scale*(room_x[i] + room_width[i]), origin_y + scale*(room_y[i] + room_height[i]), fill = color_list[i])
         canvas.create_text(origin_x + scale*(room_x[i] + room_width[i]/2), origin_y + scale*(room_y[i] + room_height[i]/2), text = str(i))
+    
+    # # draw door
+    # print("Entry: ", entry)
 
 if __name__ == "__main__":
     run()
