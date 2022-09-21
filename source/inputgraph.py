@@ -25,10 +25,10 @@ from .floorplangen import rdg as rdg
 from .floorplangen import dual as dual
 from .graphoperations import triangularity as trng
 from .floorplangen import transformation as transform
-from source.dimensioning import floorplan_to_st as fpts
+from .dimensioning import floorplan_to_st as fpts
 from .floorplangen import flippable as flp
 from .irregular import septri as st
-from source.dimensioning import block_checker as bc
+from .dimensioning import block_checker as bc
 
 class OCError(Exception):
     """One-connected Error
