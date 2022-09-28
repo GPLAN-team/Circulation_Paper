@@ -851,3 +851,11 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+''' Note:
+Try to implement:
+1. Combining dimension and circulation
+2. Catalogue for circulation
+3. Multiple circulation (one for each exterior edge)
+4. Remove corridor fn
+'''
