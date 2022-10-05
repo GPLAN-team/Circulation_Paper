@@ -382,6 +382,24 @@ def main():
         else:
             print("Your graph is planar")
 
+        # Example 8
+        x8 = np.array([2,4,5,4,2,1,2,4])
+        y8 = np.array([4,4,2,0,0,2,2,2])
+        A8 = np.array([[0, 1, 0, 0, 0, 1, 0, 1],
+                       [1, 0, 1, 0, 0, 0, 1, 0],
+                       [0, 1, 0, 1, 0, 0, 0, 0],
+                       [0, 0, 1, 0, 1, 0, 0, 0],
+                       [0, 0, 0, 1, 0, 1, 0, 0],
+                       [1, 0, 0, 0, 1, 0, 0, 0],
+                       [0, 1, 0, 0, 0, 0, 0, 0],
+                       [1, 0, 0, 0, 0, 0, 0, 0]])
+        
+        if(check_intersection(x8,y8,A8) == True):
+            print("Your graph is not planar")
+        else:
+            print("Your graph is planar")
+        print(check_intersection(x8,y8,A8))
+
     test_check_intersection()
     
 
