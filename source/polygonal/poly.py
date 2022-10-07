@@ -1,7 +1,7 @@
-import math
 from ssl import create_default_context
 import tkinter as tk
-import turtle 
+import turtle
+from source.polygonal.polygui import PolyGUI 
 
 class Room:
     def __init__(self):
@@ -11,198 +11,21 @@ class Room:
         self.disecAllowed = True
         self.noOfSides = 0
 
-
-class treenode:
-    def __init__(self, roomNo, parent, left, right):
-        self.roomNo = roomNo
-        self.parent = parent
-        self.left = left
-        self.right = right
-        self.nofOfSides = 0
-        self.listOfCorners = []
-
 class dissected:
 
     def __init__(self,graph_data,pen):
-        self.pen = pen
-        self.rootnode = treenode(None, None, None, None) 
         self.graph_data = graph_data
         self.noOfNodes = len(self.graph_data['iteration'])
-        self.scale = 0.5*self.noOfNodes/10
         self.correctCanonicalOrder = self.graph_data['currentCanonicalOrder'][self.noOfNodes-1]
-        self.activeFront = {'vertex': [] , 'v1': [] , 'v2' : []} #this might not be the active front, why are we even storing this
         self.coordinatepoints  = {} #This is the dictionary which will hold the initial coordinates of the figure when they are being constructed
         self.rooms = []  #this is the list of the rooms data structure, please please please remember!
         self.outerPath = [0,2,1] #this stores the path of the outer surface -> used for finding the leftmost and righnmost neighbors in the canonical order 
-        self.side_data = {}
-        self.startDisection()
-        
-    def startDisection(self):
-        print(400*self.scale*(1))
-        print(400*self.scale*(0.5/math.tan(36*math.pi/180)))
-        print(400*self.scale*(0.5/math.sin(36*math.pi/180)))
+        # self.mainDisectionFunction()
+        polygui = PolyGUI(pen,graph_data,self.rooms)
+        polygui.createPentagon(self.coordinatepoints)
+        polygui.createInitalRooms(self.coordinatepoints)
+        pen.hideturtle()
 
-        print(400*self.scale*(1-0.5/math.tan(36*math.pi/180)-0.5/math.sin(36*math.pi/180)))
-        self.side_data[0] = {'leftedges': [((-200*self.scale,300*self.scale),(0,self.scale*(300-400*0.5/math.tan(36*math.pi/180)-400*0.5/math.sin(36*math.pi/180))))], 'rightedges': [((-150*self.scale,300*self.scale),(0,self.scale*(300-400*0.5/math.tan(36*math.pi/180)-400*0.5/math.sin(36*math.pi/180))))], 'rightLateralLength': 0.0, 'leftLateralLength': 0.0}
-        self.side_data[1] = {'leftedges': [((-150*self.scale,300*self.scale),(0,self.scale*(300-400*0.5/math.tan(36*math.pi/180)-400*0.5/math.sin(36*math.pi/180))))], 'rightedges': [((+200*self.scale,300*self.scale),(0,self.scale*(300-400*0.5/math.tan(36*math.pi/180)-400*0.5/math.sin(36*math.pi/180))))], 'rightLateralLength': 0.0, 'leftLateralLength': 0.0}
-        self.setRightLateralLength(0)
-        self.setRightLateralLength(1)
-        self.setLeftLateralLength(0)
-        self.setLeftLateralLength(1)
-
-        # self.canvas = screen.getcanvas()
-
-        # button = tk.Button(canvas.master, text="Press me", command=press)
-        # button.pack()
-        
-
-        # canvas.create_window(-200, -200, window=button)
-        
-        # Test Cases
-        # self.hline(0,100,0)
-        # self.lshape([-100,0],[100,-200])
-        self.createPentagon()
-        self.createInitalRooms()
-        self.activeFront['vertex'].append(2)
-        self.activeFront['v1'].append([-150*self.scale,300*self.scale])
-        self.activeFront['v2'].append([150*self.scale,300*self.scale])
-
-
-        for i in range(self.noOfNodes-4,self.noOfNodes-5,-1): #make -1
-            print(self.graph_data['iteration'][i+2])
-            temp = self.graph_data['neighbors'][i] 
-            neighbors = []
-            for j in range(len(temp)):
-                if(self.correctCanonicalOrder[temp[j]]<self.noOfNodes - i -1):
-                    neighbors.append(self.correctCanonicalOrder[temp[j]])
-            print(neighbors)
-            if(len(neighbors)==2):
-                self.degreeis2(neighbors,i)
-            else:
-                self.degreenot2(neighbors,i)
-
-        self.pen.hideturtle()
-
-        # top.mainloop()
-
-    def createPentagon(self):
-        initial_coord = (-200*self.scale,300*self.scale) #IMP this is the initial starting coordinate of the dissection
-        self.pen.penup()
-        self.pen.goto(initial_coord)
-        
-        self.pen.pendown()
-        for i in range(5):
-            CoordA = self.pen.pos()
-            self.coordinatepoints[i+1] = CoordA #this sets the values of the coordinates of the polygon's vertices
-            self.pen.forward(400*self.scale) #Assuming the side of a pentagon is 400 units 
-            self.pen.right(72) #Turning the turtle by 72 degree
-
-    def createInitalRooms(self):
-        
-        initial_coord = (-150*self.scale,300*self.scale) #now starting the second side 
-        self.pen.penup()
-        self.pen.goto(initial_coord)
-        self.coordinatepoints[6] = self.pen.pos()
-        self.pen.pendown()
-        self.pen.left(144)
-
-        self.pen.left(72) #Turning the turtle by 72 degree
-        self.pen.backward(400*self.scale) #Assuming the side of a pentagon is 400 units 
-        self.coordinatepoints[7] = self.pen.pos()
-        self.pen.left(72) #Turning the turtle by 72 degree
-        length = 400 - 50*math.cos(math.pi/5) + 50*(math.sin(math.pi/5)/math.tan(2*math.pi/5))
-        self.pen.backward(length*self.scale) #Assuming the side of a pentagon is 400 units
-        self.coordinatepoints[8] = self.pen.pos() 
- 
-        
-        
-        initial_coord = (150*self.scale,300*self.scale) #coordinate number 6
-        self.pen.penup()
-        self.pen.goto(initial_coord)
-        self.coordinatepoints[9] = self.pen.pos() #the value is stored in the dictionary
-        self.pen.pendown()
-
-        self.pen.right(72) #Turning the turtle by 72 degree
-        self.pen.forward(400*self.scale) #Assuming the side of a pentagon is 400 units
-        self.coordinatepoints[10] = self.pen.pos()
-        self.pen.right(72) #Turning the turtle by 72 degree
-        length = 400 - 50*math.cos(math.pi/5) - 25*math.sec(math.pi/5) + 50*(math.sin(math.pi/5)/math.tan(2*math.pi/5))
-        print(length)
-        self.pen.forward(length*self.scale) #Assuming the side of a pentagon is 400 units
-        self.coordinatepoints[11] = self.pen.pos()
-        
-         
-               #created the initial rooms and also put their coordinates in the self function
-        #now will use these to initialise the rooms in the datastructure which stores the room coordinates
-        
-
-
-    def hline(self, x1, x2 ,height):    #To create Horizontal Line
-    #     self.c.create_line(x1,height,x2,height, fill="black", width=3)
-        x = (x1, height)
-        y = (x2, height)
-
-        self.pen.penup()
-        self.pen.goto(x)
-        self.pen.pendown()
-        self.pen.goto(y)
-
-
-    def vline(self, y1, y2 ,width): #To create Vertical Line
-        # self.c.create_line(width,y1,width,y2, fill="black", width=3)
-        x = (width, y1)
-        y = (width, y2)
-
-        self.pen.penup()
-        self.pen.goto(x)
-        self.pen.pendown()
-        self.pen.goto(y)
-
-    def lshape(self, top, end): #To create L Shaped Line
-
-        self.vline(top[1],end[1],top[0])
-        self.hline(top[0],end[0],end[1])
-
-    def degreeis2(self,neighbors,index):
-        firstDissectionVertex = -1
-        index = -1
-        for i in range(0,len(self.activeFront['vertex'])):
-            for j in neighbors:
-                if(self.activeFront['vertex'][i] == j):
-                    firstDissectionVertex = j
-                    index =i
-                    break
-            if(firstDissectionVertex!=-1):
-                break
-        self.lshape([(self.activeFront['v1'][index][0]+self.activeFront['v2'][index][0])/2,self.activeFront['v1'][index][1]],[self.findxCoord(index),300*self.scale-self.side_data[0]['leftLateralLength']])
-        # print(400*self.scale-self.side_data[0]['leftLateralLength'])
-
-
-
-                
-        # self.activeFront['vertex'].append(2)
-        # self.activeFront['v1'].append((-150*self.scale,300*self.scale))
-        # self.activeFront['v2'].append((150*self.scale,300*self.scale))
-
-
-    def degreenot2(self,neighbors,index):
-        print('degree>2')
-
-    def setRightLateralLength(self,index):
-        length =0
-        for i in range (0,len(self.side_data[index]['rightedges'])):
-            length+=(abs(self.side_data[index]['rightedges'][i][0][1]) + abs(self.side_data[index]['rightedges'][i][1][1]))/2
-        self.side_data[index]['rightLateralLength'] = length
-
-    def setLeftLateralLength(self,index):
-        length =0
-        for i in range (0,len(self.side_data[index]['leftedges'])):
-            length+=(abs(self.side_data[index]['leftedges'][i][0][1]) + abs(self.side_data[index]['leftedges'][i][1][1]))/2
-        self.side_data[index]['leftLateralLength'] = length
-
-    def findxCoord(self,index):
-        
-        return 10
 
     def createDefaultDisections(self):
         #first we initialise the rooms 1,2,3, which will always exist
@@ -213,7 +36,7 @@ class dissected:
         Room1.coords.append(self.coordinatepoints[8])
         Room1.coords.append(self.coordinatepoints[4])
         Room1.coords.append(self.coordinatepoints[5])
-        Room1.DisecAllowed = False
+        Room1.disecAllowed = False
         self.rooms.append(Room1)
         Room2 = Room()
         Room2.coords.append(self.coordinatepoints[9])
@@ -222,7 +45,7 @@ class dissected:
         Room2.coords.append(self.coordinatepoints[8])
         Room2.coords.append(self.coordinatepoints[11])
         Room2.coords.append(self.coordinatepoints[10])
-        Room2.DisecAllowed = False
+        Room2.disecAllowed = False
         self.rooms.append(Room2)
         Room3 = Room()
         Room3.coords.append(self.coordinatepoints[6])
@@ -471,42 +294,3 @@ class dissected:
                         
                         
                 self.rooms.append(newRoom)
-                
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    
-# def do_stuff():
-#     for color in ["red", "yellow", "green"]:
-#         my_lovely_turtle.color(color)
-#         my_lovely_turtle.right(120)
-
-
-# def press():
-#     do_stuff()
-
-
-
-
-
-if __name__ == '__main__':
-    top = tk.Tk()   
-    c = tk.Canvas(top,bg = "white",height = "800",width= "800")  
-    c.pack(side=tk.LEFT)
-    screen = turtle.TurtleScreen(c)
-    pen = turtle.RawTurtle(screen)
-    dissected({},pen)
