@@ -14,17 +14,21 @@ class Room:
 
 class dissected:
 
-    def __init__(self,graph_data,pen):
+    def __init__(self,graph_data,pen,color_list):
+        pen.width(1.5)
+        pen.color('black')
+        pen.write(1,font=("Arial", 20, "normal"))
+        
         self.graph_data = graph_data
         self.pen = pen
         self.noOfNodes = len(self.graph_data['iteration'])
         self.scale = 0.5*self.noOfNodes/10 #MODIFY SCALE
-
+        self.divFactor =   1/2
         self.correctCanonicalOrder = self.graph_data['currentCanonicalOrder'][self.noOfNodes-1]
         self.coordinatepoints  = {} #This is the dictionary which will hold the initial coordinates of the figure when they are being constructed
-        self.rooms = []  #this is the list of the rooms data structure, please please please remember!
+        self.rooms = []  #this is the list of the rooms data structure, please please please remember! 
         self.outerPath = [0,2,1] #this stores the path of the outer surface -> used for finding the leftmost and righnmost neighbors in the canonical order 
-        polygui = PolyGUI(pen,graph_data,self.rooms)
+        polygui = PolyGUI(pen,graph_data,self.rooms,color_list)
         polygui.createPentagon(self.coordinatepoints)
         polygui.createInitalRooms(self.coordinatepoints)
         self.mainDisectionFunction()
@@ -149,7 +153,7 @@ class dissected:
 
                     finalYCoord = max(first0, first1)
                     print(finalYCoord)
-                    newYCoord = (initYCoord+finalYCoord)/2
+                    newYCoord = (initYCoord+finalYCoord)*self.divFactor
                     print(newYCoord)
                     newCoordtoConsider = 1
                     for j in range(1,len(leftRoom.coords),1):
@@ -205,7 +209,7 @@ class dissected:
                         else:
                             first1 = last
                     finalYCoord = max(first0, first1)
-                    newYCoord = (initYCoord+finalYCoord)/2
+                    newYCoord = (initYCoord+finalYCoord)*self.divFactor
 
                     newCoordtoConsider = len(rightRoom.coords)-1; 
                     for j in range(len(rightRoom.coords)-1,-1, -1):
@@ -253,7 +257,7 @@ class dissected:
                             last = self.rooms[j].coords[k][1]
                     lowerY = max(lowerY, last)
                 print(lowerY)
-                newYCoord = (upperY+lowerY)/2
+                newYCoord = (upperY+lowerY)*self.divFactor
                 print(newYCoord)
                 for j in neighborListCanOrd:
                     if(j != leftCanOrd and j!= rightCanOrd):
@@ -323,7 +327,20 @@ class dissected:
                 print(newRoom.coords)        
                         
                 self.rooms.append(newRoom)
-            
+            # start_coord = (0,0) #IMP this is the initial starting coordinate of the dissection
+            # self.pen.penup()
+            # self.pen.goto(start_coord)
+            # self.pen.setheading(0)
+            # initialCoord =  self.rooms[i].coords[0]
+            # self.pen.goto((initialCoord[0],initialCoord[1]))
+            # self.pen.pendown()
+            # for corner in range(1,len(self.rooms[i].coords)):
+            #     nextCoords =  self.rooms[i].coords[corner] 
+            #     self.pen.goto((nextCoords[0],nextCoords[1]))
+            # self.pen.goto((initialCoord[0],initialCoord[1]))
+
+            # self.pen.penup()
+            # time.sleep(1)
 
 
 

@@ -166,5 +166,5 @@ def draw_rdg(graph_data,count,pen,mode,color_list,room_names,origin):
             value+=1
 
 def draw_poly(graph_data,count,pen,mode,color_list,room_names,origin):
-    db = poly.dissected(graph_data,pen) 
+    db = poly.dissected(graph_data,pen,color_list)
     

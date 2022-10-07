@@ -46,7 +46,7 @@ class canonical:
             temp_node_data.append(i.pos_y)
             self.node_coordinate.append(temp_node_data)
     
-        self.graph_data = {'iteration':np.zeros(noOfNodes),'marked': np.zeros(noOfNodes),'neighbors': [],'currentCanonicalOrder': np.zeros(noOfNodes*noOfNodes).reshape(noOfNodes,noOfNodes), 'indexToCanOrd': np.zeros(noOfNodes*noOfNodes).reshape(noOfNodes,noOfNodes)}
+        self.graph_data = {'iteration':np.zeros(noOfNodes),'marked': np.zeros(noOfNodes),'neighbors': [],'currentCanonicalOrder': np.zeros(noOfNodes*noOfNodes).reshape(noOfNodes,noOfNodes), 'indexToCanOrd': np.zeros(noOfNodes)}
         for i in range(noOfNodes):
             self.G.add_node(i, id = -1, chord = 0, mark = False, out = False)
         # t = list(tuple(map(int,input().split())) for r in range(graph.edgecnt))
@@ -107,7 +107,7 @@ class canonical:
         print("Canonical Order: {}".format(canord))
         self.graph_data['iteration'][0] = 1
         self.graph_data['marked'][0] = v1
-        self.graph_data['indexToCanOrd'][v1] = 0 #map from index to its canord
+        self.graph_data['indexToCanOrd'][0] = v1 #map from index to its canord
         self.graph_data['currentCanonicalOrder'][0] = canord
         #self.graph_data['neighbors'][]([])
 
@@ -119,7 +119,7 @@ class canonical:
 
         self.graph_data['iteration'][1] = 2
         self.graph_data['marked'][1] = v2
-        self.graph_data['indexToCanOrd'][v2] = 1
+        self.graph_data['indexToCanOrd'][1] = v2
         self.graph_data['currentCanonicalOrder'][1] = canord
         #self.graph_data['neighbors'].append([0])
 
@@ -171,6 +171,7 @@ class canonical:
         self.graph_data['neighbors'].append([])
         self.graph_data['neighbors'].reverse()
         print("\nFinal Canonical Order: {}".format(canord))
+        print(self.graph_data['indexToCanOrd'])
         self.displayGraph(canord,n)
         # plt.show()    #DEBUG TODO
         
@@ -195,7 +196,7 @@ class canonical:
     def updateGraphData(self,n,i,vk,neighbors,canord):
         self.graph_data['iteration'][n+2-i-1] = n+2-i
         self.graph_data['marked'][n+2-i-1] = vk
-        self.graph_data['indexToCanOrd'][vk] = i
+        self.graph_data['indexToCanOrd'][i] = vk
         # self.graph_data['neighbors'][i]=neighbors
         self.graph_data['neighbors'].append(neighbors)
 

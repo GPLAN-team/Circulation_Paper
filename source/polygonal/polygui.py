@@ -4,9 +4,10 @@ import turtle
 import time
 
 class PolyGUI:
-    def __init__(self,pen,graph_data,rooms):
+    def __init__(self,pen,graph_data,rooms,color_list):
         self.pen = pen
         self.graph_data = graph_data
+        self.color_list = color_list
         self.noOfNodes = len(self.graph_data['iteration'])
         # self.correctCanonicalOrder = self.graph_data['currentCanonicalOrder'][self.noOfNodes-1]
         self.scale = 0.5*self.noOfNodes/10 #MODIFY SCALE
@@ -26,11 +27,16 @@ class PolyGUI:
         # self.lshape([-100,0],[100,-200])
         # self.createPentagon()
         # self.createInitalRooms()
-        for room in range(3,len(self.rooms)):
+        for room in range(0,len(self.rooms)):
+            if(room==2):
+                continue
             start_coord = (0,0) #IMP this is the initial starting coordinate of the dissection
             self.pen.penup()
             self.pen.goto(start_coord)
             self.pen.setheading(0)
+            self.pen.fillcolor(self.color_list[int(self.graph_data['indexToCanOrd'][room])])
+            self.pen.begin_fill()
+
             initialCoord =  self.rooms[room].coords[0]
             self.pen.goto((initialCoord[0],initialCoord[1]))
             self.pen.pendown()
@@ -38,9 +44,10 @@ class PolyGUI:
                 nextCoords =  self.rooms[room].coords[corner] 
                 self.pen.goto((nextCoords[0],nextCoords[1]))
             self.pen.goto((initialCoord[0],initialCoord[1]))
-
             self.pen.penup()
-            time.sleep(1)
+            self.pen.end_fill()
+            # time.sleep(1)
+
             # start_coord = (0,0) #IMP this is the initial starting coordinate of the dissection
             # self.pen.penup()
             # self.pen.goto(start_coord)
@@ -52,6 +59,16 @@ class PolyGUI:
             #     nextCoords =  self.rooms[room].coords[corner] 
             #     self.pen.goto((nextCoords[0]*self.scale,nextCoords[1]*self.scale))
             # self.pen.penup()
+        
+        # FOR TEXT
+
+        # self.pen.color('black')
+        # for room in range(0,len(self.rooms)):
+        #     if(room==2):
+        #         continue
+        #     self.pen.setposition(self.find_Centroid(list(self.rooms[room].coords)))
+        #     self.pen.write(room)
+        #     self.pen.penup()       
 
         self.pen.hideturtle()
 
@@ -60,12 +77,17 @@ class PolyGUI:
         self.pen.penup()
         self.pen.goto(initial_coord)
         
+        self.pen.fillcolor(self.color_list[int(self.graph_data['indexToCanOrd'][2])])
+        self.pen.begin_fill()
+
         self.pen.pendown()
         for i in range(5):
             CoordA = self.pen.pos()
             coordinatepoints[i+1] = CoordA #this sets the values of the coordinates of the polygon's vertices
             self.pen.forward(400*self.scale) #Assuming the side of a pentagon is 400 units 
             self.pen.right(72) #Turning the turtle by 72 degree
+
+        self.pen.end_fill()
 
     def createInitalRooms(self,coordinatepoints):
         
@@ -75,6 +97,10 @@ class PolyGUI:
         self.pen.goto(initial_coord)
         self.pen.setheading(0)
         coordinatepoints[6] = self.pen.pos()
+        
+        # self.pen.fillcolor(self.color_list[int(self.graph_data['indexToCanOrd'][0])])
+        # self.pen.begin_fill()
+
         self.pen.pendown()
         self.pen.right(108)
 
@@ -86,12 +112,17 @@ class PolyGUI:
         self.pen.forward(length*self.scale) #Assuming the side of a pentagon is 400 units
         coordinatepoints[8] = self.pen.pos() 
  
+        # self.pen.end_fill()
  
         initial_coord = (150*self.scale,300*self.scale) #coordinate number 6
         self.pen.penup()
         self.pen.goto(initial_coord)
         self.pen.setheading(0)
         coordinatepoints[9] = self.pen.pos() #the value is stored in the dictionary
+
+        # self.pen.fillcolor(self.color_list[int(self.graph_data['indexToCanOrd'][1])])
+        # self.pen.begin_fill()
+
         self.pen.pendown()
 
         self.pen.right(72) #Turning the turtle by 72 degree
@@ -103,6 +134,8 @@ class PolyGUI:
         self.pen.forward(length*self.scale) #Assuming the side of a pentagon is 400 units
         coordinatepoints[11] = self.pen.pos()
         
+        # self.pen.end_fill()
+
          
                #created the initial rooms and also put their coordinates in the self function
         #now will use these to initialise the rooms in the datastructure which stores the room coordinates
@@ -141,6 +174,46 @@ class PolyGUI:
 
 # def press():
 #     do_stuff()
+    def find_Centroid(self,v):
+        ans = [0, 0]
+    
+        n = len(v)
+        signedArea = 0
+    
+        # For all vertices
+        for i in range(len(v)):
+    
+            x0 = v[i][0]
+            y0 = v[i][1]
+            x1 = v[(i + 1) % n][0]
+            y1 =v[(i + 1) % n][1]
+    
+            # Calculate value of A
+            # using shoelace formula
+            A = (x0 * y1) - (x1 * y0)
+            signedArea += A
+    
+            # Calculating coordinates of
+            # centroid of polygon
+            ans[0] += (x0 + x1) * A
+            ans[1] += (y0 + y1) * A
+    
+        signedArea *= 0.5
+        ans[0] = (ans[0]) / (6 * signedArea)
+        ans[1] = (ans[1]) / (6 * signedArea)
+    
+        return ans
+ 
+# Driver code
+ 
+# Coordinate of the vertices
+# vp = [ [ 1, 2 ],
+#        [ 3, -4 ],
+#        [ 6, -7 ] ]
+ 
+# ans = find_Centroid(vp)
+ 
+# print(round(ans[0], 12), ans[1])
 
 if __name__ == '__main__':
     top = tk.Tk()   
