@@ -1,6 +1,7 @@
 import math
 import tkinter as tk
 import turtle
+import time
 
 class PolyGUI:
     def __init__(self,pen,graph_data,rooms):
@@ -12,7 +13,7 @@ class PolyGUI:
         self.rooms = rooms
         # self.startDisection()
         
-    # def startDisection(self):
+    def startDisection(self):
         # self.canvas = screen.getcanvas()
 
         # button = tk.Button(canvas.master, text="Press me", command=press)
@@ -25,8 +26,34 @@ class PolyGUI:
         # self.lshape([-100,0],[100,-200])
         # self.createPentagon()
         # self.createInitalRooms()
+        for room in range(3,len(self.rooms)):
+            start_coord = (0,0) #IMP this is the initial starting coordinate of the dissection
+            self.pen.penup()
+            self.pen.goto(start_coord)
+            self.pen.setheading(0)
+            initialCoord =  self.rooms[room].coords[0]
+            self.pen.goto((initialCoord[0],initialCoord[1]))
+            self.pen.pendown()
+            for corner in range(1,len(self.rooms[room].coords)):
+                nextCoords =  self.rooms[room].coords[corner] 
+                self.pen.goto((nextCoords[0],nextCoords[1]))
+            self.pen.goto((initialCoord[0],initialCoord[1]))
 
-        # self.pen.hideturtle()
+            self.pen.penup()
+            time.sleep(1)
+            # start_coord = (0,0) #IMP this is the initial starting coordinate of the dissection
+            # self.pen.penup()
+            # self.pen.goto(start_coord)
+            # self.pen.setheading(0)
+            # initialCoord =  self.rooms[room].coords[0]
+            # self.pen.goto((initialCoord[0]*self.scale,initialCoord[1]*self.scale))
+            # self.pen.pendown()
+            # for corner in range(1,len(self.rooms[room].coords)):
+            #     nextCoords =  self.rooms[room].coords[corner] 
+            #     self.pen.goto((nextCoords[0]*self.scale,nextCoords[1]*self.scale))
+            # self.pen.penup()
+
+        self.pen.hideturtle()
 
     def createPentagon(self,coordinatepoints):
         initial_coord = (-200*self.scale,300*self.scale) #IMP this is the initial starting coordinate of the dissection
@@ -72,7 +99,7 @@ class PolyGUI:
         coordinatepoints[10] = self.pen.pos()
         self.pen.right(72) #Turning the turtle by 72 degree
         length = 400 - 50*math.cos(math.pi/5) - 25/math.cos(math.pi/5) + 50*(math.sin(math.pi/5)/math.tan(2*math.pi/5))
-        print(length)
+        # print(length)
         self.pen.forward(length*self.scale) #Assuming the side of a pentagon is 400 units
         coordinatepoints[11] = self.pen.pos()
         
@@ -80,31 +107,31 @@ class PolyGUI:
                #created the initial rooms and also put their coordinates in the self function
         #now will use these to initialise the rooms in the datastructure which stores the room coordinates
 
-    def hline(self, x1, x2 ,height):    #To create Horizontal Line
-    #     self.c.create_line(x1,height,x2,height, fill="black", width=3)
-        x = (x1, height)
-        y = (x2, height)
+    # def hline(self, x1, x2 ,height):    #To create Horizontal Line
+    # #     self.c.create_line(x1,height,x2,height, fill="black", width=3)
+    #     x = (x1, height)
+    #     y = (x2, height)
 
-        self.pen.penup()
-        self.pen.goto(x)
-        self.pen.pendown()
-        self.pen.goto(y)
+    #     self.pen.penup()
+    #     self.pen.goto(x)
+    #     self.pen.pendown()
+    #     self.pen.goto(y)
 
 
-    def vline(self, y1, y2 ,width): #To create Vertical Line
-        # self.c.create_line(width,y1,width,y2, fill="black", width=3)
-        x = (width, y1)
-        y = (width, y2)
+    # def vline(self, y1, y2 ,width): #To create Vertical Line
+    #     # self.c.create_line(width,y1,width,y2, fill="black", width=3)
+    #     x = (width, y1)
+    #     y = (width, y2)
 
-        self.pen.penup()
-        self.pen.goto(x)
-        self.pen.pendown()
-        self.pen.goto(y)
+    #     self.pen.penup()
+    #     self.pen.goto(x)
+    #     self.pen.pendown()
+    #     self.pen.goto(y)
 
-    def lshape(self, top, end): #To create L Shaped Line
+    # def lshape(self, top, end): #To create L Shaped Line
 
-        self.vline(top[1],end[1],top[0])
-        self.hline(top[0],end[0],end[1])
+    #     self.vline(top[1],end[1],top[0])
+    #     self.hline(top[0],end[0],end[1])
 
 # def do_stuff():
 #     for color in ["red", "yellow", "green"]:

@@ -109,7 +109,7 @@ class canonical:
         self.graph_data['marked'][0] = v1
         self.graph_data['indexToCanOrd'][v1] = 0 #map from index to its canord
         self.graph_data['currentCanonicalOrder'][0] = canord
-        self.graph_data['neighbors'].append([])
+        #self.graph_data['neighbors'][]([])
 
         canord[v2] = 1
 
@@ -121,7 +121,7 @@ class canonical:
         self.graph_data['marked'][1] = v2
         self.graph_data['indexToCanOrd'][v2] = 1
         self.graph_data['currentCanonicalOrder'][1] = canord
-        self.graph_data['neighbors'].append([0])
+        #self.graph_data['neighbors'].append([0])
 
         canord[vn] = n-1
 
@@ -143,18 +143,21 @@ class canonical:
             canord[vk] = i
             mark[vk] = True
             print("Marked: {}".format(vk))
-            neighbors = np.array( list(self.G.neighbors(vk)))
-            indices = np.where(mark == True)
-            neighbors = np.delete(neighbors, np.where(neighbors == indices))
-            # for j in neighbors:
+            neighbors = list(self.G.neighbors(vk))
+            # indices = np.where(mark == True)
+            # neighbors = np.delete(neighbors, np.where(neighbors == indices))
+            print(neighbors)
+            neighborlist = []
+            for j in neighbors:
 
-            #     if mark[j] == True:
-            #         neighbors.remove(j)
+                if mark[j] == False or j == v1 or j ==v2:
+                    neighborlist.append(j)
 
                     #The neighbors to which it is adjacent can also be saved in a separate data structure which is accessible outside this function 
             # here we need only those neighbours which have not been marked in the canord yet. Therefore, we need to take an and with
             # and with the not marked thing as well.
             #These neighbors are now the ones which are the next present on the boundary
+            neighbors = neighborlist
             print ("Neighbors of vk: {} ".format(neighbors))
 
             for j in neighbors:
@@ -163,12 +166,16 @@ class canonical:
             print("Canonical Order: {}".format(canord))
             # self.displayGraph(canord,n)
             self.updateGraphData(n,i,vk,neighbors,canord)
-     
+
+        self.graph_data['neighbors'].append([0])
+        self.graph_data['neighbors'].append([])
+        self.graph_data['neighbors'].reverse()
         print("\nFinal Canonical Order: {}".format(canord))
         self.displayGraph(canord,n)
         # plt.show()    #DEBUG TODO
         
-
+        # for i in range(0,n, 1):
+        #     print("i : {}",self.graph_data['neighbors'][i])
         fig, axes = plt.subplots(nrows=1, ncols=2)
         ax = axes.flatten()
         fig.set_size_inches(15.0, 5.25)
@@ -190,7 +197,7 @@ class canonical:
         self.graph_data['marked'][n+2-i-1] = vk
         self.graph_data['indexToCanOrd'][vk] = i
         # self.graph_data['neighbors'][i]=neighbors
-        self.graph_data['neighbors'].insert(0, neighbors)
+        self.graph_data['neighbors'].append(neighbors)
 
         self.graph_data['currentCanonicalOrder'][n+2-i-1] = canord
 

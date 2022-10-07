@@ -2,6 +2,7 @@ from ssl import create_default_context
 import tkinter as tk
 import turtle
 from source.polygonal.polygui import PolyGUI 
+import time
 
 class Room:
     def __init__(self):
@@ -15,16 +16,20 @@ class dissected:
 
     def __init__(self,graph_data,pen):
         self.graph_data = graph_data
+        self.pen = pen
         self.noOfNodes = len(self.graph_data['iteration'])
+        self.scale = 0.5*self.noOfNodes/10 #MODIFY SCALE
+
         self.correctCanonicalOrder = self.graph_data['currentCanonicalOrder'][self.noOfNodes-1]
         self.coordinatepoints  = {} #This is the dictionary which will hold the initial coordinates of the figure when they are being constructed
         self.rooms = []  #this is the list of the rooms data structure, please please please remember!
         self.outerPath = [0,2,1] #this stores the path of the outer surface -> used for finding the leftmost and righnmost neighbors in the canonical order 
-        # self.mainDisectionFunction()
         polygui = PolyGUI(pen,graph_data,self.rooms)
         polygui.createPentagon(self.coordinatepoints)
         polygui.createInitalRooms(self.coordinatepoints)
-        pen.hideturtle()
+        self.mainDisectionFunction()
+        polygui.startDisection()
+        # pen.hideturtle()
 
 
     def createDefaultDisections(self):
@@ -62,29 +67,31 @@ class dissected:
         
         for i in range(3, self.noOfNodes, 1):
             #determine the number of neighbors of i-> to determine which operation to perform 
-            neighborNum = len(self.graph_data['neighbor'][i])
-            neighborListIndex = self.graph_data['neighbor'][i] #consists of indexes in original input Graph
+            neighborNum = len(self.graph_data['neighbors'][i])
+            neighborListIndex = self.graph_data['neighbors'][i] #consists of indexes in original input Graph
             neighborListCanOrd = [] 
             indexInPathArray = []                            #consists of the indexes of the neighbors in the canonically ordered graph
             for j in neighborListIndex:
-                neighborListCanOrd.append(self.correctCanonicalOrder[j])
+                neighborListCanOrd.append(int(self.correctCanonicalOrder[j]))
+                #print(self.correctCanonicalOrder[j])
             #now we have to update the path from 1 to 2 as well, to be used in other iterations
             for j in neighborListCanOrd:
                 indexInPathArray.append(self.outerPath.index(j))
 
             l = min(indexInPathArray)
-            r = max(indexInPathArray)            
+            r = max(indexInPathArray) 
+            print("left : {} , right = {}".format(l,r) )          
             newPath =[]
             for j in range(0,l+1,1):
                 newPath.append(self.outerPath[j])
-            self.outerPath.append(i)
+            newPath.append(i)
             for j in range(r,len(self.outerPath),1):
                 newPath.append(self.outerPath[j])
             
             leftCanOrd = self.outerPath[l]
             rightCanOrd = self.outerPath[r]
             self.outerPath = newPath
-
+            print(self.outerPath)
             if neighborNum == 2:
                 print("Vertex {} has 2 neighbors.".format(i))
                 # now since we know it has 2 neighbors, we need to make a disection in either of the two
@@ -113,34 +120,45 @@ class dissected:
                     print("The dissection will be done in the left room.")
                     activeFront0 = leftRoom.coords[0]
                     activeFront1 = leftRoom.coords[1]
+                    print(activeFront0)
+                    print(activeFront1)
                     newActivePoint = ((activeFront0[0]+activeFront1[0])/2,activeFront0[1])
                     #now we will determine the y coordinate - slightly complicated process
+                    print(newActivePoint)
                     initYCoord = activeFront0[1]
                     first0  = initYCoord
                     first1 = initYCoord
                     last = initYCoord
-                    for j in range(1,len(leftRoom.coords),1):
+                    print(initYCoord)
+                    print(leftRoom.coords)
+                    print(rightRoom.coords)
+                    for j in range(2,len(leftRoom.coords),1):
                         last = leftRoom.coords[j][1]
                         if(last>=first0):
                             break
                         else:
                             first0 = last
                     
-                    for j in range(len(rightRoom.coords)-1,0, -1):
+                    for j in range(len(rightRoom.coords)-1,1, -1):
                         last = rightRoom.coords[j][1]
+                        
                         if(last>=first1):
                             break
                         else:
                             first1 = last
-                    finalYCoord = max(first0, first1)
-                    newYCoord = (initYCoord+finalYCoord)/2
 
-                    newCoordtoConsider = 1; 
+                    finalYCoord = max(first0, first1)
+                    print(finalYCoord)
+                    newYCoord = (initYCoord+finalYCoord)/2
+                    print(newYCoord)
+                    newCoordtoConsider = 1
                     for j in range(1,len(leftRoom.coords),1):
                         if(leftRoom.coords[j][1]<newYCoord):
                             newCoordtoConsider = j
                             break
-                    newPointXCoord = ((leftRoom.coords[newCoordtoConsider][0]- leftRoom.coords[newCoordtoConsider-1][0])/(leftRoom.coords[newCoordtoConsider][1]- leftRoom.coords[newCoordtoConsider-1][1]))(newYCoord - leftRoom.coords[newCoordtoConsider][1]) + leftRoom.coords[newCoordtoConsider][0]
+                    print(newCoordtoConsider)
+                    newPointXCoord = ((leftRoom.coords[newCoordtoConsider][0]- leftRoom.coords[newCoordtoConsider-1][0])/(leftRoom.coords[newCoordtoConsider][1]- leftRoom.coords[newCoordtoConsider-1][1]))*(newYCoord - leftRoom.coords[newCoordtoConsider][1]) + leftRoom.coords[newCoordtoConsider][0]
+                    print(newPointXCoord)
                     Point1 = (newActivePoint[0], newYCoord)
                     Point2 = (newPointXCoord, newYCoord)
                     newcoordList=[]
@@ -157,6 +175,7 @@ class dissected:
                         newRoom.coords.append(leftRoom.coords[j])
                     newRoom.coords.append(Point2)
                     newRoom.coords.append(Point1)
+                    print(newRoom.coords)
                     self.rooms.append(newRoom)
                     leftRoom.coords = newcoordList
                     leftRoom.rightDisecDone = True
@@ -194,7 +213,7 @@ class dissected:
                             newCoordtoConsider = j
                             break
                     
-                    newPointXCoord = ((rightRoom.coords[newCoordtoConsider][0]- rightRoom.coords[newCoordtoConsider+1][0])/(rightRoom.coords[newCoordtoConsider][1]- rightRoom.coords[newCoordtoConsider+1][1]))(newYCoord - rightRoom.coords[newCoordtoConsider][1]) + rightRoom.coords[newCoordtoConsider][0]
+                    newPointXCoord = ((rightRoom.coords[newCoordtoConsider][0]- rightRoom.coords[(newCoordtoConsider+1)%len(rightRoom.coords)][0])/(rightRoom.coords[newCoordtoConsider][1]- rightRoom.coords[(newCoordtoConsider+1)%len(rightRoom.coords)][1]))*(newYCoord - rightRoom.coords[newCoordtoConsider][1]) + rightRoom.coords[newCoordtoConsider][0]
                     Point1 = (newActivePoint[0], newYCoord)
                     Point2 = (newPointXCoord, newYCoord)
                     newcoordList=[]
@@ -227,14 +246,15 @@ class dissected:
                 for j in neighborListCanOrd:
                     
                     last = upperY
-                    for k in range(1,len(self.rooms[j].coords),1):
+                    for k in range(2,len(self.rooms[j].coords),1):
                         if(self.rooms[j].coords[k][1]>= last):
                             break
                         else:
                             last = self.rooms[j].coords[k][1]
                     lowerY = max(lowerY, last)
-
+                print(lowerY)
                 newYCoord = (upperY+lowerY)/2
+                print(newYCoord)
                 for j in neighborListCanOrd:
                     if(j != leftCanOrd and j!= rightCanOrd):
 
@@ -244,18 +264,22 @@ class dissected:
                                 newCoordtoConsider1 = k
                                 break
                         
-                        newXCoordright = ((self.rooms[j].coords[newCoordtoConsider1][0]- self.rooms[j].coords[newCoordtoConsider1-1][0])/(self.rooms[j].coords[newCoordtoConsider1][1]- self.rooms[j].coords[newCoordtoConsider1-1][1]))(newYCoord - self.rooms[j].coords[newCoordtoConsider1][1]) + self.rooms[j].coords[newCoordtoConsider1][0]
+                        newXCoordright = ((self.rooms[j].coords[newCoordtoConsider1][0]- self.rooms[j].coords[newCoordtoConsider1-1][0])/(self.rooms[j].coords[newCoordtoConsider1][1]- self.rooms[j].coords[newCoordtoConsider1-1][1]))*(newYCoord - self.rooms[j].coords[newCoordtoConsider1][1]) + self.rooms[j].coords[newCoordtoConsider1][0]
 
                         for k in range(len(self.rooms[j].coords)-1, -1,-1):
                             if(self.rooms[j].coords[k][1]<newYCoord):
                                 newCoordtoConsider2 = k
                                 break
-                        newXCoordleft = ((self.rooms[j].coords[newCoordtoConsider2][0]- self.rooms[j].coords[newCoordtoConsider2+1][0])/(self.rooms[j].coords[newCoordtoConsider2][1]- self.rooms[j].coords[newCoordtoConsider2+1][1]))(newYCoord - self.rooms[j].coords[newCoordtoConsider2][1]) + self.rooms[j].coords[newCoordtoConsider2][0]
+                        print(newCoordtoConsider2)
+                        newXCoordleft = ((self.rooms[j].coords[newCoordtoConsider2][0]- self.rooms[j].coords[(newCoordtoConsider2+1)%len(self.rooms[j].coords)][0])/(self.rooms[j].coords[newCoordtoConsider2][1]- self.rooms[j].coords[(newCoordtoConsider2+1)%len(self.rooms[j].coords)][1]))*(newYCoord - self.rooms[j].coords[newCoordtoConsider2][1]) + self.rooms[j].coords[newCoordtoConsider2][0]
             
                         newcoordlist = []
                         newcoordlist.append((newXCoordleft, newYCoord))
                         newcoordlist.append((newXCoordright, newYCoord))
-                        for k in (newCoordtoConsider1, newCoordtoConsider2+1, 1) :
+                        print(self.rooms[j].coords)
+
+                        for k in range(newCoordtoConsider1, newCoordtoConsider2+1, 1) :
+                            print(k)
                             newcoordlist.append(self.rooms[j].coords[k])
                         self.rooms[j].coords = newcoordlist
                 
@@ -277,12 +301,17 @@ class dissected:
                         newCoordtoConsider2 = j
                         break
         
+                print(newCoordtoConsider1)
+                print(newCoordtoConsider2)
+                print(self.rooms[leftCanOrd].coords)
+                print(self.rooms[rightCanOrd].coords)
                 
                 #make changes as discussed 
-                rightBotX = ((self.rooms[rightCanOrd].coords[newCoordtoConsider1][0]- self.rooms[rightCanOrd].coords[newCoordtoConsider1+1][0])/(self.rooms[rightCanOrd].coords[newCoordtoConsider1][1]- self.rooms[rightCanOrd].coords[newCoordtoConsider1+1][1]))(newYCoord - self.rooms[rightCanOrd].coords[newCoordtoConsider1][1]) + self.rooms[rightCanOrd].coords[newCoordtoConsider1][0]
-                leftBotX = ((self.rooms[leftCanOrd].coords[newCoordtoConsider2][0]- self.rooms[leftCanOrd].coords[newCoordtoConsider2-1][0])/(self.rooms[leftCanOrd].coords[newCoordtoConsider2][1]- self.rooms[leftCanOrd].coords[newCoordtoConsider2-1][1]))(newYCoord - self.rooms[leftCanOrd].coords[newCoordtoConsider2][1]) + self.rooms[leftCanOrd].coords[newCoordtoConsider2][0]
+                rightBotX = ((self.rooms[rightCanOrd].coords[newCoordtoConsider1][0]- self.rooms[rightCanOrd].coords[(newCoordtoConsider1+1)%len(self.rooms[rightCanOrd].coords)][0])/(self.rooms[rightCanOrd].coords[newCoordtoConsider1][1]- self.rooms[rightCanOrd].coords[(newCoordtoConsider1+1)%len(self.rooms[rightCanOrd].coords)][1]))*(newYCoord - self.rooms[rightCanOrd].coords[newCoordtoConsider1][1]) + self.rooms[rightCanOrd].coords[newCoordtoConsider1][0]
+                leftBotX = ((self.rooms[leftCanOrd].coords[newCoordtoConsider2][0]- self.rooms[leftCanOrd].coords[newCoordtoConsider2-1][0])/(self.rooms[leftCanOrd].coords[newCoordtoConsider2][1]- self.rooms[leftCanOrd].coords[newCoordtoConsider2-1][1]))*(newYCoord - self.rooms[leftCanOrd].coords[newCoordtoConsider2][1]) + self.rooms[leftCanOrd].coords[newCoordtoConsider2][0]
                 rightBot = (rightBotX, newYCoord)
                 leftBot = (leftBotX,newYCoord)
+
                 for k in range(len(self.rooms[rightCanOrd].coords)-1,newCoordtoConsider1,-1):
                     newRoom.coords.append(self.rooms[rightCanOrd].coords[k])
                 
@@ -291,6 +320,11 @@ class dissected:
         
                 for k in range(newCoordtoConsider2-1,1, -1):    
                     newRoom.coords.append(self.rooms[leftCanOrd].coords[k])
-                        
+                print(newRoom.coords)        
                         
                 self.rooms.append(newRoom)
+            
+
+
+
+
