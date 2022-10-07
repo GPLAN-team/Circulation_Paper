@@ -46,7 +46,7 @@ class canonical:
             temp_node_data.append(i.pos_y)
             self.node_coordinate.append(temp_node_data)
     
-        self.graph_data = {'iteration':np.zeros(noOfNodes),'marked': np.zeros(noOfNodes),'neighbors': [],'currentCanonicalOrder': np.zeros(noOfNodes*noOfNodes).reshape(noOfNodes,noOfNodes), 'indexToCanOrd': np.zeros(noOfNodes*noOfNodes).reshape(noOfNodes,noOfNodes)}
+        self.graph_data = {'iteration':np.zeros(noOfNodes),'marked': np.zeros(noOfNodes),'neighbors': [],'currentCanonicalOrder': np.zeros(noOfNodes*noOfNodes).reshape(noOfNodes,noOfNodes)}
         for i in range(noOfNodes):
             self.G.add_node(i, id = -1, chord = 0, mark = False, out = False)
         # t = list(tuple(map(int,input().split())) for r in range(graph.edgecnt))
@@ -58,7 +58,7 @@ class canonical:
         self.graphs.append(self.G)
         is_planar, G2 = nx.check_planarity(self.G, False)
         if(not is_planar):
-            return False
+            return False;
 
         # nx.draw(self.G,self.node_coordinate,with_labels=True, font_weight='bold')
         # plt.gca().invert_yaxis()
@@ -93,7 +93,7 @@ class canonical:
         chord = np.zeros((n,), dtype= bool)
         out = np.zeros((n,), dtype= bool)
 
-        canord[v1] = 0
+        canord[v1] = 0;
         
         mark[v1] = True
         mark[v2] = True
@@ -107,11 +107,10 @@ class canonical:
         print("Canonical Order: {}".format(canord))
         self.graph_data['iteration'][0] = 1
         self.graph_data['marked'][0] = v1
-        self.graph_data['indexToCanOrd'][v1] = 0 #map from index to its canord
         self.graph_data['currentCanonicalOrder'][0] = canord
-        self.graph_data['neighbors'].append([])
 
-        canord[v2] = 1
+
+        canord[v2] = 1;
 
         print("\n\nIteration {}".format(2))
         print("Marked: {}".format(v2))
@@ -119,11 +118,9 @@ class canonical:
 
         self.graph_data['iteration'][1] = 2
         self.graph_data['marked'][1] = v2
-        self.graph_data['indexToCanOrd'][v2] = 1
         self.graph_data['currentCanonicalOrder'][1] = canord
-        self.graph_data['neighbors'].append([0])
 
-        canord[vn] = n-1
+        canord[vn] = n-1;
 
         for i in range(n-1, 1, -1):
             print("\n\nIteration {}".format(n+2-i))
@@ -144,19 +141,7 @@ class canonical:
             mark[vk] = True
             print("Marked: {}".format(vk))
             neighbors = np.array( list(self.G.neighbors(vk)))
-            indices = np.where(mark == True)
-            neighbors = np.delete(neighbors, np.where(neighbors == indices))
-            # for j in neighbors:
-
-            #     if mark[j] == True:
-            #         neighbors.remove(j)
-
-                    #The neighbors to which it is adjacent can also be saved in a separate data structure which is accessible outside this function 
-            # here we need only those neighbours which have not been marked in the canord yet. Therefore, we need to take an and with
-            # and with the not marked thing as well.
-            #These neighbors are now the ones which are the next present on the boundary
             print ("Neighbors of vk: {} ".format(neighbors))
-
             for j in neighbors:
                 out[j] = True
             self.updatechord(chord, mark,out, v1,v2)
@@ -188,10 +173,7 @@ class canonical:
     def updateGraphData(self,n,i,vk,neighbors,canord):
         self.graph_data['iteration'][n+2-i-1] = n+2-i
         self.graph_data['marked'][n+2-i-1] = vk
-        self.graph_data['indexToCanOrd'][vk] = i
-        # self.graph_data['neighbors'][i]=neighbors
-        self.graph_data['neighbors'].insert(0, neighbors)
-
+        self.graph_data['neighbors'].append(neighbors)
         self.graph_data['currentCanonicalOrder'][n+2-i-1] = canord
 
        
