@@ -28,8 +28,8 @@ class PolyGUI:
         # self.createPentagon()
         # self.createInitalRooms()
         for room in range(0,len(self.rooms)):
-            if(room==2):
-                continue
+            # if(room==2):
+            #     continue
             start_coord = (0,0) #IMP this is the initial starting coordinate of the dissection
             self.pen.penup()
             self.pen.goto(start_coord)
@@ -77,8 +77,8 @@ class PolyGUI:
         self.pen.penup()
         self.pen.goto(initial_coord)
         
-        self.pen.fillcolor(self.color_list[int(self.graph_data['indexToCanOrd'][2])])
-        self.pen.begin_fill()
+        # self.pen.fillcolor(self.color_list[int(self.graph_data['indexToCanOrd'][2])])
+        # self.pen.begin_fill()
 
         self.pen.pendown()
         for i in range(5):
@@ -87,7 +87,7 @@ class PolyGUI:
             self.pen.forward(400*self.scale) #Assuming the side of a pentagon is 400 units 
             self.pen.right(72) #Turning the turtle by 72 degree
 
-        self.pen.end_fill()
+        # self.pen.end_fill()
 
     def createInitalRooms(self,coordinatepoints):
         

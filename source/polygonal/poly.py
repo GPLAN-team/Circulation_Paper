@@ -23,7 +23,8 @@ class dissected:
         self.pen = pen
         self.noOfNodes = len(self.graph_data['iteration'])
         self.scale = 0.5*self.noOfNodes/10 #MODIFY SCALE
-        self.divFactor =   1/2
+        self.divFactor_num =   4
+        self.divFactor_den = 5
         self.correctCanonicalOrder = self.graph_data['currentCanonicalOrder'][self.noOfNodes-1]
         self.coordinatepoints  = {} #This is the dictionary which will hold the initial coordinates of the figure when they are being constructed
         self.rooms = []  #this is the list of the rooms data structure, please please please remember! 
@@ -153,7 +154,7 @@ class dissected:
 
                     finalYCoord = max(first0, first1)
                     print(finalYCoord)
-                    newYCoord = (initYCoord+finalYCoord)*self.divFactor
+                    newYCoord = (initYCoord*(self.divFactor_den- self.divFactor_num)+finalYCoord*self.divFactor_num)/self.divFactor_den
                     print(newYCoord)
                     newCoordtoConsider = 1
                     for j in range(1,len(leftRoom.coords),1):
@@ -195,7 +196,7 @@ class dissected:
                     first0  = initYCoord #least y coordinate of left room
                     first1 = initYCoord #least y coordinate of right room
                     last = initYCoord
-                    for j in range(1,len(leftRoom.coords),1):
+                    for j in range(2,len(leftRoom.coords),1):
                         last = leftRoom.coords[j][1]
                         if(last>=first0):
                             break
@@ -209,7 +210,7 @@ class dissected:
                         else:
                             first1 = last
                     finalYCoord = max(first0, first1)
-                    newYCoord = (initYCoord+finalYCoord)*self.divFactor
+                    newYCoord = (initYCoord*(self.divFactor_den- self.divFactor_num)+finalYCoord*self.divFactor_num)/self.divFactor_den
 
                     newCoordtoConsider = len(rightRoom.coords)-1; 
                     for j in range(len(rightRoom.coords)-1,-1, -1):
@@ -257,7 +258,7 @@ class dissected:
                             last = self.rooms[j].coords[k][1]
                     lowerY = max(lowerY, last)
                 print(lowerY)
-                newYCoord = (upperY+lowerY)*self.divFactor
+                newYCoord = (upperY*(self.divFactor_den - self.divFactor_num)+lowerY*self.divFactor_num)/self.divFactor_den
                 print(newYCoord)
                 for j in neighborListCanOrd:
                     if(j != leftCanOrd and j!= rightCanOrd):
