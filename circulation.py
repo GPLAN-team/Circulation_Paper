@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from copy import deepcopy
 import itertools
-import source.trial.bdy as bdy
+import bdy
 from typing import List, Tuple
 
 class Point:
@@ -47,35 +47,54 @@ class RFP:
     #Functions to create RFP from the graph
 
 class circulation:
-    def __init__(self,graph: nx.Graph, thickness:float = 0.1, rfp: RFP = None) -> None:
+    def __init__(self,graph: nx.Graph, rfp: RFP = None) -> None:
         self.graph = graph
         self.adjacency = {}
         self.circulation_graph = nx.Graph() 
         self.RFP = rfp
         self.temp_push_states = []
-        self.corridor_thickness = thickness
+        self.corridor_thickness = 0.1
         self.pushed_stack = []
         self.circulations_adjacency_list = []
+        self.multiple_circ = []
+        self.exterior_edges = []
+    
+    
+    def multiple_circulation(self,coord:List) -> None:
 
-   
-    # def is_subgraph(self,g1: nx.graph, g2: nx.graph, k: int) -> bool:
-    #     """This function checks if g1 is a subgraph of g2
+        self.find_exterior_edges(coord)
+        print("Exterior edges:")
+        print(self.exterior_edges)
 
-    #     Args:
-    #         g1 (nx.graph): The first graph which we check is a subgraph
-    #         g2 (nx.graph): The other graph of which g1 maybe a subgraph of
-    #         k (int): The size of graph g1
+        for x in self.exterior_edges:
+            self.circulation_algorithm(x[0],x[1])
+            self.multiple_circ.append(self.circulation_graph)
+    
+    def find_exterior_edges(self, coord: List) -> None:
+        """This function finds the exterior edges of the graph input by the user
 
-    #     Returns:
-    #         bool: True if g1 is a subgraph of g2
-    #     """
+        Args:
+            coord (List): This is the list of coordinates of the vertices of the graph
+        """
+        graph1 = deepcopy(self.graph)
+        adj = nx.to_numpy_matrix(graph1)
+        edgecnt = adj.sum()/2
+        edgeset =[]
+        for i in range(len(graph1)):
+            for j in range(i+1, len(graph1)):
+                if(adj[i,j] == 1):
+                    edgeset.append((i,j))
+        bdy_obj = bdy.Boundary(len(graph1), edgecnt, edgeset, coord)
+        boundary = bdy_obj.identify_bdy()
+        for x in boundary:
+            if len(x) == 2:
+                self.exterior_edges.append(x)
+            
+            else:
+                for i in range(len(x) - 1):
+                    self.exterior_edges.append([x[i], x[i+1]])
 
-    #     for SG in (g2.subgraph(s) for s in itertools.combinations(g2, k)):
-    #         # print(SG.nodes(), SG.edges())
-    #         if(nx.is_isomorphic(g1,SG)):
-    #             return True
-        
-    #     return False
+
     def remove_corridor(self,graph:nx.Graph,v1:int = 0,v2:int = 1)->None:
         """To remove corridor vertex between v1 and v2 if exists
 
@@ -840,13 +859,36 @@ def main():
         plot(circulation_obj.circulation_graph, len(circulation_obj.circulation_graph))
         circulation_obj.remove_corridor(circulation_obj.circulation_graph)
         plot(circulation_obj.circulation_graph, len(circulation_obj.circulation_graph))
+    
+    def test_multiple_circ():
+        # Example1
+        g1, coord1 = wheel_graph(10)
+        circ_obj1 = circulation(g1)
+        circ_obj1.multiple_circulation(coord1)
+        print("Number of multiple circulations: ", end=" ")
+        print(len(circ_obj1.multiple_circ))
+
+        # # Example2
+        # g2,coord2 = complete_graph(5)
+        # circ_obj2 = circulation(g2)
+        # circ_obj2.multiple_circulation(coord2)
+        # print("Number of multiple circulations: ", end=" ")
+        # print(len(circ_obj2.multiple_circ))
+
+        # # Example3
+        # g3, coord3 = complete_graph(4)
+        # circ_obj3 = circulation(g3)
+        # circ_obj3.multiple_circulation(coord3)
+        # print("Number of multiple circulations: ", end=" ")
+        # print(len(circ_obj3.multiple_circ))
 
     # test_circ()
     # test_comm_edges()
     # test_comm_neighbors()
     # test_move_edges()
     # test_adjust_RFP_to_circ()
-    test_remove_corridor()
+    # test_remove_corridor()
+    test_multiple_circ()
     
 
 if __name__ == "__main__":

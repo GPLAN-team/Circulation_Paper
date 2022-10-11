@@ -84,20 +84,20 @@ class gui_class:
         self.value = []
         self.root =tk.Tk()
 
-        self.entry_door = []
+        # self.entry_door = []
         
-        self.l = tk.IntVar(None)
-        self.l.set(0)
-        self.r = tk.IntVar(None)
-        self.r.set(1)
-        self.left = 0
-        self.right = 1
-        # To get user input for corridor thickness
-        self.ct = tk.DoubleVar(None)
-        self.ct.set(0.1)
-        self.corridor_thickness=0.1
-        self.entry_door.append(self.l)
-        self.entry_door.append(self.r)
+        # self.l = tk.IntVar(None)
+        # self.l.set(0)
+        # self.r = tk.IntVar(None)
+        # self.r.set(1)
+        # self.left = 0
+        # self.right = 1
+        # # To get user input for corridor thickness
+        # self.ct = tk.DoubleVar(None)
+        # self.ct.set(0.1)
+        # self.corridor_thickness=0.1
+        # self.entry_door.append(self.l)
+        # self.entry_door.append(self.r)
 
         self.output_found = False
         self.json_data = {}
@@ -1296,7 +1296,7 @@ class gui_class:
             b4 = tk.Button(master.frame1,width=15, text='Multiple Rectangular Floor Plans',relief='flat',**button_details,command=master.multiple_oc_floorplan)
             b4.grid(row=4,column=0,padx=5,pady=5)
             
-            b6 = tk.Button(master.frame1,width=15, text='Circulation',relief='flat',**button_details,command=master.change_entry_gui)
+            b6 = tk.Button(master.frame1,width=15, text='Circulation',relief='flat',**button_details,command=master.circulation)
             b6.grid(row=6,column=0,padx=5,pady=5)
             # b3 = tk.Button(master.frame1,width=15, text='Circulation',relief='flat',**button_details,command=master.change_entry_gui)
             # b3.grid(row=4,column=0,padx=5,pady=5)
@@ -1600,25 +1600,25 @@ class gui_class:
             else:
                 generate_catalogue_dimensioned(self.app.edges, self.num_rfp, self.time_taken, self.output_data, self.dimensional_constraints, self.ptpg.fpcnt)
 
-    def change_entry_gui(self):
-        """This function takes user input for starting edge/door for the corridor
-        """
-        self.top = tk.Toplevel(self.root, width=800, height=400)
-        root = self.top
-        root.geometry("550x80")
-        root.title('Circulation Entry Changer and Corridor thickness')
-        entry_text = tk.Label(root, text="Enter the two rooms adjacent to the new entry door")
-        entry_text.grid(row = 3, column = 0)
-        l_val = tk.Entry(root, textvariable = self.l)
-        l_val.grid(row  = 3, column = 1)
-        r_val = tk.Entry(root, textvariable = self.r)
-        r_val.grid(row = 3, column = 2)
-        corridor_text = tk.Label(root,text="Enter the corridor thickness")
-        corridor_text.grid(row= 0, column= 0)
-        thickness = tk.Entry(root, textvariable=self.ct)
-        thickness.grid(row  = 0, column = 1)
-        ex = tk.Button(root,text = "Submit",command = self.entry_ender)
-        ex.grid(row = 5, column= 1)
+    # def change_entry_gui(self):
+    #     """This function takes user input for starting edge/door for the corridor
+    #     """
+    #     self.top = tk.Toplevel(self.root, width=800, height=400)
+    #     root = self.top
+    #     root.geometry("550x80")
+    #     root.title('Circulation Entry Changer and Corridor thickness')
+    #     entry_text = tk.Label(root, text="Enter the two rooms adjacent to the new entry door")
+    #     entry_text.grid(row = 3, column = 0)
+    #     l_val = tk.Entry(root, textvariable = self.l)
+    #     l_val.grid(row  = 3, column = 1)
+    #     r_val = tk.Entry(root, textvariable = self.r)
+    #     r_val.grid(row = 3, column = 2)
+    #     corridor_text = tk.Label(root,text="Enter the corridor thickness")
+    #     corridor_text.grid(row= 0, column= 0)
+    #     thickness = tk.Entry(root, textvariable=self.ct)
+    #     thickness.grid(row  = 0, column = 1)
+    #     ex = tk.Button(root,text = "Submit",command = self.entry_ender)
+    #     ex.grid(row = 5, column= 1)
 
         # Added to handle when input door index is not integer
         # # Make sure entered rooms are integers
@@ -1647,17 +1647,17 @@ class gui_class:
     #     ex = tk.Button(root,text = "Submit",command = self.entry_ender)
     #     ex.grid(row = 3)
         
-    def entry_ender(self):
-        self.left = self.l.get() + 1
-        self.right = self.r.get() + 1
-        self.entry_door = [self.left, self.right]
-        self.corridor_thickness = self.ct.get()
-        self.end.set(self.end.get()+1)
-        self.top.destroy()
+    # def entry_ender(self):
+    #     self.left = self.l.get() + 1
+    #     self.right = self.r.get() + 1
+    #     self.entry_door = [self.left, self.right]
+    #     self.corridor_thickness = self.ct.get()
+    #     self.end.set(self.end.get()+1)
+    #     self.top.destroy()
         
-        self.app.command="circulation"
-        self.command = "circulation"
-        self.end.set(self.end.get()+1)
+    #     self.app.command="circulation"
+    #     self.command = "circulation"
+    #     self.end.set(self.end.get()+1)
 
     def save_file(self,filename = "Rectangular Dual Graph.txt"):
         # self.root.filename = self.value

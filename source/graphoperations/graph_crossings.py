@@ -208,18 +208,18 @@ def check_intersection(x_coord: list, y_coord: list, A: np.array) -> bool:
     left_pts = [x[0] for x in list(edges.values())]
     right_pts = [x[1] for x in list(edges.values())]
 
-    # A list to keep track of traversed vertices
     traversed = []
 
     # We have a sorted list of points for traversal
     sorted_by_x = sorted(points, key= lambda p : p.x)
 
+    # indices_p tells us the edge labels in which point x is present
     indices_p = [i for i, x in enumerate(left_pts) if x == sorted_by_x[0]]
+    # check_count tells us the number of edges of which x is a part of
     check_count = len(indices_p)
 
     # We stop at each point
     for p in sorted_by_x:
-
         # If it is left endpoint of an edge, add it edge id to traversed
         if(p in left_pts):
             # Get all indices where p is the left endpoint
@@ -231,8 +231,9 @@ def check_intersection(x_coord: list, y_coord: list, A: np.array) -> bool:
             if(len(traversed) > len(indices_p)):
 
                 for i in indices_p:
-                    for j in range(len(traversed) - len(indices_p) - check_count, len(traversed) - len(indices_p)):
-
+                    # for j in range(len(traversed) - len(indices_p) - check_count, len(traversed) - len(indices_p)):
+                    for j in range(0, len(traversed) - len(indices_p)):
+                    
                         t = traversed[j]
                         if(doIntersect_endpts(edges.get(i)[0], edges.get(i)[1], edges.get(t)[0], edges.get(t)[1])):
                             return True
@@ -246,9 +247,15 @@ def check_intersection(x_coord: list, y_coord: list, A: np.array) -> bool:
             check_count = len(indices_p)
         
         # If it is right endpoint of an edge, the corresponding edge id is removed from traversed
-        if((p in right_pts) and (right_pts.index(p) in traversed)):
-            traversed.remove(right_pts.index(p))
+        prev_index = 0
+        while ((p in right_pts) and (right_pts.index(p) in traversed)):
+            indices = [i for i,x in enumerate(right_pts) if x == p]
+            for i in indices:
+                traversed.remove(i)
             if((len(traversed) == 0) and (p == sorted_by_x[-1])):
+                return False
+        
+        if((len(traversed) == 0) and (p == sorted_by_x[-1])):
                 return False
 
 def main():

@@ -53,6 +53,9 @@ def run():
                 ,gclass.value[1]
                 ,gclass.value[2]
                 ,gclass.value[7])
+            
+            # Get node coordinates
+            node_coord = graph.coordinates
             origin = 0
             if(gclass.command == "circulation"): # For spanning circulation
                 start = time.time()
@@ -81,7 +84,8 @@ def run():
                         'irreg_nodes': graph.irreg_nodes1
                     }
     
-                new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
+                # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
+                new_graph_data = call_circulation(graph_data, gclass.value[2], node_coord)
                 # If there was some error in algorithm execution new_graph_data will be empty
                 # we display the pop-up error message
                 if new_graph_data == None:
@@ -89,7 +93,8 @@ def run():
                 
                 # If no issues we continue to draw the corridor
                 else :
-                    draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6], gclass.entry_door)
+                    # draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6], gclass.entry_door)
+                    draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6])
 
             elif(gclass.command == "single"): #Single Irregular Dual/Floorplan
                 if(gclass.value[4] == 0): #Non-Dimensioned single dual
@@ -444,7 +449,8 @@ def make_dissection_corridor(gclass):
 #     # draw.draw_rdg(G,1,gclass.pen,G.to_be_merged_vertices,G.rdg_vertices,0,gclass.value[6],gclass.value[5])
 #     G.circulation(gclass.pen,gclass.ocan.canvas, C, 1, 2)
 
-def call_circulation(graph_data, edge_set, entry, thickness):
+# def call_circulation(graph_data, edge_set, entry, thickness):
+def call_circulation(graph_data, edge_set, coord):
 
     g = nx.Graph()
     
@@ -460,8 +466,11 @@ def call_circulation(graph_data, edge_set, entry, thickness):
     # cir.plot(g,n)
     rfp = cir.RFP(g, rooms)
 
-    circulation_obj = cir.circulation(g, thickness, rfp)
-    circulation_result = circulation_obj.circulation_algorithm(entry[0], entry[1])
+    # circulation_obj = cir.circulation(g, thickness, rfp)
+    circulation_obj = cir.circulation(g, rfp)
+    # circulation_result = circulation_obj.circulation_algorithm(entry[0], entry[1])
+    # circulation_result = circulation_obj.multiple_circulation(coord)
+    circulation_result = circulation_obj.circulation_algorithm()
     if circulation_result == 0:
         return None
     
@@ -517,7 +526,8 @@ def plot(graph: nx.Graph,m: int) -> None:
                     alpha=1)
     plt.show()
 
-def draw_circulation(graph_data, canvas, color_list, entry):
+# def draw_circulation(graph_data, canvas, color_list,entry):
+def draw_circulation(graph_data, canvas, color_list):
     
     origin_x, origin_y = -200,-100
     scale = 50
