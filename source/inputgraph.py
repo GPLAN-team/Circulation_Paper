@@ -15,7 +15,7 @@ from random import randint
 from .graphoperations import biconnectivity as bcn
 from .graphoperations import oneconnectivity as onc
 from .graphoperations import operations as opr
-from .graphoperations import graph_crossings as gc
+from .graphoperations import graph_crossings1 as gc
 from .irregular import shortcutresolver as sr
 from .boundary import cip as cip
 from .boundary import news as news
