@@ -122,6 +122,7 @@ class gui_class:
         self.app = self.PlotApp(self.frame2,self)
         self.root.title('Input Graph')
         self.checkvar1 = tk.IntVar()
+        self.checkvar2 = tk.IntVar()
         self.e1 = tk.IntVar()
         self.e2 = tk.IntVar()
 
@@ -235,7 +236,7 @@ class gui_class:
                 temp_node_data.append(i.pos_x)
                 temp_node_data.append(i.pos_y)
                 node_coordinate.append(temp_node_data)
-            return [len(self.nodes_data),self.edge_count,self.edges,self.command,self.master.checkvar1.get(),list(filter(None, [row[1].get() for row in self.table._data_vars])),self.hex_list, node_coordinate]
+            return [len(self.nodes_data),self.edge_count,self.edges,self.command,self.master.checkvar1.get(),list(filter(None, [row[1].get() for row in self.table._data_vars])),self.hex_list, node_coordinate,self.master.checkvar2.get()]
 
         def createCanvas(self):
             self.id_circle.clear()
@@ -1313,9 +1314,11 @@ class gui_class:
             
             # b6 = tk.Button(master.frame1,width=15, text='Restart',relief='flat', **button_details,command=master.restart)
             # b6.grid(row=6,column=0,padx=5,pady=5)
+            c1 = tk.Checkbutton(master.frame1, text = "Dimensioned Circulation",relief='flat',**button_details,selectcolor='#4A4E69',width=13 ,variable = master.checkvar2,onvalue = 1, offvalue = 0)
+            c1.grid(row=7,column=0,padx=5,pady=5)
            
             b5 = tk.Button(master.frame1,width=15, text='EXIT',relief='flat', **button_details,command=master.exit)
-            b5.grid(row=7,column=0,padx=5,pady=5)
+            b5.grid(row=8,column=0,padx=5,pady=5)
 
     class menu:
         def __init__(self,master):
