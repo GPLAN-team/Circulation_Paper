@@ -60,14 +60,13 @@ def run():
             node_coord = graph.coordinates
             origin = 0
             if(gclass.command == "circulation"): # For spanning circulation
-                start = time.time()
-                graph.irreg_single_dual()
-                end = time.time()
-                printe("Time taken: " + str((end-start)*1000) + " ms")
-                print("type of roomx " + str(type(graph.room_x)))
                 
                 if gclass.value[8] == False:
-
+                    start = time.time()
+                    graph.irreg_single_dual()
+                    end = time.time()
+                    printe("Time taken: " + str((end-start)*1000) + " ms")
+                    print("type of roomx " + str(type(graph.room_x)))
                     graph_data = {
                             'room_x': graph.room_x,
                             'room_y': graph.room_y,
@@ -86,7 +85,44 @@ def run():
                             'mergednodes': graph.mergednodes,
                             'irreg_nodes': graph.irreg_nodes1
                         }
-        
+
+                else:
+                    old_dims = [[0] * gclass.value[0]
+                                , [0] * gclass.value[0]
+                                , [0] * gclass.value[0]
+                                , [0] * gclass.value[0]
+                                , ""
+                                , [0] * gclass.value[0]
+                                , [0] * gclass.value[0]]
+                    min_width,max_width,min_height,max_height, symm_string, min_aspect, max_aspect, plot_width, plot_height  = dimgui.gui_fnc(old_dims, gclass.value[0])
+                    start = time.time()
+                    try:
+                        graph.oneconnected_dual("multiple")
+                    except inputgraph.OCError:
+                        gclass.show_warning("Can not generate rectangular floorplan.")
+                        graph.irreg_multiple_dual()
+                    except inputgraph.BCNError:
+                        graph.irreg_multiple_dual()
+                    
+                    graph.single_floorplan(min_width,min_height,max_width,max_height,symm_string, min_aspect, max_aspect, plot_width, plot_height)
+                    while(graph.floorplan_exist == False):
+                        old_dims = [min_width, max_width, min_height, max_height, symm_string, min_aspect, max_aspect]
+                        min_width,max_width,min_height,max_height, symm_string, min_aspect, max_aspect, plot_width, plot_height  = dimgui.gui_fnc(old_dims, gclass.value[0])
+                        graph.multiple_dual()
+                        graph.single_floorplan(min_width,min_height,max_width,max_height,symm_string, min_aspect, max_aspect, plot_width, plot_height)
+                    end = time.time()
+                    printe("Time taken: " + str((end-start)*1000) + " ms")
+                    graph_data = {
+                            'room_x': graph.room_x,
+                            'room_y': graph.room_y,
+                            'room_width': graph.room_width,
+                            'room_height': graph.room_height,
+                            'area': graph.area,
+                            'extranodes': graph.extranodes,
+                            'mergednodes': graph.mergednodes,
+                            'irreg_nodes': graph.irreg_nodes1
+                        }
+
                     # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
                     new_graph_data = call_circulation(graph_data, gclass.value[2], node_coord)
                     # If there was some error in algorithm execution new_graph_data will be empty
