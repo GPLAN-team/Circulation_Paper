@@ -280,6 +280,7 @@ def run():
                         graph.irreg_multiple_dual()
                     except inputgraph.BCNError:
                         graph.irreg_multiple_dual()
+                    
                     graph.single_floorplan(min_width,min_height,max_width,max_height,symm_string, min_aspect, max_aspect, plot_width, plot_height)
                     while(graph.floorplan_exist == False):
                         old_dims = [min_width, max_width, min_height, max_height, symm_string, min_aspect, max_aspect]
@@ -298,7 +299,7 @@ def run():
                             'mergednodes': graph.mergednodes,
                             'irreg_nodes': graph.irreg_nodes1
                         }
-                    
+                                        
                     gclass.output_data.append(graph_data)
                     draw.draw_rdg(graph_data
                             ,1
