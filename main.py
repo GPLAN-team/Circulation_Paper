@@ -150,7 +150,7 @@ def run():
                         # If no issues we continue to draw the corridor
                         else :
                             # draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6], gclass.entry_door)
-                            draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6])
+                            draw_circulation(new_graph_data, gclass.pen, gclass.ocan.canvas, gclass.value[6])
 
             elif(gclass.command == "single"): #Single Irregular Dual/Floorplan
                 if(gclass.value[4] == 0): #Non-Dimensioned single dual
@@ -586,7 +586,7 @@ def plot(graph: nx.Graph,m: int) -> None:
     plt.show()
 
 # def draw_circulation(graph_data, canvas, color_list,entry):
-def draw_circulation(graph_data, canvas, color_list):
+def draw_circulation(graph_data, pen, canvas, color_list):
     
     origin_x, origin_y = -200,-100
     scale = 50
@@ -598,7 +598,26 @@ def draw_circulation(graph_data, canvas, color_list):
         canvas.create_rectangle(origin_x + scale*room_x[i], origin_y + scale*room_y[i], origin_x + scale*(room_x[i] + room_width[i]), origin_y + scale*(room_y[i] + room_height[i]), fill = color_list[i])
         canvas.create_text(origin_x + scale*(room_x[i] + room_width[i]/2), origin_y + scale*(room_y[i] + room_height[i]/2), text = str(i))
     
-    # # draw door
+    # Printing are in case it is dimensioned
+    # Gets the max x coordinate (rightmost end of floorplan)
+    x_max = np.max(graph_data['room_x']) + graph_data['room_width'][np.argmax(graph_data['room_x'])]
+    # Gets the max y coordinate (topmost end of floorplan)
+    y_max = np.max(graph_data['room_y']) + graph_data['room_height'][np.argmax(graph_data['room_y'])]
+
+    value = 1 # variable to write next area in next line
+    if(len(graph_data['area']) != 0):
+        pen.setposition(x_max* scale + origin_x + 50, y_max* scale + origin_y - 30)
+        pen.write('Area of Each Room' ,font=("Arial", 20, "normal"))
+        for i in range(0,len(graph_data['area'])):
+            if i in graph_data['extranodes']:
+                continue
+            pen.setposition(x_max* scale + origin_x+50, y_max* scale + origin_y - 30 - value*30)
+            pen.write('Room ' + str(i)+ ': '+ str(graph_data['area'][i]),font=("Arial", 15, "normal"))
+            pen.penup()
+            # Moving pen to next line
+            value+=1
+
+    # draw door
     # print("Entry: ", entry)
 
 if __name__ == "__main__":
