@@ -99,12 +99,11 @@ def run():
                     else :
                         # draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6], gclass.entry_door)
                         draw_circulation(new_graph_data, gclass.pen, gclass.ocan.canvas, gclass.value[6])
-                        print("*********AREAS**********")
-                        print(graph_data['area'])
 
 
                 else: #Dimensioned single circulation
                     is_dimensioned = True
+                    feasible_dim = 0
                     old_dims = [[0] * gclass.value[0]
                                 , [0] * gclass.value[0]
                                 , [0] * gclass.value[0]
@@ -153,8 +152,15 @@ def run():
                         
                         # If no issues we continue to draw the corridor
                         else :
+                            if (success == False):
+                                continue
                             # draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6], gclass.entry_door)
                             draw_circulation(new_graph_data, gclass.pen, gclass.ocan.canvas, gclass.value[6])
+                            feasible_dim = 1
+                            break
+                    
+                    if(feasible_dim == 0):
+                        tk.messagebox.showerror("Error", "ERROR!! NO CIRCULATION POSSIBLE FOR GIVEN DIMENSIONS")
 
             elif(gclass.command == "single"): #Single Irregular Dual/Floorplan
                 if(gclass.value[4] == 0): #Non-Dimensioned single dual
@@ -570,7 +576,7 @@ def call_circulation(graph_data, edge_set, coord, is_dimensioned, dim_constraint
     graph_data['room_y'] = np.array(room_y)
     graph_data['room_height'] = np.array(room_height)
     graph_data['room_width'] = np.array(room_width)
-    graph_data['area'] = circulation_obj.room_area
+    graph_data['area'] = np.array(circulation_obj.room_area)
     return (graph_data, circulation_obj.is_dimensioning_successful)
 
 def plot(graph: nx.Graph,m: int) -> None:
@@ -615,11 +621,12 @@ def draw_circulation(graph_data, pen, canvas, color_list):
     # Gets the max x coordinate (rightmost end of floorplan)
     x_max = np.max(graph_data['room_x']) + graph_data['room_width'][np.argmax(graph_data['room_x'])]
     # Gets the max y coordinate (topmost end of floorplan)
-    y_max = np.max(graph_data['room_y']) + graph_data['room_height'][np.argmax(graph_data['room_y'])]
+    # y_max = np.max(graph_data['room_y']) + graph_data['room_height'][np.argmax(graph_data['room_y'])]
+    y_max = np.max(graph_data['room_y'])
 
-    print("Reached till x_max y_max")
 
     value = 1 # variable to write next area in next line
+    pen.penup()
     if(len(graph_data['area']) != 0):
         pen.setposition(x_max* scale + origin_x + 50, y_max* scale + origin_y - 30)
         pen.write('Area of Each Room' ,font=("Arial", 20, "normal"))
@@ -631,7 +638,6 @@ def draw_circulation(graph_data, pen, canvas, color_list):
             pen.penup()
             # Moving pen to next line
             value+=1
-    print("Reached after x_max y_max")
 
     # draw door
     # print("Entry: ", entry)
