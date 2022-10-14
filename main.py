@@ -587,6 +587,14 @@ def plot(graph: nx.Graph,m: int) -> None:
 
 # def draw_circulation(graph_data, canvas, color_list,entry):
 def draw_circulation(graph_data, pen, canvas, color_list):
+    """This is the draw function specifically for the circulation module
+
+    Args:
+        graph_data (dict): Contains the room coordinates, dimensions, area, etc.
+        pen (output_canvas class in gui.py): To write area of each room
+        canvas (output_canvas class in gui.py): To draw the rooms
+        color_list (list): Color of each room
+    """
     
     origin_x, origin_y = -200,-100
     scale = 50
