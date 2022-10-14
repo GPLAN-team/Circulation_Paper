@@ -1,6 +1,7 @@
 """Main file of the project
 
 """
+from dataclasses import is_dataclass
 import warnings
 import time
 import tkinter as tk
@@ -60,7 +61,7 @@ def run():
             node_coord = graph.coordinates
             origin = 0
             if(gclass.command == "circulation"): # For spanning circulation
-                
+                is_dimensioned = False
                 if gclass.value[8] == 0:
                     start = time.time()
                     graph.irreg_single_dual()
@@ -87,6 +88,7 @@ def run():
                         }
 
                 else:
+                    is_dimensioned = True
                     old_dims = [[0] * gclass.value[0]
                                 , [0] * gclass.value[0]
                                 , [0] * gclass.value[0]
@@ -124,7 +126,7 @@ def run():
                         }
 
                 # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
-                new_graph_data = call_circulation(graph_data, gclass.value[2], node_coord)
+                new_graph_data = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned)
                 # If there was some error in algorithm execution new_graph_data will be empty
                 # we display the pop-up error message
                 if new_graph_data == None:
@@ -490,7 +492,7 @@ def make_dissection_corridor(gclass):
 #     G.circulation(gclass.pen,gclass.ocan.canvas, C, 1, 2)
 
 # def call_circulation(graph_data, edge_set, entry, thickness):
-def call_circulation(graph_data, edge_set, coord):
+def call_circulation(graph_data, edge_set, coord, is_dimensioned):
 
     g = nx.Graph()
     
@@ -508,6 +510,8 @@ def call_circulation(graph_data, edge_set, coord):
 
     # circulation_obj = cir.circulation(g, thickness, rfp)
     circulation_obj = cir.circulation(g, rfp)
+    if is_dimensioned == True:
+        circulation_obj.is_dimensioned = True
     # circulation_result = circulation_obj.circulation_algorithm(entry[0], entry[1])
     # circulation_result = circulation_obj.multiple_circulation(coord)
     circulation_result = circulation_obj.circulation_algorithm()

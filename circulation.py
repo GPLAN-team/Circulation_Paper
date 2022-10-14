@@ -58,6 +58,7 @@ class circulation:
         self.circulations_adjacency_list = []
         self.multiple_circ = []
         self.exterior_edges = []
+        self.is_dimensioned = False
     
     
     def multiple_circulation(self,coord:List) -> None:
