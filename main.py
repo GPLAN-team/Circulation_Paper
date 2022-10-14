@@ -86,6 +86,19 @@ def run():
                             'mergednodes': graph.mergednodes,
                             'irreg_nodes': graph.irreg_nodes1
                         }
+                    
+                    # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
+                    new_graph_data = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned)
+                    # If there was some error in algorithm execution new_graph_data will be empty
+                    # we display the pop-up error message
+                    if new_graph_data == None:
+                        tk.messagebox.showerror("Error", "ERROR!! THE INITIAL CHOSEN ENTRY EDGE MUST BE EXTERIOR EDGE")
+                    
+                    # If no issues we continue to draw the corridor
+                    else :
+                        # draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6], gclass.entry_door)
+                        draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6])
+
 
                 else:
                     is_dimensioned = True
@@ -97,6 +110,7 @@ def run():
                                 , [0] * gclass.value[0]
                                 , [0] * gclass.value[0]]
                     min_width,max_width,min_height,max_height, symm_string, min_aspect, max_aspect, plot_width, plot_height  = dimgui.gui_fnc(old_dims, gclass.value[0])
+                    dimensional_constraints = [min_width,max_width,min_height,max_height, symm_string, min_aspect, max_aspect, plot_width, plot_height]
                     start = time.time()
                     try:
                         graph.oneconnected_dual("multiple")
@@ -114,28 +128,29 @@ def run():
                         graph.single_floorplan(min_width,min_height,max_width,max_height,symm_string, min_aspect, max_aspect, plot_width, plot_height)
                     end = time.time()
                     printe("Time taken: " + str((end-start)*1000) + " ms")
-                    graph_data = {
-                            'room_x': graph.room_x,
-                            'room_y': graph.room_y,
-                            'room_width': graph.room_width,
-                            'room_height': graph.room_height,
-                            'area': graph.area,
-                            'extranodes': graph.extranodes,
-                            'mergednodes': graph.mergednodes,
-                            'irreg_nodes': graph.irreg_nodes1
-                        }
+                    for idx in range(len(graph.room_x)):
+                        graph_data = {
+                                'room_x': graph.room_x,
+                                'room_y': graph.room_y,
+                                'room_width': graph.room_width,
+                                'room_height': graph.room_height,
+                                'area': graph.area,
+                                'extranodes': graph.extranodes,
+                                'mergednodes': graph.mergednodes,
+                                'irreg_nodes': graph.irreg_nodes1
+                            }
 
-                # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
-                new_graph_data = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned)
-                # If there was some error in algorithm execution new_graph_data will be empty
-                # we display the pop-up error message
-                if new_graph_data == None:
-                    tk.messagebox.showerror("Error", "ERROR!! THE INITIAL CHOSEN ENTRY EDGE MUST BE EXTERIOR EDGE")
-                
-                # If no issues we continue to draw the corridor
-                else :
-                    # draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6], gclass.entry_door)
-                    draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6])
+                        # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
+                        new_graph_data = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned)
+                        # If there was some error in algorithm execution new_graph_data will be empty
+                        # we display the pop-up error message
+                        if new_graph_data == None:
+                            tk.messagebox.showerror("Error", "ERROR!! THE INITIAL CHOSEN ENTRY EDGE MUST BE EXTERIOR EDGE")
+                        
+                        # If no issues we continue to draw the corridor
+                        else :
+                            # draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6], gclass.entry_door)
+                            draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6])
 
             elif(gclass.command == "single"): #Single Irregular Dual/Floorplan
                 if(gclass.value[4] == 0): #Non-Dimensioned single dual
