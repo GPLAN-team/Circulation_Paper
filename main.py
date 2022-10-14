@@ -89,7 +89,7 @@ def run():
                         }
                     
                     # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
-                    new_graph_data = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned, dim_constraints)
+                    (new_graph_data, success) = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned, dim_constraints)
                     # If there was some error in algorithm execution new_graph_data will be empty
                     # we display the pop-up error message
                     if new_graph_data == None:
@@ -99,6 +99,8 @@ def run():
                     else :
                         # draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6], gclass.entry_door)
                         draw_circulation(new_graph_data, gclass.pen, gclass.ocan.canvas, gclass.value[6])
+                        print("*********AREAS**********")
+                        print(graph_data['area'])
 
 
                 else: #Dimensioned single circulation
@@ -615,6 +617,8 @@ def draw_circulation(graph_data, pen, canvas, color_list):
     # Gets the max y coordinate (topmost end of floorplan)
     y_max = np.max(graph_data['room_y']) + graph_data['room_height'][np.argmax(graph_data['room_y'])]
 
+    print("Reached till x_max y_max")
+
     value = 1 # variable to write next area in next line
     if(len(graph_data['area']) != 0):
         pen.setposition(x_max* scale + origin_x + 50, y_max* scale + origin_y - 30)
@@ -627,6 +631,7 @@ def draw_circulation(graph_data, pen, canvas, color_list):
             pen.penup()
             # Moving pen to next line
             value+=1
+    print("Reached after x_max y_max")
 
     # draw door
     # print("Entry: ", entry)
