@@ -59,6 +59,10 @@ class circulation:
         self.multiple_circ = []
         self.exterior_edges = []
         self.is_dimensioned = False
+        self.dimensions = {}
+        self.dimension_constraints = []
+        self.room_area = []
+        self.is_dimensioning_successful = False
     
     
     def multiple_circulation(self,coord:List) -> None:
@@ -253,6 +257,16 @@ class circulation:
 
         for room in self.RFP.rooms:
             self.push_edges(room)
+        print(self.dimensions)
+        if(self.is_dimensioned == True):
+            is_feasible = self.check_dimensions_feasibility()
+            if is_feasible == True:
+                for i in range(len(self.dimension_constraints[0])):
+                    self.room_area.append(self.dimensions[i][0] * self.dimensions[i][1])
+                self.is_dimensioning_successful = True
+            else:
+                self.is_dimensioning_successful = False
+
     
     def add_corridor_between_2_rooms(self,room1: Room,room2: Room) -> None:
         """Adds corridors between 2 given rooms. First finds the common edge between the two rooms
@@ -489,6 +503,30 @@ class circulation:
         room.top_left_x += room.rel_push_L
         room.bottom_right_y += room.rel_push_B
         room.bottom_right_x += room.rel_push_R
+        height = room.top_left_y - room.bottom_right_y
+        width = room.bottom_right_x- room.top_left_x
+        self.dimensions[room.id] = [width, height]
+
+    def check_dimensions_feasibility(self):
+        min_width = self.dimension_constraints[0]
+        max_width = self.dimension_constraints[1]
+        min_height = self.dimension_constraints[2]
+        max_height = self.dimension_constraints[3]
+        min_ar = self.dimension_constraints[4]
+        max_ar = self.dimension_constraints[5]
+
+        flag = 0
+        for i in range(len(min_width)):
+            width = self.dimensions[i][0]
+            height = self.dimensions[i][1]
+            if (width < min_width[i] or height < min_height[i] or width/height < min_ar[i]):
+                flag = 1
+                break
+        if flag == 1:
+            return False
+        else:
+            return True  
+
 
 def wheel_graph(n: int) -> Tuple[nx.Graph, list]:
     """Returns a wheel graph of size n and its positional coordinates

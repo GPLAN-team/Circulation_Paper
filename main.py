@@ -62,7 +62,8 @@ def run():
             origin = 0
             if(gclass.command == "circulation"): # For spanning circulation
                 is_dimensioned = False
-                if gclass.value[8] == 0:
+                dim_constraints = []
+                if gclass.value[8] == 0: #Non-dimensioned single circulation
                     start = time.time()
                     graph.irreg_single_dual()
                     end = time.time()
@@ -88,7 +89,7 @@ def run():
                         }
                     
                     # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
-                    new_graph_data = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned)
+                    new_graph_data = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned, dim_constraints)
                     # If there was some error in algorithm execution new_graph_data will be empty
                     # we display the pop-up error message
                     if new_graph_data == None:
@@ -97,10 +98,10 @@ def run():
                     # If no issues we continue to draw the corridor
                     else :
                         # draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6], gclass.entry_door)
-                        draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6])
+                        draw_circulation(new_graph_data, gclass.pen, gclass.ocan.canvas, gclass.value[6])
 
 
-                else:
+                else: #Dimensioned single circulation
                     is_dimensioned = True
                     old_dims = [[0] * gclass.value[0]
                                 , [0] * gclass.value[0]
@@ -141,7 +142,8 @@ def run():
                             }
 
                         # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
-                        new_graph_data = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned)
+                        dim_constraints = [min_width, max_width, min_height, max_height, min_aspect, max_aspect]
+                        (new_graph_data, success) = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned, dim_constraints)
                         # If there was some error in algorithm execution new_graph_data will be empty
                         # we display the pop-up error message
                         if new_graph_data == None:
@@ -507,7 +509,7 @@ def make_dissection_corridor(gclass):
 #     G.circulation(gclass.pen,gclass.ocan.canvas, C, 1, 2)
 
 # def call_circulation(graph_data, edge_set, entry, thickness):
-def call_circulation(graph_data, edge_set, coord, is_dimensioned):
+def call_circulation(graph_data, edge_set, coord, is_dimensioned, dim_constraints):
 
     g = nx.Graph()
     
@@ -527,6 +529,7 @@ def call_circulation(graph_data, edge_set, coord, is_dimensioned):
     circulation_obj = cir.circulation(g, rfp)
     if is_dimensioned == True:
         circulation_obj.is_dimensioned = True
+        circulation_obj.dimension_constraints = dim_constraints
     # circulation_result = circulation_obj.circulation_algorithm(entry[0], entry[1])
     # circulation_result = circulation_obj.multiple_circulation(coord)
     circulation_result = circulation_obj.circulation_algorithm()
@@ -565,8 +568,8 @@ def call_circulation(graph_data, edge_set, coord, is_dimensioned):
     graph_data['room_y'] = np.array(room_y)
     graph_data['room_height'] = np.array(room_height)
     graph_data['room_width'] = np.array(room_width)
-
-    return graph_data
+    graph_data['area'] = circulation_obj.room_area
+    return (graph_data, circulation_obj.is_dimensioning_successful)
 
 def plot(graph: nx.Graph,m: int) -> None:
     """Plots thr graph using matplotlib
