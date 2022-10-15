@@ -11,6 +11,9 @@ def gui_fnc(old_dims, nodes):
     min_aspect = []
     max_aspect = []
     symmetric_text = []
+    # ct = tk.DoubleVar(None)
+    # ct.set(0.1)
+    # corridor_thickness = 0.1
 
     root = tk.Toplevel()
 
@@ -182,7 +185,26 @@ def gui_fnc(old_dims, nodes):
     def default_ar_func():
         for i in range(0, nodes):
             min_ar[i].set(0.5)
-            max_ar[i].set(2)
+            max_ar[i].set(2)        
+    
+    # def corridor_thickness_func():
+    #     top = tk.Toplevel(root, width=800, height=400)
+    #     root = top
+    #     root.geometry("550x80")
+    #     root.title('Corridor thickness modifier')
+    #     corridor_text = tk.Label(root,text="Enter the corridor thickness")
+    #     corridor_text.grid(row= 0, column= 0)
+    #     thickness = tk.Entry(root, textvariable=ct)
+    #     thickness.grid(row  = 0, column = 1)
+    #     ex = tk.Button(root,text = "Submit",command = entry_ender)
+    #     ex.grid(row = 5, column= 1)
+
+    # def entry_ender(top, corridor_thickness):
+    #     end= tk.IntVar(root)
+    #     corridor_thickness = ct.get()
+    #     end.set(end.get()+1)
+    #     top.destroy()
+    #     end.set(end.get()+1)
 
     # def clicked():
     # 	if(checkvar1.get() == 0):
@@ -214,6 +236,8 @@ def gui_fnc(old_dims, nodes):
     # checkvar1 = tk.IntVar()
     # c1 = tk.Checkbutton(root, text = "Default AR Range", variable = checkvar1,onvalue = 1, offvalue = 0,command=clicked)
     # c1.place(relx = 0.85, rely = 0.9, anchor = 'ne')
+    # corridor_thickness_btn = tk.Button(root, text="Corridor", padx=5, command=corridor_thickness_func)
+    # corridor_thickness_btn.place(relx=0.8, rely=0.9, anchor='ne')
 
     root.wait_window(root)
     print("dimgui")

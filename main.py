@@ -89,7 +89,7 @@ def run():
                         }
                     
                     # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
-                    (new_graph_data, success) = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned, dim_constraints)
+                    (new_graph_data, success) = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned, dim_constraints, gclass.corridor_thickness)
                     # If there was some error in algorithm execution new_graph_data will be empty
                     # we display the pop-up error message
                     if new_graph_data == None:
@@ -144,7 +144,7 @@ def run():
 
                         # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
                         dim_constraints = [min_width, max_width, min_height, max_height, min_aspect, max_aspect]
-                        (new_graph_data, success) = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned, dim_constraints)
+                        (new_graph_data, success) = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned, dim_constraints, gclass.corridor_thickness)
                         # If there was some error in algorithm execution new_graph_data will be empty
                         # we display the pop-up error message
                         if new_graph_data == None:
@@ -517,7 +517,7 @@ def make_dissection_corridor(gclass):
 #     G.circulation(gclass.pen,gclass.ocan.canvas, C, 1, 2)
 
 # def call_circulation(graph_data, edge_set, entry, thickness):
-def call_circulation(graph_data, edge_set, coord, is_dimensioned, dim_constraints):
+def call_circulation(graph_data, edge_set, coord, is_dimensioned, dim_constraints, thickness):
 
     g = nx.Graph()
     
@@ -533,8 +533,8 @@ def call_circulation(graph_data, edge_set, coord, is_dimensioned, dim_constraint
     # cir.plot(g,n)
     rfp = cir.RFP(g, rooms)
 
-    # circulation_obj = cir.circulation(g, thickness, rfp)
-    circulation_obj = cir.circulation(g, rfp)
+    circulation_obj = cir.circulation(g, thickness, rfp)
+    # circulation_obj = cir.circulation(g, rfp)
     if is_dimensioned == True:
         circulation_obj.is_dimensioned = True
         circulation_obj.dimension_constraints = dim_constraints
@@ -617,11 +617,10 @@ def draw_circulation(graph_data, pen, canvas, color_list):
         canvas.create_rectangle(origin_x + scale*room_x[i], origin_y + scale*room_y[i], origin_x + scale*(room_x[i] + room_width[i]), origin_y + scale*(room_y[i] + room_height[i]), fill = color_list[i])
         canvas.create_text(origin_x + scale*(room_x[i] + room_width[i]/2), origin_y + scale*(room_y[i] + room_height[i]/2), text = str(i))
     
-    # Printing are in case it is dimensioned
+    # Printing dimensions in case it is dimensioned
     # Gets the max x coordinate (rightmost end of floorplan)
     x_max = np.max(graph_data['room_x']) + graph_data['room_width'][np.argmax(graph_data['room_x'])]
     # Gets the max y coordinate (topmost end of floorplan)
-    # y_max = np.max(graph_data['room_y']) + graph_data['room_height'][np.argmax(graph_data['room_y'])]
     y_max = np.max(graph_data['room_y'])
 
 
@@ -629,12 +628,12 @@ def draw_circulation(graph_data, pen, canvas, color_list):
     pen.penup()
     if(len(graph_data['area']) != 0):
         pen.setposition(x_max* scale + origin_x + 50, y_max* scale + origin_y - 30)
-        pen.write('Area of Each Room' ,font=("Arial", 20, "normal"))
+        pen.write('Dimensions of Each Room' ,font=("Arial", 20, "normal"))
         for i in range(0,len(graph_data['area'])):
             if i in graph_data['extranodes']:
                 continue
             pen.setposition(x_max* scale + origin_x+50, y_max* scale + origin_y - 30 - value*30)
-            pen.write('Room ' + str(i)+ ': '+ str(graph_data['area'][i]),font=("Arial", 15, "normal"))
+            pen.write('Room ' + str(i)+ ': Width= '+ str(graph_data['room_width'][i]) + ' Height= ' + str(graph_data['room_height'][i]),font=("Arial", 15, "normal"))
             pen.penup()
             # Moving pen to next line
             value+=1
