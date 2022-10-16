@@ -633,7 +633,7 @@ def draw_circulation(graph_data, pen, canvas, color_list):
             if i in graph_data['extranodes']:
                 continue
             pen.setposition(x_max* scale + origin_x+50, y_max* scale + origin_y - 30 - value*30)
-            pen.write('Room ' + str(i)+ ': Width= '+ str(graph_data['room_width'][i]) + ' Height= ' + str(graph_data['room_height'][i]),font=("Arial", 15, "normal"))
+            pen.write('Room ' + str(i)+ ': Width= '+ str(round(graph_data['room_width'][i],1)) + ' Height= ' + str(round(graph_data['room_height'][i], 1)),font=("Arial", 15, "normal"))
             pen.penup()
             # Moving pen to next line
             value+=1
