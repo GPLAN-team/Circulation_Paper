@@ -62,6 +62,8 @@ class circulation:
         self.dimensions = {}
         self.dimension_constraints = []
         self.room_area = []
+        # self.room_width = []
+        # self.room_height = []
         self.is_dimensioning_successful = False
     
     
@@ -262,7 +264,9 @@ class circulation:
             is_feasible = self.check_dimensions_feasibility()
             if is_feasible == True:
                 for i in range(len(self.dimension_constraints[0])):
-                    self.room_area.append(self.dimensions[i][0] * self.dimensions[i][1])
+                    # self.room_area.append(self.dimensions[i][0] * self.dimensions[i][1])
+                    self.room_area.append("W:{0}; H:{1}; A:{2}".format(round(self.dimensions[i][0], 2), 
+                                            round(self.dimensions[i][1], 2), round(self.dimensions[i][0] * self.dimensions[i][1], 2)))
                 self.is_dimensioning_successful = True
             else:
                 self.is_dimensioning_successful = False
