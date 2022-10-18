@@ -1,6 +1,5 @@
 """This file is the code to insert a spanning circulation for a given planar graph input and entry input
 """
-
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
@@ -502,6 +501,11 @@ class circulation:
             room_obj.rel_push_B = min(room_obj.rel_push_B, -0.5*self.corridor_thickness) if room_obj.rel_push_B <= 0 else room_obj.rel_push_B
 
     def push_edges(self, room: Room) -> None:
+        """This modifies the room coordinates (final step of adjustment)
+
+        Args:
+            room (Room): Room whose coordinates are modified
+        """
         
         room.top_left_y += room.rel_push_T
         room.top_left_x += room.rel_push_L
@@ -511,7 +515,13 @@ class circulation:
         width = room.bottom_right_x- room.top_left_x
         self.dimensions[room.id] = [width, height]
 
-    def check_dimensions_feasibility(self):
+    def check_dimensions_feasibility(self) -> bool:
+        """This checks which dimensioned floorplans still satisfies the dimensional constraints after adding circulation
+
+        Returns:
+            bool: True if modified floorplan still satisfies dimension conditions, else False
+        """
+        # Variables declared for readability
         min_width = self.dimension_constraints[0]
         max_width = self.dimension_constraints[1]
         min_height = self.dimension_constraints[2]
@@ -615,6 +625,7 @@ def is_subgraph(g1: nx.graph, k: int) -> bool:
         
     return False
 
+# Main fn for writing the test cases for each feature
 def main():
     def make_graph():
         g = nx.Graph()
