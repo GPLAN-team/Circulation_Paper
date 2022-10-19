@@ -238,7 +238,37 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100, dimensioned =
         
         pdf.set_draw_color(0,0,0)
 
+def fill_dimensional_constraints(pdf : PDF, room, dimensional_constraints):
+    [min_width,max_width,min_height,max_height, symm_string, min_aspect, max_aspect, plot_width, plot_height] = dimensional_constraints    
+    cons_y = pdf.y
 
+    pdf.cell(20, 10, "Room " + str(room), 0, 1, 'C')
+    pdf.x = pdf.x + 20
+    pdf.y = cons_y
+
+    pdf.cell(20, 10, str(min_width[room]), 0, 1, 'C')
+    pdf.x = pdf.x + 40
+    pdf.y = cons_y
+
+    pdf.cell(20, 10, str(max_width[room]), 0, 1, 'C')
+    pdf.x = pdf.x + 60
+    pdf.y = cons_y
+
+    pdf.cell(20, 10, str(min_height[room]), 0, 1, 'C')
+
+    pdf.x = pdf.x + 80
+    pdf.y = cons_y
+    pdf.cell(20, 10, str(max_height[room]), 0, 1, 'C')
+
+    pdf.x = pdf.x + 100
+    pdf.y = cons_y
+    pdf.cell(30, 10, str(min_aspect[room]), 0, 1, 'C')
+    
+    pdf.x = pdf.x + 130
+    pdf.y = cons_y
+    pdf.cell(30, 10, str(max_aspect[room]), 0, 1, 'C')
+    
+    return pdf.y
 
 def add_dimensional_constraints(pdf : PDF, dimensional_constraints, fpcnt, num_rfp):
     [min_width,max_width,min_height,max_height, symm_string, min_aspect, max_aspect, plot_width, plot_height] = dimensional_constraints
@@ -273,35 +303,19 @@ def add_dimensional_constraints(pdf : PDF, dimensional_constraints, fpcnt, num_r
         pdf.y = cons_y
         pdf.multi_cell(30, 10, "Max. Aspect Ratio", 1, 1, 'C')
 
+        room = 0
+        y_coord = []
+        while room < len(min_width) and room < 7: #Hardcoded here to get correct page addition if conditions overflow to next page
+            y_coord.append(fill_dimensional_constraints(pdf, room, dimensional_constraints))
+            room += 1
+        if room < len(min_width):
+            pdf.add_page()
+            pdf.add_border()
+        while room < len(min_width):
+            y_coord.append(fill_dimensional_constraints(pdf, room, dimensional_constraints))
+            room += 1
+        print(y_coord)
 
-        for room in range(len(min_width)):
-            cons_y = pdf.y
-
-            pdf.cell(20, 10, "Room " + str(room), 0, 1, 'C')
-            pdf.x = pdf.x + 20
-            pdf.y = cons_y
-
-            pdf.cell(20, 10, str(min_width[room]), 0, 1, 'C')
-            pdf.x = pdf.x + 40
-            pdf.y = cons_y
-
-            pdf.cell(20, 10, str(max_width[room]), 0, 1, 'C')
-            pdf.x = pdf.x + 60
-            pdf.y = cons_y
-
-            pdf.cell(20, 10, str(min_height[room]), 0, 1, 'C')
-
-            pdf.x = pdf.x + 80
-            pdf.y = cons_y
-            pdf.cell(20, 10, str(max_height[room]), 0, 1, 'C')
-
-            pdf.x = pdf.x + 100
-            pdf.y = cons_y
-            pdf.cell(30, 10, str(min_aspect[room]), 0, 1, 'C')
-            
-            pdf.x = pdf.x + 130
-            pdf.y = cons_y
-            pdf.cell(30, 10, str(max_aspect[room]), 0, 1, 'C')
 
 
 
