@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from ssl import create_default_context
 import tkinter as tk
 import turtle
@@ -27,17 +28,23 @@ class dissected:
         self.divFactor_den = 5
         self.correctCanonicalOrder = self.graph_data['currentCanonicalOrder'][self.noOfNodes-1]
         self.coordinatepoints  = {} #This is the dictionary which will hold the initial coordinates of the figure when they are being constructed
+        self.innerBoundary = [[200,400],[400,200],[200,0],[-200,0],[-400,200],[-200,400]] #this is the outer boundary that is specified by the user(can also be NULL) 
+        self.outerBoundary = []
+        self.lowestPointIndex = 0 #for disections in case of custom rooms
         self.rooms = []  #this is the list of the rooms data structure, please please please remember! 
         self.outerPath = [0,2,1] #this stores the path of the outer surface -> used for finding the leftmost and righnmost neighbors in the canonical order 
-        polygui = PolyGUI(pen,graph_data,self.rooms,color_list)
-        polygui.createPentagon(self.coordinatepoints)
-        polygui.createInitalRooms(self.coordinatepoints)
+        polygui = PolyGUI(pen,graph_data,self.rooms,color_list, self.innerBoundary)
+        # polygui.createPentagon(self.coordinatepoints)
+        # polygui.createInitalRoomsForPentagon(self.coordinatepoints)
+        # polygui.createHexagon(self.coordinatepoints)
+        # polygui.createInitalRoomsForHexagon(self.coordinatepoints)
+        self.lowestPointIndex= polygui.createCustom(self.outerBoundary)
         self.mainDisectionFunction()
         polygui.startDisection()
         # pen.hideturtle()
 
 
-    def createDefaultDisections(self):
+    def createDefaultDisectionsforPentagon(self):
         #first we initialise the rooms 1,2,3, which will always exist
         Room1 = Room()
         Room1.coords.append(self.coordinatepoints[1])
@@ -64,9 +71,75 @@ class dissected:
         Room3.coords.append(self.coordinatepoints[11])
         Room3.coords.append(self.coordinatepoints[7])
         self.rooms.append(Room3)
-    
+
+    def createDefaultDisectionsforHexagon(self):
+        #first we initialise the rooms 1,2,3, which will always exist
+        Room1 = Room()
+        Room1.coords.append(self.coordinatepoints[1])
+        Room1.coords.append(self.coordinatepoints[7])
+        Room1.coords.append(self.coordinatepoints[8])
+        Room1.coords.append(self.coordinatepoints[9])
+        Room1.coords.append(self.coordinatepoints[5])
+        Room1.coords.append(self.coordinatepoints[6])
+        Room1.disecAllowed = False
+        self.rooms.append(Room1)
+        Room2 = Room()
+        Room2.coords.append(self.coordinatepoints[10])
+        Room2.coords.append(self.coordinatepoints[2])
+        Room2.coords.append(self.coordinatepoints[3])
+        Room2.coords.append(self.coordinatepoints[4])
+        Room2.coords.append(self.coordinatepoints[9])
+        Room2.coords.append(self.coordinatepoints[13])
+        Room2.coords.append(self.coordinatepoints[12])
+        Room2.coords.append(self.coordinatepoints[11])
+        Room2.disecAllowed = False
+        self.rooms.append(Room2)
+        Room3 = Room()
+        Room3.coords.append(self.coordinatepoints[7])
+        Room3.coords.append(self.coordinatepoints[10])
+        Room3.coords.append(self.coordinatepoints[11])
+        Room3.coords.append(self.coordinatepoints[12])
+        Room3.coords.append(self.coordinatepoints[13])
+        Room3.coords.append(self.coordinatepoints[8])
+        self.rooms.append(Room3)
+
+    def createDefaultDisectionsforCustom(self):
+        
+
+        Room1 = Room()
+        Room1.coords.append(self.outerBoundary[-1])
+        for i in range(len(self.innerBoundary)-1, self.lowestPointIndex-1, -1):
+            Room1.coords.append(self.innerBoundary[i])
+        for i in range(self.lowestPointIndex, len(self.outerBoundary)-1, 1):
+            Room1.coords.append(self.outerBoundary[i])
+        Room1.disecAllowed = False
+        print(Room1.coords)
+        self.rooms.append(Room1)
+
+        Room2 = Room()
+        Room2.coords.append(self.innerBoundary[0])
+        for i in range(0, self.lowestPointIndex+1,1):
+            Room2.coords.append(self.outerBoundary[i])
+        for i in range(self.lowestPointIndex, 0, -1):
+            Room2.coords.append(self.innerBoundary[i])
+        Room2.disecAllowed = False
+        print(Room2.coords)
+        self.rooms.append(Room2)
+        
+                
+        
+        Room3 = Room()
+        print(self.innerBoundary)
+        Room3.coords.append(self.innerBoundary[-1])
+        for i in range(0, len(self.innerBoundary)-1, 1):
+            Room3.coords.append(self.innerBoundary[i])
+        print(Room3.coords)
+        self.rooms.append(Room3)
+
+        
     def mainDisectionFunction(self):
-        self.createDefaultDisections()
+        #self.createDefaultDisectionsforHexagon()
+        self.createDefaultDisectionsforCustom()
         #now 0,1,2 are already made, we need to make the rooms for all the others from 3 to n-1 
         #this function is responsible for determining the coordinates and storing with each disection of each room!
         

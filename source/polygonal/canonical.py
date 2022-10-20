@@ -7,6 +7,7 @@ import re
 class canonical:
    
     def __init__(self):
+        
         self.graphs = []
         self.G = nx.Graph()
         self.adjacencies = []
@@ -15,9 +16,12 @@ class canonical:
         self.node_coordinate = [] 
         self.new_node_coordinate = {}
         self.priority_order = []
+        self.vertex_added_to_triangulate = False #for dealing with the not-fully triangulated constraint! - not implemented so far
+
+
     def run(self):
         
-        #inputting te graph
+        #inputting the graph
         self.G = nx.Graph()
         self.adjacencies = []
         n = int(input("Enter number of nodes: "))
@@ -36,6 +40,27 @@ class canonical:
         plt.show()    #DEBUG TODOs
             
         #initialisations
+        temp_node_data = []
+        temp_node_data.append(self.node_coordinate[v1][0])
+        temp_node_data.append(self.node_coordinate[v1][1])
+        self.node_coordinate.append(temp_node_data)
+
+        temp_node_data = []
+        temp_node_data.append(self.node_coordinate[v2][0])
+        temp_node_data.append(self.node_coordinate[v2][1])
+        self.node_coordinate.append(temp_node_data)
+
+        self.G.add_node(n)
+        self.G.add_node(n+1)
+        self.G.add_edge(v1, n)
+        self.G.add_edge(v2, n)
+        self.G.add_edge(v2, n+1)
+        self.G.add_edge(n, n+1)
+        self.G.add_edge(vn, n)
+        self.G.add_edge(vn, n+1)
+        v1 = n
+        v2 = n+1
+        n += 2
         canord = np.zeros(n, dtype= int)
         self.canonical_order(canord, v1,v2,vn, n)   # TODO find v1,v2,vn
 
@@ -45,8 +70,7 @@ class canonical:
             temp_node_data.append(i.pos_x)
             temp_node_data.append(i.pos_y)
             self.node_coordinate.append(temp_node_data)
-    
-        self.graph_data = {'iteration':np.zeros(noOfNodes),'marked': np.zeros(noOfNodes),'neighbors': [],'currentCanonicalOrder': np.zeros(noOfNodes*noOfNodes).reshape(noOfNodes,noOfNodes), 'indexToCanOrd': np.zeros(noOfNodes)}
+        
         for i in range(noOfNodes):
             self.G.add_node(i, id = -1, chord = 0, mark = False, out = False)
         # t = list(tuple(map(int,input().split())) for r in range(graph.edgecnt))
@@ -75,20 +99,46 @@ class canonical:
         # self.G.add_edges_from(t) 
         
         #initialisations
-        canord = np.zeros(noOfNodes, dtype= int)
+        temp_node_data = []
+        temp_node_data.append(self.node_coordinate[v1][0]-100)
+        temp_node_data.append(self.node_coordinate[v1][1]+100)
+        self.node_coordinate.append(temp_node_data)
+
+        temp_node_data = []
+        temp_node_data.append(self.node_coordinate[v2][0]+100)
+        temp_node_data.append(self.node_coordinate[v2][1]+100)
+        self.node_coordinate.append(temp_node_data)
+
+        self.G.add_node(noOfNodes)
+        self.G.add_node(noOfNodes+1)
+        self.G.add_edge(v1, noOfNodes)
+        self.G.add_edge(v2, noOfNodes)
+        self.G.add_edge(v2, noOfNodes+1)
+        self.G.add_edge(noOfNodes, noOfNodes+1)
+        self.G.add_edge(vn, noOfNodes)
+        self.G.add_edge(vn, noOfNodes+1)
+        
+        
         if(priority_order!=""):
             self.priority_order = list(map(int, re.findall(r'\d+', priority_order)))
             if v1 in self.priority_order:
                 self.priority_order.remove(v1)
             if v2 in self.priority_order: 
                 self.priority_order.remove(v2)
+        v1 = noOfNodes
+        v2 = noOfNodes+1
+        noOfNodes += 2
+        self.graph_data = {'iteration':np.zeros(noOfNodes),'marked': np.zeros(noOfNodes),'neighbors': [],'currentCanonicalOrder': np.zeros(noOfNodes*noOfNodes).reshape(noOfNodes,noOfNodes), 'indexToCanOrd': np.zeros(noOfNodes)}
 
+        canord = np.zeros(noOfNodes, dtype= int)
         self.canonical_order(canord, v1,v2,vn,noOfNodes)   # TODO find v1,v2,vn
 
 
     def canonical_order(self,canord, v1,v2,vn,n):
         n = int(n)
+        
         print("Priority_Order : {}".format(self.priority_order))
+        
         mark = np.zeros((n,), dtype= bool)
         chord = np.zeros((n,), dtype= bool)
         out = np.zeros((n,), dtype= bool)
@@ -164,7 +214,7 @@ class canonical:
                 out[j] = True
             self.updatechord(chord, mark,out, v1,v2)
             print("Canonical Order: {}".format(canord))
-            # self.displayGraph(canord,n)
+            #self.displayGraph(canord,n)
             self.updateGraphData(n,i,vk,neighbors,canord)
 
         self.graph_data['neighbors'].append([0])
