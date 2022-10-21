@@ -18,7 +18,7 @@ class dissected:
     def __init__(self,graph_data,pen,color_list):
         pen.width(1.5)
         pen.color('black')
-        pen.write(1,font=("Arial", 20, "normal"))
+        # pen.write(1,font=("Arial", 20, "normal"))
         
         self.graph_data = graph_data
         self.pen = pen
