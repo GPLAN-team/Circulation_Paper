@@ -1,4 +1,3 @@
-from asyncio.windows_events import NULL
 from ssl import create_default_context
 import tkinter as tk
 import turtle
