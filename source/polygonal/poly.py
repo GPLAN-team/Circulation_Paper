@@ -1,9 +1,10 @@
-from asyncio.windows_events import NULL
-from ssl import create_default_context
+# from ssl import create_default_context
 import tkinter as tk
-import turtle
+# import turtle
+# from source.polygonal.draw import DrawOuterBoundary
 from source.polygonal.polygui import PolyGUI 
-import time
+# import time
+
 
 class Room:
     def __init__(self):
@@ -15,11 +16,13 @@ class Room:
 
 class dissected:
 
-    def __init__(self,graph_data,pen,color_list):
+    def __init__(self,graph_data,pen,color_list,shape,innerBoundary = [[200,400],[400,200],[200,0],[-200,0],[-400,200],[-200,400]]):
         pen.width(1.5)
         pen.color('black')
         # pen.write(1,font=("Arial", 20, "normal"))
-        
+        print("\nReceieved Inner Boundary = {}\n".format(innerBoundary))
+        print("\nReceieved Shape = {}\n".format(shape))
+
         self.graph_data = graph_data
         self.pen = pen
         self.noOfNodes = len(self.graph_data['iteration'])
@@ -28,17 +31,21 @@ class dissected:
         self.divFactor_den = 5
         self.correctCanonicalOrder = self.graph_data['currentCanonicalOrder'][self.noOfNodes-1]
         self.coordinatepoints  = {} #This is the dictionary which will hold the initial coordinates of the figure when they are being constructed
-        self.innerBoundary = [[200,400],[400,200],[200,0],[-200,0],[-400,200],[-200,400]] #this is the outer boundary that is specified by the user(can also be NULL) 
+        self.innerBoundary = innerBoundary #this is the outer boundary that is specified by the user(can also be NULL) 
         self.outerBoundary = []
         self.lowestPointIndex = 0 #for disections in case of custom rooms
         self.rooms = []  #this is the list of the rooms data structure, please please please remember! 
         self.outerPath = [0,2,1] #this stores the path of the outer surface -> used for finding the leftmost and righnmost neighbors in the canonical order 
+        self.shape = shape
         polygui = PolyGUI(pen,graph_data,self.rooms,color_list, self.innerBoundary)
-        # polygui.createPentagon(self.coordinatepoints)
-        # polygui.createInitalRoomsForPentagon(self.coordinatepoints)
-        # polygui.createHexagon(self.coordinatepoints)
-        # polygui.createInitalRoomsForHexagon(self.coordinatepoints)
-        self.lowestPointIndex= polygui.createCustom(self.outerBoundary)
+        if(shape=="Pentagon"):
+            polygui.createPentagon(self.coordinatepoints)
+            polygui.createInitalRoomsForPentagon(self.coordinatepoints)
+        elif(shape=="Hexagon"):
+            polygui.createHexagon(self.coordinatepoints)
+            polygui.createInitalRoomsForHexagon(self.coordinatepoints)
+        else:
+            self.lowestPointIndex= polygui.createCustom(self.outerBoundary)
         self.mainDisectionFunction()
         polygui.startDisection()
         # pen.hideturtle()
@@ -138,8 +145,12 @@ class dissected:
 
         
     def mainDisectionFunction(self):
-        #self.createDefaultDisectionsforHexagon()
-        self.createDefaultDisectionsforCustom()
+        if(self.shape=="Pentagon"):
+            self.createDefaultDisectionsforPentagon()
+        elif(self.shape=="Hexagon"):
+            self.createDefaultDisectionsforHexagon()
+        else:
+            self.createDefaultDisectionsforCustom()
         #now 0,1,2 are already made, we need to make the rooms for all the others from 3 to n-1 
         #this function is responsible for determining the coordinates and storing with each disection of each room!
         

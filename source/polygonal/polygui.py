@@ -4,8 +4,6 @@ import turtle
 import time
 from numpy import outer
 
-from sklearn.preprocessing import scale
-
 class PolyGUI:
     def __init__(self,pen,graph_data,rooms,color_list, outer):
         self.pen = pen

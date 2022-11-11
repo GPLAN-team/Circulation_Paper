@@ -92,16 +92,20 @@ class gui_class:
         self.v2 = 0 
         self.vn = 0
         self.po = ""
-
+        self.shape = ""
+        self.outer_boundary = []
+        self.choice = tk.IntVar(None)
         self.v11 = tk.IntVar(None)
         self.v11.set(0)
         self.v22 = tk.IntVar(None)
         self.v22.set(1)
         self.vnn = tk.IntVar(None)
         self.vnn.set(2)
+        self.shapes = tk.StringVar(None)
+        self.shapes.set("Custom")
+        self.outer_boundary2 = []
         self.priority_order = tk.StringVar(None)
         self.priority_order.set("")
-
 
         self.l = tk.IntVar(None)
         self.l.set(0)
@@ -1513,6 +1517,8 @@ class gui_class:
         self.v1 = self.v11.get()
         self.v2 = self.v22.get()
         self.vn = self.vnn.get()
+        self.outer_boundary = self.outer_boundary2
+        self.shape = self.shapes.get()
         self.po = self.priority_order.get()
         self.top.destroy()
         self.app.command="poly"
@@ -1644,12 +1650,107 @@ class gui_class:
         vn_val.grid(row  = 1, column = 3)
         priority_order = tk.Entry(root, textvariable = self.priority_order)
         priority_order.grid(row  = 1, column = 0)
+        self.choice = tk.IntVar()
+        self.choice.set(1)
+        sub_text = tk.Label(root, 
+        text="""Choose the outer structure of Floorplan:""",
+        justify = tk.LEFT,
+        padx = 20)
+        sub_text.grid(row=3)
 
-        ex = tk.Button(root,text = "Submit",command = self.polygonal)
-        ex.grid(row = 3)
+        btn1 = tk.Radiobutton(root, 
+               text="Pentagon",
+               padx = 20, 
+               variable=self.choice, 
+               value=1)
+        btn1.grid(row = 4,column = 0)
+        btn2 = tk.Radiobutton(root, 
+               text="Hexagon",
+               padx = 20, 
+               variable=self.choice, 
+               value=2)
+        btn2.grid(row = 4,column = 1)
+
+        btn3 = tk.Radiobutton(root, 
+               text="Draw Structure",
+               padx = 20, 
+               variable=self.choice, 
+               value=3)
+        btn3.grid(row = 4,column = 2)
+
+        ex = tk.Button(root,text = "Submit",command = self.choiceFunction)
+        ex.grid(row = 5)
         # else: 
         #     tk.messagebox.showerror("Error", "ERROR!! THE INITIAL GRAPH IS NON PLANAR, START AGAIN")
             # TODO NOt working if error
+    def choiceFunction(self):
+        if(self.choice.get()==1):
+            self.shapes.set("Pentagon")
+            self.polygonal()
+        elif(self.choice.get()==2):
+            self.shapes.set("Hexagon")
+            self.polygonal()
+        else:
+            self.cano_out_bdry()
+
+    def cano_out_bdry(self):
+        self.shapes.set("Custom");
+        self.top = tk.Toplevel(self.root, width = 300, height = 300)
+        root = self.top
+        root.title('Boundary of Outer Structure')
+        canvas = tk.Canvas(root, bg="white", width=600, height=400)
+        
+        btn = tk.Button(root, text='Submit!', width=40,
+             height=5, bd='10', command=self.polygonal)
+  
+        btn.place(x=65, y=100)
+
+        canvas.pack()
+        coords = {"x":0,"y":0,"x2":0,"y2":0}
+        self.outer_boundary2 = []
+        lines = []
+
+        self.previous_point = [] 
+        def click(e):
+            if(len(self.previous_point)==0):
+                coords["x"] = e.x
+                coords["y"] = e.y
+            else:
+                coords["x"] = self.previous_point[0]
+                coords["y"] = self.previous_point[1]
+                
+            lines.append(canvas.create_line(coords["x"],coords["y"],coords["x"],coords["y"]))
+
+        def release(l):
+            lis=[]
+            lis.append(coords["x"]);lis.append(coords["y"]);lis.append(coords["x2"]);lis.append(coords["y2"])
+            self.previous_point = [coords["x2"],coords["y2"]]
+
+            self.outer_boundary2.append(lis)
+
+        def drag(e):
+            coords["x2"] = e.x
+            coords["y2"] = e.y
+            canvas.coords(lines[-1], coords["x"],coords["y"],coords["x2"],coords["y2"])
+            
+        canvas.bind("<ButtonPress-1>", click)
+        canvas.bind("<B1-Motion>", drag) 
+        canvas.bind('<ButtonRelease-1>', release)
+        # root.mainloop()
+        print("Final = {}".format(self.outer_boundary2))
+        for i in range(len(self.outer_boundary2)):
+            self.outer_boundary2.append([self.outer_boundary2[i][2],self.outer_boundary2[i][3]])
+            if(i==len(self.outer_boundary2)-1):
+                self.outer_boundary2.append([self.outer_boundary2[0][0],self.outer_boundary2[0][1]])
+                print("Outer Boundary detected in the shape: {}".format(self.outer_boundary2))
+
+        
+        # self.outer_boundary[len(self.outer_boundary)-1][1] = self.outer_boundary[0][1]
+        # first = self.outer_boundary[0]
+        # for i in range(len(self.outer_boundary)-1):
+            # self.outer_boundary[i] = self.outer_boundary[i+1]
+        # self.outer_boundary[len(self.outer_boundary)-1] = first;
+        # poly.dissected(self.graph_data,self.pen,self.color_list,self.outer_boundary)
 
 
         

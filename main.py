@@ -362,12 +362,14 @@ def run():
                 #         'irreg_nodes': graph.irreg_nodes1
                 #     }
                 # gclass.output_data.append(graph_data)
+                print("\nReceieved Inner Boundary in Main= {}\n".format(gclass.outer_boundary))
+
                 draw.draw_poly(gclass.canonicalObject.graph_data,1
                         ,gclass.pen
                         ,1
                         ,gclass.value[6]
                         ,[]
-                        ,origin)
+                        ,origin,gclass.outer_boundary,gclass.shape)
             else:
                 old_dims = [[0] * gclass.value[0]
                             , [0] * gclass.value[0]
