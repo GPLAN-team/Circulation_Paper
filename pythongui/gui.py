@@ -106,7 +106,10 @@ class gui_class:
         self.outer_boundary2 = []
         self.priority_order = tk.StringVar(None)
         self.priority_order.set("")
-
+        self.debugcano = tk.IntVar()
+        self.canvasForOuterBoundary = None
+        self.initialPoint = []
+        self.finalPoint = []
         self.l = tk.IntVar(None)
         self.l.set(0)
         self.r = tk.IntVar(None)
@@ -1678,12 +1681,15 @@ class gui_class:
                value=3)
         btn3.grid(row = 4,column = 2)
 
+        tk.Checkbutton(root, text="Show Canonical Order", variable=self.debugcano).grid(row=5, sticky=tk.W)
+
         ex = tk.Button(root,text = "Submit",command = self.choiceFunction)
-        ex.grid(row = 5)
+        ex.grid(row = 6)
         # else: 
         #     tk.messagebox.showerror("Error", "ERROR!! THE INITIAL GRAPH IS NON PLANAR, START AGAIN")
             # TODO NOt working if error
     def choiceFunction(self):
+        self.top.destroy()
         if(self.choice.get()==1):
             self.shapes.set("Pentagon")
             self.polygonal()
@@ -1693,18 +1699,47 @@ class gui_class:
         else:
             self.cano_out_bdry()
 
+    def completeStructure(self):
+        self.canvasForOuterBoundary.create_line(self.outer_boundary2[len(self.outer_boundary2)-1][2],self.outer_boundary2[len(self.outer_boundary2)-1][3],self.outer_boundary2[0][0],self.outer_boundary2[0][1])
+   
+    def create_grid(self,event=None):
+        w = self.canvasForOuterBoundary.winfo_width() # Get current width of canvas
+        h = self.canvasForOuterBoundary.winfo_height() # Get current height of canvas
+        self.canvasForOuterBoundary.delete('grid_line') # Will only remove the grid_line
+
+        # Creates all vertical lines at intevals of 100
+        for i in range(0, w, 20):
+            self.canvasForOuterBoundary.create_line([(i, 0), (i, h)], tag='grid_line',fill='grey')
+
+        # Creates all horizontal lines at intevals of 100
+        for i in range(0, h, 20):
+            self.canvasForOuterBoundary.create_line([(0, i), (w, i)], tag='grid_line')
     def cano_out_bdry(self):
         self.shapes.set("Custom");
         self.top = tk.Toplevel(self.root, width = 300, height = 300)
         root = self.top
         root.title('Boundary of Outer Structure')
         canvas = tk.Canvas(root, bg="white", width=600, height=400)
+        self.canvasForOuterBoundary = canvas
+        canvas.bind('<Configure>', self.create_grid)
         
-        btn = tk.Button(root, text='Submit!', width=40,
+        main_text = tk.Label(root, text="First draw Active Front\n(Left to Right).")
+        main_text.place(x=0,y=0)
+        # main_text.grid(row = 0, column = 0)
+
+        main_text2 = tk.Label(root, text="At the end, to join \n initial and final points\n press Complete Structure \n and Submit")
+        # main_text2.grid(row = 1, column = 0)
+        main_text2.place(x=0,y=50)
+        btn0 = tk.Button(root, text='Complete Structure!', width=15,
+             height=5, bd='10', command=self.completeStructure)
+
+        btn0.place(x=0,y=120)
+
+        btn = tk.Button(root, text='Submit!', width=15,
              height=5, bd='10', command=self.polygonal)
   
-        btn.place(x=65, y=100)
-
+        btn.place(x=0, y=270)
+        canvas.scale("all",0,0,1,-1)
         canvas.pack()
         coords = {"x":0,"y":0,"x2":0,"y2":0}
         self.outer_boundary2 = []
@@ -1748,8 +1783,9 @@ class gui_class:
         # self.outer_boundary[len(self.outer_boundary)-1][1] = self.outer_boundary[0][1]
         # first = self.outer_boundary[0]
         # for i in range(len(self.outer_boundary)-1):
-            # self.outer_boundary[i] = self.outer_boundary[i+1]
+        #     self.outer_boundary[i] = self.outer_boundary[i+1]
         # self.outer_boundary[len(self.outer_boundary)-1] = first;
+
         # poly.dissected(self.graph_data,self.pen,self.color_list,self.outer_boundary)
 
 

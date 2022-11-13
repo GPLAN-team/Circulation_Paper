@@ -17,6 +17,7 @@ class canonical:
         self.new_node_coordinate = {}
         self.priority_order = []
         self.vertex_added_to_triangulate = False #for dealing with the not-fully triangulated constraint! - not implemented so far
+        self.debugCano = tk.IntVar(None)       #For User Input if they want to see the canonical Ordering output
 
 
     def run(self):
@@ -90,7 +91,7 @@ class canonical:
         # plt.show()    #Uncomment above 4 lines to see input graph
         return True
 
-    def runWithArguments(self,noOfNodes,v1,v2,vn,priority_order,graph,edge_set):
+    def runWithArguments(self,noOfNodes,v1,v2,vn,priority_order,graph,edge_set,debugCano):
         
         # print("v1 : {}".format(v1))
         # print("v1 : {}".format(v2))
@@ -108,6 +109,8 @@ class canonical:
         temp_node_data.append(self.node_coordinate[v2][0]+100)
         temp_node_data.append(self.node_coordinate[v2][1]+100)
         self.node_coordinate.append(temp_node_data)
+
+        self.debugCano = debugCano
 
         self.G.add_node(noOfNodes)
         self.G.add_node(noOfNodes+1)
@@ -227,6 +230,7 @@ class canonical:
         
         # for i in range(0,n, 1):
         #     print("i : {}",self.graph_data['neighbors'][i])
+
         fig, axes = plt.subplots(nrows=1, ncols=2)
         ax = axes.flatten()
         fig.set_size_inches(15.0, 5.25)
@@ -241,7 +245,8 @@ class canonical:
         nx.draw(self.graphs[1],self.new_node_coordinate,with_labels=True, font_weight='bold',ax = ax[1])
         ax[1].set_axis_off()
         plt.savefig("./source/polygonal/lastcanonicalorder.png")
-        plt.show() #ON
+        if self.debugCano.get() == 1:
+            plt.show() #ON
 
     def updateGraphData(self,n,i,vk,neighbors,canord):
         self.graph_data['iteration'][n+2-i-1] = n+2-i

@@ -347,7 +347,7 @@ def run():
             elif(gclass.command == "poly"): #Polygonal Floorplan
                 start = time.time()
                 # graph.irreg_single_dual()
-                graph.polyonalinput(gclass.canonicalObject,gclass.v1,gclass.v2,gclass.vn,gclass.po,gclass.value[2])
+                graph.polyonalinput(gclass.canonicalObject,gclass.v1,gclass.v2,gclass.vn,gclass.po,gclass.value[2],gclass.debugcano)
                 end = time.time()
 
                 # printe("Time taken: " + str((end-start)*1000) + " ms")
