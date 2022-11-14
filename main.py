@@ -145,6 +145,9 @@ def run():
                         # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
                         dim_constraints = [min_width, max_width, min_height, max_height, min_aspect, max_aspect]
                         (new_graph_data, success) = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned, dim_constraints, gclass.corridor_thickness)
+                        print("Constraints: ", dim_constraints)
+                        print("New graph data: ", new_graph_data)
+                        print("success: ", success)                        
                         # If there was some error in algorithm execution new_graph_data will be empty
                         # we display the pop-up error message
                         if new_graph_data == None:
@@ -567,10 +570,6 @@ def call_circulation(graph_data, edge_set, coord, is_dimensioned, dim_constraint
         room_y.append(room.bottom_right_y)
         room_height.append(abs(room.top_left_y - room.bottom_right_y))
         room_width.append(abs(room.top_left_x - room.bottom_right_x))
-
-
-
-
 
     graph_data['room_x'] = np.array(room_x)
     graph_data['room_y'] = np.array(room_y)

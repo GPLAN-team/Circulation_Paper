@@ -261,14 +261,12 @@ class circulation:
         print(self.dimensions)
         if(self.is_dimensioned == True):
             is_feasible = self.check_dimensions_feasibility()
+            self.is_dimensioning_successful = is_feasible
             if is_feasible == True:
                 for i in range(len(self.dimension_constraints[0])):
                     # self.room_area.append(self.dimensions[i][0] * self.dimensions[i][1])
                     self.room_area.append("W:{0}; H:{1}; A:{2}".format(round(self.dimensions[i][0], 2), 
                                             round(self.dimensions[i][1], 2), round(self.dimensions[i][0] * self.dimensions[i][1], 2)))
-                self.is_dimensioning_successful = True
-            else:
-                self.is_dimensioning_successful = False
 
     
     def add_corridor_between_2_rooms(self,room1: Room,room2: Room) -> None:
@@ -533,7 +531,7 @@ class circulation:
         for i in range(len(min_width)):
             width = self.dimensions[i][0]
             height = self.dimensions[i][1]
-            if (width < min_width[i] or height < min_height[i] or width/height < min_ar[i]):
+            if (width < min_width[i] - self.corridor_thickness or height < min_height[i] - self.corridor_thickness or width/height < min_ar[i]):
                 flag = 1
                 break
         if flag == 1:
