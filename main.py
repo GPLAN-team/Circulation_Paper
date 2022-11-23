@@ -62,8 +62,9 @@ def run():
             origin = 0
             if(gclass.command == "circulation"): # For spanning circulation
                 is_dimensioned = False
+                remove_corridor = False
                 dim_constraints = []
-                if gclass.value[8] == 0: #Non-dimensioned single circulation
+                if (gclass.value[8] == 0 and gclass.value[9] == 0): #Non-dimensioned single circulation
                     start = time.time()
                     graph.irreg_single_dual()
                     end = time.time()
@@ -89,7 +90,7 @@ def run():
                         }
                     
                     # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
-                    (new_graph_data, success) = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned, dim_constraints, gclass.corridor_thickness)
+                    (new_graph_data, success) = call_circulation(graph_data, gclass, node_coord, is_dimensioned, dim_constraints, remove_corridor)
                     # If there was some error in algorithm execution new_graph_data will be empty
                     # we display the pop-up error message
                     if new_graph_data == None:
@@ -101,7 +102,7 @@ def run():
                         draw_circulation(new_graph_data, gclass.pen, gclass.ocan.canvas, gclass.value[6])
 
 
-                else: #Dimensioned single circulation
+                elif(gclass.value[8] == 1 and gclass.value[9] == 0): #Dimensioned single circulation
                     is_dimensioned = True
                     feasible_dim = 0
                     old_dims = [[0] * gclass.value[0]
@@ -144,7 +145,7 @@ def run():
 
                         # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
                         dim_constraints = [min_width, max_width, min_height, max_height, min_aspect, max_aspect]
-                        (new_graph_data, success) = call_circulation(graph_data, gclass.value[2], node_coord, is_dimensioned, dim_constraints, gclass.corridor_thickness)
+                        (new_graph_data, success) = call_circulation(graph_data, gclass, node_coord, is_dimensioned, dim_constraints, remove_corridor)
                         print("Constraints: ", dim_constraints)
                         print("New graph data: ", new_graph_data)
                         print("success: ", success)                        
@@ -164,6 +165,38 @@ def run():
                     
                     if(feasible_dim == 0):
                         tk.messagebox.showerror("Error", "ERROR!! NO CIRCULATION POSSIBLE FOR GIVEN DIMENSIONS")
+                
+                elif(gclass.value[8] == 0 and gclass.value[9] == 1): # Add/remove
+                    remove_corridor = True
+                    start = time.time()
+                    graph.irreg_single_dual()
+                    end = time.time()
+                    printe("Time taken: " + str((end-start)*1000) + " ms")
+                    print("type of roomx " + str(type(graph.room_x)))
+                    graph_data = {
+                            'room_x': graph.room_x,
+                            'room_y': graph.room_y,
+                            'room_width': graph.room_width,
+                            'room_height': graph.room_height,
+                            'area': graph.area,
+                            'extranodes': graph.extranodes,
+                            'mergednodes': graph.mergednodes,
+                            'irreg_nodes': graph.irreg_nodes1
+                        }
+                    
+                    (new_graph_data, success) = call_circulation(graph_data, gclass, node_coord, is_dimensioned, dim_constraints, remove_corridor)
+                    
+                    # If there was some error in algorithm execution new_graph_data will be empty
+                    # we display the pop-up error message
+                    if new_graph_data == None:
+                        tk.messagebox.showerror("Error", "ERROR!! THE INITIAL CHOSEN ENTRY EDGE MUST BE EXTERIOR EDGE")
+                    
+                    # If no issues we continue to draw the corridor
+                    else :
+                        # draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6], gclass.entry_door)
+                        draw_circulation(new_graph_data, gclass.pen, gclass.ocan.canvas, gclass.value[6])
+
+
 
             elif(gclass.command == "single"): #Single Irregular Dual/Floorplan
                 if(gclass.value[4] == 0): #Non-Dimensioned single dual
@@ -520,10 +553,11 @@ def make_dissection_corridor(gclass):
 #     G.circulation(gclass.pen,gclass.ocan.canvas, C, 1, 2)
 
 # def call_circulation(graph_data, edge_set, entry, thickness):
-def call_circulation(graph_data, edge_set, coord, is_dimensioned, dim_constraints, thickness):
+def call_circulation(graph_data, gclass, coord, is_dimensioned, dim_constraints, remove_corridor):
 
     g = nx.Graph()
-    
+    edge_set = gclass.value[2]
+
     for x in edge_set:
         g.add_edge(x[0], x[1])
     
@@ -536,7 +570,7 @@ def call_circulation(graph_data, edge_set, coord, is_dimensioned, dim_constraint
     # cir.plot(g,n)
     rfp = cir.RFP(g, rooms)
 
-    circulation_obj = cir.circulation(g, thickness, rfp)
+    circulation_obj = cir.circulation(g, gclass.corridor_thickness, rfp)
     # circulation_obj = cir.circulation(g, rfp)
     if is_dimensioned == True:
         circulation_obj.is_dimensioned = True
@@ -547,6 +581,15 @@ def call_circulation(graph_data, edge_set, coord, is_dimensioned, dim_constraint
     if circulation_result == 0:
         return None
     
+    if remove_corridor == True:
+        corridors = circulation_obj.adjacency
+        gclass.remove_corridor_gui(corridors)
+        print("Edges to remove: ",gclass.remove_edges)
+
+        for x in gclass.remove_edges:
+            circulation_obj.remove_corridor(circulation_obj.circulation_graph,x[0],x[1])
+        
+        
     # To remove entry corridor alone we are just shifting rooms by looking at second corridor vertex
     # Done by shifting the range left bound in for loop of adjust_RFP_to_circulation()
     circulation_obj.adjust_RFP_to_circulation()

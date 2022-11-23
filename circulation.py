@@ -63,8 +63,7 @@ class circulation:
         self.room_area = []
         # self.room_width = []
         # self.room_height = []
-        self.is_dimensioning_successful = False
-    
+        self.is_dimensioning_successful = False    
     
     def multiple_circulation(self,coord:List) -> None:
 
@@ -224,7 +223,8 @@ class circulation:
         [a,b] = self.adjacency.get(corridor_vertex)
         
         return [a,b]
-
+    
+    # Main function integrating the others
     def adjust_RFP_to_circulation(self) -> None:
         """
         Adjusts the RFP to form the circulation
@@ -906,7 +906,7 @@ def main():
 
         rfp = RFP(g, [room1, room2, room3, room4])
         circulation_obj = circulation(g, 0.1, rfp)
-        rooms = []
+        # rooms = []
         circulation_obj.circulation_algorithm()
         plot(circulation_obj.circulation_graph, len(circulation_obj.circulation_graph))
         circulation_obj.remove_corridor(circulation_obj.circulation_graph)
@@ -939,8 +939,8 @@ def main():
     # test_comm_neighbors()
     # test_move_edges()
     # test_adjust_RFP_to_circ()
-    # test_remove_corridor()
-    test_multiple_circ()
+    test_remove_corridor()
+    # test_multiple_circ()
     
 
 if __name__ == "__main__":

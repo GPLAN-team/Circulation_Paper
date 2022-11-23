@@ -96,9 +96,11 @@ class gui_class:
         self.ct = tk.DoubleVar(None)
         self.ct.set(0.1)
         self.corridor_thickness=0.1
+        self.remove_or_not = []
+        self.remove_edges = []
+        self.adjacency = {}
         # self.entry_door.append(self.l)
         # self.entry_door.append(self.r)
-
         self.output_found = False
         self.json_data = {}
         screen_width = self.root.winfo_screenwidth()
@@ -121,8 +123,9 @@ class gui_class:
 
         self.app = self.PlotApp(self.frame2,self)
         self.root.title('Input Graph')
-        self.checkvar1 = tk.IntVar()
-        self.checkvar2 = tk.IntVar()
+        self.checkvar1 = tk.IntVar() # For dimenisioned floorplan
+        self.checkvar2 = tk.IntVar() # For dimensioned circ
+        self.checkvar3 = tk.IntVar() # For remove/add circulation
         self.e1 = tk.IntVar()
         self.e2 = tk.IntVar()
 
@@ -236,7 +239,7 @@ class gui_class:
                 temp_node_data.append(i.pos_x)
                 temp_node_data.append(i.pos_y)
                 node_coordinate.append(temp_node_data)
-            return [len(self.nodes_data),self.edge_count,self.edges,self.command,self.master.checkvar1.get(),list(filter(None, [row[1].get() for row in self.table._data_vars])),self.hex_list, node_coordinate,self.master.checkvar2.get()]
+            return [len(self.nodes_data),self.edge_count,self.edges,self.command,self.master.checkvar1.get(),list(filter(None, [row[1].get() for row in self.table._data_vars])),self.hex_list, node_coordinate,self.master.checkvar2.get(), self.master.checkvar3.get()]
 
         def createCanvas(self):
             self.id_circle.clear()
@@ -1316,9 +1319,12 @@ class gui_class:
             # b6.grid(row=6,column=0,padx=5,pady=5)
             c1 = tk.Checkbutton(master.frame1, text = "Dimensioned Circulation",relief='flat',**button_details,selectcolor='#4A4E69',width=13 ,variable = master.checkvar2,onvalue = 1, offvalue = 0)
             c1.grid(row=7,column=0,padx=5,pady=5)
-           
+
+            c2 = tk.Checkbutton(master.frame1, text = "Remove Circulation",relief='flat',**button_details,selectcolor='#4A4E69',width=13 ,variable = master.checkvar3,onvalue = 1, offvalue = 0)
+            c2.grid(row=8,column=0,padx=5,pady=5)
+
             b5 = tk.Button(master.frame1,width=15, text='EXIT',relief='flat', **button_details,command=master.exit)
-            b5.grid(row=8,column=0,padx=5,pady=5)
+            b5.grid(row=9,column=0,padx=5,pady=5)
 
     class menu:
         def __init__(self,master):
@@ -1661,7 +1667,52 @@ class gui_class:
         self.app.command="circulation"
         self.command = "circulation"
         self.end.set(self.end.get()+1)
+    
+    def remove_corridor_gui(self, adjacency):
+        """GUI for user to indicate where to remove corridors
 
+        Args:
+            remove_corridor (List): List to indicate to which existing corridors we want to remove
+        """
+        self.adjacency = adjacency
+        for i in range(len(adjacency)):
+            self.remove_or_not.append(tk.IntVar(value=0))
+        self.top = tk.Toplevel(self.root, width=2000, height=1000)
+        root = self.top
+        root.geometry("400x400")
+        root.title('Remove corridor')
+        corr_edges = list(self.adjacency.values())
+        corr_text = tk.Label(root,text="Enter 1 if you want to remove corridor",justify=tk.CENTER)
+        corr_text.grid(row= 3, column= 10, ipadx = 5, ipady = 20)
+        for i in range(1,len(adjacency)):
+            text = tk.Label(root, text = str(corr_edges[i][0]) + "           " + str(corr_edges[i][1]))
+            text.grid(row=i+30,column=8)
+            rem_val = tk.Entry(root, textvariable=self.remove_or_not[i])
+            rem_val.grid(row=i+30,column=10)
+
+        ex = tk.Button(root,text = "Submit",command = self.remove_corridor_done, justify=tk.CENTER)
+        ex.place(relx=0.4 , rely= 0.025*(10+len(adjacency)))
+
+        ex1 = tk.Button(root,text = "Remove all",command = self.remove_all, justify=tk.CENTER)
+        ex1.place(relx=0.6 , rely= 0.025*(10+len(adjacency)))
+    
+    def remove_corridor_done(self):
+        corr_edges = list(self.adjacency.values())
+        for i in range(len(corr_edges)):
+            if(self.remove_or_not[i].get()):
+                self.remove_edges.append(corr_edges[i])
+        
+        # self.end.set(self.end.get()+1)
+        self.top.destroy()
+
+        self.app.command="circulation"
+        self.command = "circulation"
+        self.end.set(self.end.get()+1)
+
+    def remove_all(self):
+        for i in range(len(self.remove_or_not)):
+            self.remove_or_not[i].set(1)
+        
     def save_file(self,filename = "Rectangular Dual Graph.txt"):
         # self.root.filename = self.value
         if filename == "Rectangular Dual Graph.txt":
