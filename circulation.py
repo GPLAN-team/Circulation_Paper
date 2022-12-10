@@ -238,8 +238,11 @@ class circulation:
         # For each corridor vertex we find the pair of rooms that this corridor connects
         # Shifted left bound by 1 to shift the boundary only from the second corridor vertex
         for corridor in range(len(self.graph) + 1, len(self.circulation_graph)):
-            [room1, room2] = self.corridor_boundary_rooms(corridor)
-            self.add_corridor_between_2_rooms(self.RFP.rooms[room1],self.RFP.rooms[room2])
+            if corridor in list(self.adjacency.keys()):
+                [room1, room2] = self.corridor_boundary_rooms(corridor)
+                self.add_corridor_between_2_rooms(self.RFP.rooms[room1],self.RFP.rooms[room2])
+            else:
+                continue
         
         # For rooms that are connected by corridors we directly assign relative push values
         # as calculated in add_corridor_between_rooms fn
