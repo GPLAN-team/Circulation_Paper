@@ -31,7 +31,7 @@ class canonical:
         t = list(tuple(map(int,input().split())) for r in range(int(input('enter no of self.adjacencies : '))))  
         self.G.add_edges_from(t) 
         self.graphs.append(self.G)
-        
+            
         v1 = int(input("Enter v1: "))
         v2 = int(input("Enter v2: "))
         vn = int(input("Enter vn: "))
@@ -98,8 +98,18 @@ class canonical:
         # print("v1 : {}".format(vn))
         
         # self.G.add_edges_from(t) 
-        
+       
+        outerboundary = list(map(int, re.findall(r'\d+', priority_order)))
         #initialisations
+        v1 = outerboundary[0]
+        v2 = outerboundary[1]
+        vn = outerboundary[2]
+        
+        temp_node_data = []
+        temp_node_data.append(self.node_coordinate[vn][0]-100)
+        temp_node_data.append(self.node_coordinate[vn][1]+100)
+        self.node_coordinate.append(temp_node_data)
+
         temp_node_data = []
         temp_node_data.append(self.node_coordinate[v1][0]-100)
         temp_node_data.append(self.node_coordinate[v1][1]+100)
@@ -112,25 +122,43 @@ class canonical:
 
         self.debugCano = debugCano
 
-        self.G.add_node(noOfNodes)
-        self.G.add_node(noOfNodes+1)
-        self.G.add_edge(v1, noOfNodes)
-        self.G.add_edge(v2, noOfNodes)
-        self.G.add_edge(v2, noOfNodes+1)
-        self.G.add_edge(noOfNodes, noOfNodes+1)
-        self.G.add_edge(vn, noOfNodes)
-        self.G.add_edge(vn, noOfNodes+1)
-        
-        
         if(priority_order!=""):
             self.priority_order = list(map(int, re.findall(r'\d+', priority_order)))
             if v1 in self.priority_order:
                 self.priority_order.remove(v1)
             if v2 in self.priority_order: 
                 self.priority_order.remove(v2)
-        v1 = noOfNodes
-        v2 = noOfNodes+1
-        noOfNodes += 2
+        
+       
+        # if (self.G.number_of_edges() != (3*noOfNodes -6)):
+            
+        #     self.isFTPG = False
+        #     self.G.add_node(noOfNodes)
+        #     for i in range(0,noOfNodes,1):
+        #         self.G.add_edge(i, noOfNodes)
+        #     vn = noOfNodes
+        #     noOfNodes +=1 
+        
+        #change this
+        self.G.add_node(noOfNodes)
+        for i in range(0, len(outerboundary),1):
+            self.G.add_edge(noOfNodes, outerboundary[i])
+        vn = noOfNodes
+        noOfNodes += 1
+
+        # self.G.add_node(noOfNodes)
+        # self.G.add_node(noOfNodes+1)
+        # self.G.add_edge(v1, noOfNodes)
+        # self.G.add_edge(v2, noOfNodes)
+        # self.G.add_edge(v2, noOfNodes+1)
+        # self.G.add_edge(noOfNodes, noOfNodes+1)
+        # self.G.add_edge(vn, noOfNodes)
+        # self.G.add_edge(vn, noOfNodes+1)
+        # v1 = noOfNodes
+        # v2 = noOfNodes+1
+        # noOfNodes += 2
+    
+        
         self.graph_data = {'iteration':np.zeros(noOfNodes),'marked': np.zeros(noOfNodes),'neighbors': [],'currentCanonicalOrder': np.zeros(noOfNodes*noOfNodes).reshape(noOfNodes,noOfNodes), 'indexToCanOrd': np.zeros(noOfNodes)}
 
         canord = np.zeros(noOfNodes, dtype= int)
@@ -186,6 +214,7 @@ class canonical:
             poss_vertex = np.where(temp_array == True)[0].flatten()
             # print(poss_vertex)
             print("Options for Next Iteration: {}".format(poss_vertex)) 
+            
             if len(self.priority_order)>0 and self.priority_order[0] in poss_vertex:
                 vk = self.priority_order[0]
                 self.priority_order.remove(self.priority_order[0])
@@ -193,6 +222,7 @@ class canonical:
                 vk = poss_vertex[0]
                 if vk in self.priority_order:
                     self.priority_order.remove(vk)
+            
             canord[vk] = i
             mark[vk] = True
             print("Marked: {}".format(vk))
