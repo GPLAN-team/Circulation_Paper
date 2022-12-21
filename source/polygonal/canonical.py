@@ -99,16 +99,16 @@ class canonical:
         
         # self.G.add_edges_from(t) 
        
-        outerboundary = list(map(int, re.findall(r'\d+', priority_order)))
-        #initialisations
-        v1 = outerboundary[0]
-        v2 = outerboundary[1]
-        vn = outerboundary[2]
+        # outerboundary = list(map(int, re.findall(r'\d+', priority_order)))
+        # #initialisations
+        # v1 = outerboundary[0]
+        # v2 = outerboundary[1]
+        # vn = outerboundary[2]
         
-        temp_node_data = []
-        temp_node_data.append(self.node_coordinate[vn][0]-100)
-        temp_node_data.append(self.node_coordinate[vn][1]+100)
-        self.node_coordinate.append(temp_node_data)
+        # temp_node_data = []
+        # temp_node_data.append(self.node_coordinate[vn][0]-100)
+        # temp_node_data.append(self.node_coordinate[vn][1]+100)
+        # self.node_coordinate.append(temp_node_data)
 
         temp_node_data = []
         temp_node_data.append(self.node_coordinate[v1][0]-100)
@@ -122,6 +122,16 @@ class canonical:
 
         self.debugCano = debugCano
 
+        # self.G.add_node(noOfNodes)
+        # self.G.add_node(noOfNodes+1)
+        # self.G.add_edge(v1, noOfNodes)
+        # self.G.add_edge(v2, noOfNodes)
+        # self.G.add_edge(v2, noOfNodes+1)
+        # self.G.add_edge(noOfNodes, noOfNodes+1)
+        # self.G.add_edge(vn, noOfNodes)
+        # self.G.add_edge(vn, noOfNodes+1)
+
+
         if(priority_order!=""):
             self.priority_order = list(map(int, re.findall(r'\d+', priority_order)))
             if v1 in self.priority_order:
@@ -129,7 +139,10 @@ class canonical:
             if v2 in self.priority_order: 
                 self.priority_order.remove(v2)
         
-       
+        # v1 = noOfNodes
+        # v2 = noOfNodes+1
+        # noOfNodes += 2
+
         # if (self.G.number_of_edges() != (3*noOfNodes -6)):
             
         #     self.isFTPG = False
@@ -140,11 +153,11 @@ class canonical:
         #     noOfNodes +=1 
         
         #change this
-        self.G.add_node(noOfNodes)
-        for i in range(0, len(outerboundary),1):
-            self.G.add_edge(noOfNodes, outerboundary[i])
-        vn = noOfNodes
-        noOfNodes += 1
+        # self.G.add_node(noOfNodes)
+        # for i in range(0, len(outerboundary),1):
+        #     self.G.add_edge(noOfNodes, outerboundary[i])
+        # vn = noOfNodes
+        # noOfNodes += 1
 
         # self.G.add_node(noOfNodes)
         # self.G.add_node(noOfNodes+1)

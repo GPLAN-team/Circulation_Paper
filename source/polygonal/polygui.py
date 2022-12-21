@@ -29,7 +29,7 @@ class PolyGUI:
         # self.lshape([-100,0],[100,-200])
         # self.createPentagon()
         # self.createInitalRoomsForPentagon()
-        for room in range(0,len(self.rooms)-1):
+        for room in range(0,len(self.rooms)):
             # if(room==2):
             #     continue
             start_coord = (0,0) #IMP this is the initial starting coordinate of the dissection
