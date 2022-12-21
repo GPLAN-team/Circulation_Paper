@@ -15,7 +15,7 @@ from random import randint
 from .graphoperations import biconnectivity as bcn
 from .graphoperations import oneconnectivity as onc
 from .graphoperations import operations as opr
-from .graphoperations import graph_crossings as gc
+from .graphoperations import graph_crossings1 as gc
 from .irregular import shortcutresolver as sr
 from .boundary import cip as cip
 from .boundary import news as news
@@ -25,10 +25,10 @@ from .floorplangen import rdg as rdg
 from .floorplangen import dual as dual
 from .graphoperations import triangularity as trng
 from .floorplangen import transformation as transform
-from source.dimensioning import floorplan_to_st as fpts
+from .dimensioning import floorplan_to_st as fpts
 from .floorplangen import flippable as flp
 from .irregular import septri as st
-from source.dimensioning import block_checker as bc
+from .dimensioning import block_checker as bc
 
 class OCError(Exception):
     """One-connected Error
