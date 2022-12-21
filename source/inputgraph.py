@@ -12,6 +12,7 @@ import copy
 import numpy as np
 import networkx as nx
 from random import randint
+import source.polygonal.ushape
 from .graphoperations import biconnectivity as bcn
 from .graphoperations import oneconnectivity as onc
 from .graphoperations import operations as opr
@@ -747,3 +748,6 @@ def generate_multiple_bdy(matrix, nodecnt, edgecnt, bcn_edges, trng_edges, merge
         cip_list = news.find_multiple_boundary(
             news.all_boundaries(corner_pts, outer_boundary), outer_boundary)
     return matrix, cip_list, nodecnt, edgecnt, mergednodes, irreg_nodes1, irreg_nodes2
+
+def ushaped(graph):
+    source.polygonal.ushape.UShapedFloorplan(graph)

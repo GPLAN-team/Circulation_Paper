@@ -1320,6 +1320,9 @@ class gui_class:
 
             b7 = tk.Button(master.frame1,width=15, text='Polygonal Floorplans',relief='flat',**button_details,command=master.polygonal_inputbox)
             b7.grid(row=7,column=0,padx=5,pady=5)
+
+            b8 = tk.Button(master.frame1,width=15,text='U Shaped Floor Plan',relief='flat',**button_details,command=master.u_shaped)
+            b8.grid(row=8,column=0,padx=5,pady=5)
             # b3 = tk.Button(master.frame1,width=15, text='Circulation',relief='flat',**button_details,command=master.change_entry_gui)
             # b3.grid(row=4,column=0,padx=5,pady=5)
 
@@ -1337,7 +1340,7 @@ class gui_class:
             # b6.grid(row=6,column=0,padx=5,pady=5)
            
             b5 = tk.Button(master.frame1,width=15, text='EXIT',relief='flat', **button_details,command=master.exit)
-            b5.grid(row=8,column=0,padx=5,pady=5)
+            b5.grid(row=9,column=0,padx=5,pady=5)
 
     class menu:
         def __init__(self,master):
@@ -1552,6 +1555,11 @@ class gui_class:
             self.app = self.PlotApp(self.frame2,self)
             self.dclass.root.destroy()
             self.dissecting = 1
+
+    def u_shaped(self):
+        self.app.command="u_shaped"
+        self.command = "u_shaped"
+        self.end.set(self.end.get()+1)
 
     def restart(self):
         os.execl(sys.executable, os.path.abspath(__file__), *sys.argv)
