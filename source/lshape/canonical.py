@@ -1,3 +1,4 @@
+from turtle import pos
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,7 +8,6 @@ import re
 class canonical:
    
     def __init__(self):
-        
         self.graphs = []
         self.G = nx.Graph()
         self.adjacencies = []
@@ -15,14 +15,12 @@ class canonical:
         self.graph_data = {}
         self.node_coordinate = [] 
         self.new_node_coordinate = {}
-        self.priority_order = []
-        self.vertex_added_to_triangulate = False #for dealing with the not-fully triangulated constraint! - not implemented so far
-        self.debugCano = tk.IntVar(None)       #For User Input if they want to see the canonical Ordering output
-
-
+        self.triplet = []
+        self.lshapegraph = []
+        self.lshapematrix = []
     def run(self):
         
-        #inputting the graph
+        #inputting te graph
         self.G = nx.Graph()
         self.adjacencies = []
         n = int(input("Enter number of nodes: "))
@@ -31,7 +29,7 @@ class canonical:
         t = list(tuple(map(int,input().split())) for r in range(int(input('enter no of self.adjacencies : '))))  
         self.G.add_edges_from(t) 
         self.graphs.append(self.G)
-            
+        
         v1 = int(input("Enter v1: "))
         v2 = int(input("Enter v2: "))
         vn = int(input("Enter vn: "))
@@ -41,43 +39,26 @@ class canonical:
         plt.show()    #DEBUG TODOs
             
         #initialisations
-        temp_node_data = []
-        temp_node_data.append(self.node_coordinate[v1][0])
-        temp_node_data.append(self.node_coordinate[v1][1])
-        self.node_coordinate.append(temp_node_data)
-
-        temp_node_data = []
-        temp_node_data.append(self.node_coordinate[v2][0])
-        temp_node_data.append(self.node_coordinate[v2][1])
-        self.node_coordinate.append(temp_node_data)
-
-        self.G.add_node(n)
-        self.G.add_node(n+1)
-        self.G.add_edge(v1, n)
-        self.G.add_edge(v2, n)
-        self.G.add_edge(v2, n+1)
-        self.G.add_edge(n, n+1)
-        self.G.add_edge(vn, n)
-        self.G.add_edge(vn, n+1)
-        v1 = n
-        v2 = n+1
-        n += 2
         canord = np.zeros(n, dtype= int)
         self.canonical_order(canord, v1,v2,vn, n)   # TODO find v1,v2,vn
 
-    def displayInputGraph(self,noOfNodes,edge_set,nodes_data):
+    def displayInputGraph(self,noOfNodes,matrix,nodes_data=[]):
         for i in nodes_data: #To get the Coordinates of the nodes 
             temp_node_data = []
             temp_node_data.append(i.pos_x)
             temp_node_data.append(i.pos_y)
             self.node_coordinate.append(temp_node_data)
-        
+    
+        self.graph_data = {'iteration':np.zeros(noOfNodes),'marked': np.zeros(noOfNodes),'neighbors': [],'currentCanonicalOrder': np.zeros(noOfNodes*noOfNodes).reshape(noOfNodes,noOfNodes), 'indexToCanOrd': np.zeros(noOfNodes)}
         for i in range(noOfNodes):
             self.G.add_node(i, id = -1, chord = 0, mark = False, out = False)
         # t = list(tuple(map(int,input().split())) for r in range(graph.edgecnt))
-        
-        for x in edge_set:
-            self.G.add_edge(x[0], x[1])
+            rows, cols = np.where(matrix == 1)
+            edges = zip(rows.tolist(), cols.tolist())
+            self.G.add_edges_from(edges)
+
+        # for x in edge_set:
+        #     self.G.add_edge(x[0], x[1])
         
         # self.G.add_edges_from(t) 
         self.graphs.append(self.G)
@@ -85,104 +66,38 @@ class canonical:
         if(not is_planar):
             return False
 
-        # nx.draw(self.G,self.node_coordinate,with_labels=True, font_weight='bold')
-        # plt.gca().invert_yaxis()
-        # plt.savefig("inputgraph.png")
-        # plt.show()    #Uncomment above 4 lines to see input graph
+        nx.draw(self.G,self.node_coordinate,with_labels=True, font_weight='bold')
+        plt.gca().invert_yaxis()
+        plt.savefig("inputgraph.png")
+        plt.show()    #Uncomment above 4 lines to see input graph
         return True
 
-    def runWithArguments(self,noOfNodes,v1,v2,vn,priority_order,graph,edge_set,debugCano):
+    def runWithArguments(self,noOfNodes,v1,v2,vn,triplet,graph,matrix):
         
         # print("v1 : {}".format(v1))
         # print("v1 : {}".format(v2))
         # print("v1 : {}".format(vn))
         
         # self.G.add_edges_from(t) 
-       
-        # outerboundary = list(map(int, re.findall(r'\d+', priority_order)))
-        # #initialisations
-        # v1 = outerboundary[0]
-        # v2 = outerboundary[1]
-        # vn = outerboundary[2]
-        
-        # temp_node_data = []
-        # temp_node_data.append(self.node_coordinate[vn][0]-100)
-        # temp_node_data.append(self.node_coordinate[vn][1]+100)
-        # self.node_coordinate.append(temp_node_data)
-
-        temp_node_data = []
-        temp_node_data.append(self.node_coordinate[v1][0]-100)
-        temp_node_data.append(self.node_coordinate[v1][1]+100)
-        self.node_coordinate.append(temp_node_data)
-
-        temp_node_data = []
-        temp_node_data.append(self.node_coordinate[v2][0]+100)
-        temp_node_data.append(self.node_coordinate[v2][1]+100)
-        self.node_coordinate.append(temp_node_data)
-
-        self.debugCano = debugCano
-
-        # self.G.add_node(noOfNodes)
-        # self.G.add_node(noOfNodes+1)
-        # self.G.add_edge(v1, noOfNodes)
-        # self.G.add_edge(v2, noOfNodes)
-        # self.G.add_edge(v2, noOfNodes+1)
-        # self.G.add_edge(noOfNodes, noOfNodes+1)
-        # self.G.add_edge(vn, noOfNodes)
-        # self.G.add_edge(vn, noOfNodes+1)
-
-
-        if(priority_order!=""):
-            self.priority_order = list(map(int, re.findall(r'\d+', priority_order)))
-            if v1 in self.priority_order:
-                self.priority_order.remove(v1)
-            if v2 in self.priority_order: 
-                self.priority_order.remove(v2)
-        
-        # v1 = noOfNodes
-        # v2 = noOfNodes+1
-        # noOfNodes += 2
-
-        # if (self.G.number_of_edges() != (3*noOfNodes -6)):
-            
-        #     self.isFTPG = False
-        #     self.G.add_node(noOfNodes)
-        #     for i in range(0,noOfNodes,1):
-        #         self.G.add_edge(i, noOfNodes)
-        #     vn = noOfNodes
-        #     noOfNodes +=1 
-        
-        #change this
-        # self.G.add_node(noOfNodes)
-        # for i in range(0, len(outerboundary),1):
-        #     self.G.add_edge(noOfNodes, outerboundary[i])
-        # vn = noOfNodes
-        # noOfNodes += 1
-
-        # self.G.add_node(noOfNodes)
-        # self.G.add_node(noOfNodes+1)
-        # self.G.add_edge(v1, noOfNodes)
-        # self.G.add_edge(v2, noOfNodes)
-        # self.G.add_edge(v2, noOfNodes+1)
-        # self.G.add_edge(noOfNodes, noOfNodes+1)
-        # self.G.add_edge(vn, noOfNodes)
-        # self.G.add_edge(vn, noOfNodes+1)
-        # v1 = noOfNodes
-        # v2 = noOfNodes+1
-        # noOfNodes += 2
-    
-        
-        self.graph_data = {'iteration':np.zeros(noOfNodes),'marked': np.zeros(noOfNodes),'neighbors': [],'currentCanonicalOrder': np.zeros(noOfNodes*noOfNodes).reshape(noOfNodes,noOfNodes), 'indexToCanOrd': np.zeros(noOfNodes)}
-
+        # priority_order = ""
+        #initialisations
         canord = np.zeros(noOfNodes, dtype= int)
+        # if(priority_order!=""):
+        #     self.priority_order = list(map(int, re.findall(r'\d+', priority_order)))
+        #     if v1 in self.priority_order:
+        #         self.priority_order.remove(v1)
+        #     if v2 in self.priority_order: 
+        #         self.priority_order.remove(v2)
+
+        self.triplet = triplet
+        self.lshapegraph = graph
+        self.lshapematrix = matrix
         self.canonical_order(canord, v1,v2,vn,noOfNodes)   # TODO find v1,v2,vn
 
 
     def canonical_order(self,canord, v1,v2,vn,n):
         n = int(n)
-        
-        print("Priority_Order : {}".format(self.priority_order))
-        
+        # print("Priority_Order : {}".format(self.priority_order))
         mark = np.zeros((n,), dtype= bool)
         chord = np.zeros((n,), dtype= bool)
         out = np.zeros((n,), dtype= bool)
@@ -215,10 +130,17 @@ class canonical:
         self.graph_data['marked'][1] = v2
         self.graph_data['indexToCanOrd'][1] = v2
         self.graph_data['currentCanonicalOrder'][1] = canord
+
         #self.graph_data['neighbors'].append([0])
 
-        canord[vn] = n-1
+        tempList = []
+        tempList.append(list(self.G.neighbors(v1)))
+        tempList.append(list(self.G.neighbors(v2)))
+        news = (self.lshapegraph.north,self.lshapegraph.west,self.lshapegraph.east,self.lshapegraph.south)
+        secondary_vertices = set(tempList)
+        secondary_vertices = secondary_vertices.difference(news)
 
+        canord[vn] = n-1
         for i in range(n-1, 1, -1):
             print("\n\nIteration {}".format(n+2-i))
             print("Chords : {}".format(chord))
@@ -226,16 +148,25 @@ class canonical:
             # print(temp_array)
             poss_vertex = np.where(temp_array == True)[0].flatten()
             # print(poss_vertex)
-            print("Options for Next Iteration: {}".format(poss_vertex)) 
+            print("Options for Next Iteration: {}".format(poss_vertex))
             
-            if len(self.priority_order)>0 and self.priority_order[0] in poss_vertex:
-                vk = self.priority_order[0]
-                self.priority_order.remove(self.priority_order[0])
+            #Additions for Lshaped
+            if(i==n-1):
+                vk = self.lshapegraph.east
+            elif(i==n-2):
+                vk = self.lshapegraph.northeast
             else:
-                vk = poss_vertex[0]
-                if vk in self.priority_order:
-                    self.priority_order.remove(vk)
-            
+                if(poss_vertex[0]==self.triplet[1] and len(poss_vertex)>1):
+                    if(mark[self.triplet[0]] and mark[self.triplet[2]]):
+                        vk = poss_vertex[0]
+                    else:
+                        vk = poss_vertex[1]
+                else:
+                    temp3 = [x for x in poss_vertex if x not in secondary_vertices]
+                    if(len(temp3)>0):
+                        vk = temp3[0]
+                    else:
+                        vk = poss_vertex[0]
             canord[vk] = i
             mark[vk] = True
             print("Marked: {}".format(vk))
@@ -245,10 +176,8 @@ class canonical:
             print(neighbors)
             neighborlist = []
             for j in neighbors:
-
-                if mark[j] == False or j == v1 or j ==v2:
+                if mark[j] == False or j == v1 or j == v2:
                     neighborlist.append(j)
-
                     #The neighbors to which it is adjacent can also be saved in a separate data structure which is accessible outside this function 
             # here we need only those neighbours which have not been marked in the canord yet. Therefore, we need to take an and with
             # and with the not marked thing as well.
@@ -260,7 +189,7 @@ class canonical:
                 out[j] = True
             self.updatechord(chord, mark,out, v1,v2)
             print("Canonical Order: {}".format(canord))
-            #self.displayGraph(canord,n)
+            # self.displayGraph(canord,n)
             self.updateGraphData(n,i,vk,neighbors,canord)
 
         self.graph_data['neighbors'].append([0])
@@ -273,7 +202,6 @@ class canonical:
         
         # for i in range(0,n, 1):
         #     print("i : {}",self.graph_data['neighbors'][i])
-
         fig, axes = plt.subplots(nrows=1, ncols=2)
         ax = axes.flatten()
         fig.set_size_inches(15.0, 5.25)
@@ -288,8 +216,7 @@ class canonical:
         nx.draw(self.graphs[1],self.new_node_coordinate,with_labels=True, font_weight='bold',ax = ax[1])
         ax[1].set_axis_off()
         plt.savefig("./source/polygonal/lastcanonicalorder.png")
-        if self.debugCano.get() == 1:
-            plt.show() #ON
+        plt.show() #ON
 
     def updateGraphData(self,n,i,vk,neighbors,canord):
         self.graph_data['iteration'][n+2-i-1] = n+2-i

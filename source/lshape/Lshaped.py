@@ -3,6 +3,7 @@ from random import randint, triangular
 from networkx.algorithms.centrality.betweenness_subset import betweenness_centrality_source
 from networkx.algorithms.core import core_number
 from networkx.classes import graph
+from lcanonical import canonical
 import source.boundary.cip as cip
 import source.graphoperations.operations as opr
 import numpy as np
@@ -35,10 +36,20 @@ def LShapedFloorplan(graph):
 	new_adjacency_mat = add_NESW(graph, new_adjacency_mat, path1)
 	graph.matrix = new_adjacency_mat
 	print("=====graph.matrix after adding NESW======")
+
+
+
 	print(graph.matrix)
-	get_rel(graph, path1)
+	can = canonical()
+	can.displayInputGraph(graph.nodecnt,graph.matrix)
+	can.runWithArguments(graph.nodecnt,graph.west,graph.south,graph.north,triplet,graph.matrix)
+
+
+	
+
+	# get_rel(graph, path1)
 	# get_flippable(graph, triplet)
-	get_floorplan(graph,triplet)
+	# get_floorplan(graph,triplet)
 
 	
 def find_cips(graph):

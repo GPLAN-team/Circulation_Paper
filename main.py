@@ -347,7 +347,7 @@ def run():
             elif(gclass.command == "poly"): #Polygonal Floorplan
                 start = time.time()
                 # graph.irreg_single_dual()
-                graph.polyonalinput(gclass.canonicalObject,gclass.v1,gclass.v2,gclass.vn,gclass.po,gclass.value[2])
+                graph.polyonalinput(gclass.canonicalObject,gclass.v1,gclass.v2,gclass.vn,gclass.po,gclass.value[2],gclass.debugcano)
                 end = time.time()
 
                 # printe("Time taken: " + str((end-start)*1000) + " ms")
@@ -362,12 +362,14 @@ def run():
                 #         'irreg_nodes': graph.irreg_nodes1
                 #     }
                 # gclass.output_data.append(graph_data)
+                print("\nReceieved Inner Boundary in Main= {}\n".format(gclass.outer_boundary))
+
                 draw.draw_poly(gclass.canonicalObject.graph_data,1
                         ,gclass.pen
                         ,1
                         ,gclass.value[6]
                         ,[]
-                        ,origin)
+                        ,origin,gclass.outer_boundary,gclass.shape)
             else:
                 old_dims = [[0] * gclass.value[0]
                             , [0] * gclass.value[0]
