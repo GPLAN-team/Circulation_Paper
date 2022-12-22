@@ -38,24 +38,24 @@ def path_lister(graph, cip):
     triangular_cycles = opr.get_trngls(graph.matrix)
     digraph = opr.get_directed(graph.matrix)
     graph.bdy_nodes, graph.bdy_edges = opr.get_bdy(triangular_cycles, digraph)
+    ordered_boundary = opr.ordered_bdy(graph.bdy_nodes, graph.bdy_edges)
     path_list = []
     centre_cip = []
     centre_cip_temp = []
     for i in range(6):
-        # path_list[i].append(cip[i][1])
         centre_cip.append(cip[i][1])
-    for i in graph.bdy_nodes:
+    for i in ordered_boundary:
         if i in centre_cip:
             centre_cip_temp.append(i)
     centre_cip = centre_cip_temp
-    while graph.bdy_nodes[0] != centre_cip[0]:
-        graph.bdy_nodes.insert(0, graph.bdy_nodes.pop())
-    first = graph.bdy_nodes[0]
-    graph.bdy_nodes.pop(0)
-    graph.bdy_nodes.append(first)
-    print("ordered vertices sorted", graph.bdy_nodes)
+    while ordered_boundary[0] != centre_cip[0]:
+        ordered_boundary.insert(0, ordered_boundary.pop())
+    first = ordered_boundary[0]
+    ordered_boundary.pop(0)
+    ordered_boundary.append(first)
+    print("ordered vertices sorted", ordered_boundary)
     temp_path = [first]
-    for i in graph.bdy_nodes:
+    for i in ordered_boundary:
         print("val", i)
         temp_path.append(i)
         if i in centre_cip:
