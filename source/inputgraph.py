@@ -14,6 +14,7 @@ import networkx as nx
 from random import randint
 import source.polygonal.ushape
 import source.polygonal.zshape
+import source.polygonal.tshape
 from .graphoperations import biconnectivity as bcn
 from .graphoperations import oneconnectivity as onc
 from .graphoperations import operations as opr
@@ -755,3 +756,6 @@ def ushaped(graph):
 
 def zshaped(graph):
     source.polygonal.zshape.ZShapedFloorplan(graph)
+
+def tshaped(graph):
+    source.polygonal.tshape.TShapedFloorplan(graph)
