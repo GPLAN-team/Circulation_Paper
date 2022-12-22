@@ -13,6 +13,7 @@ import numpy as np
 import networkx as nx
 from random import randint
 import source.polygonal.ushape
+import source.polygonal.zshape
 from .graphoperations import biconnectivity as bcn
 from .graphoperations import oneconnectivity as onc
 from .graphoperations import operations as opr
@@ -751,3 +752,6 @@ def generate_multiple_bdy(matrix, nodecnt, edgecnt, bcn_edges, trng_edges, merge
 
 def ushaped(graph):
     source.polygonal.ushape.UShapedFloorplan(graph)
+
+def zshaped(graph):
+    source.polygonal.zshape.ZShapedFloorplan(graph)

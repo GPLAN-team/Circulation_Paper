@@ -180,6 +180,28 @@ def run():
                         ,gclass.value[6]
                         ,[]
                         ,origin)
+
+            elif(gclass.command == "z_shaped"):
+                start = time.time()
+                inputgraph.zshaped(graph)
+                end = time.time()
+                graph_data = {
+                    'room_x': graph.room_x,
+                    'room_y': graph.room_y,
+                    'room_width': graph.room_width,
+                    'room_height': graph.room_height,
+                    'area': graph.area,
+                    'extranodes': graph.extranodes,
+                    'mergednodes': graph.mergednodes,
+                    'irreg_nodes': graph.irreg_nodes1
+                    }
+                draw.draw_rdg(graph_data
+                        ,1
+                        ,gclass.pen
+                        ,1
+                        ,gclass.value[6]
+                        ,[]
+                        ,origin)
                         
             elif(gclass.command == "multiple"):#Multiple Irregular Dual/Floorplan
                 if(gclass.value[4] == 0):#Non-Dimensioned multiple dual

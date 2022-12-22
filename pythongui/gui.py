@@ -1323,6 +1323,9 @@ class gui_class:
 
             b8 = tk.Button(master.frame1,width=15,text='U Shaped Floor Plan',relief='flat',**button_details,command=master.u_shaped)
             b8.grid(row=8,column=0,padx=5,pady=5)
+
+            b9 = tk.Button(master.frame1,width=15,text='Z Shaped Floor Plan',relief='flat',**button_details,command=master.z_shaped)
+            b9.grid(row=9,column=0,padx=5,pady=5)
             # b3 = tk.Button(master.frame1,width=15, text='Circulation',relief='flat',**button_details,command=master.change_entry_gui)
             # b3.grid(row=4,column=0,padx=5,pady=5)
 
@@ -1340,7 +1343,7 @@ class gui_class:
             # b6.grid(row=6,column=0,padx=5,pady=5)
            
             b5 = tk.Button(master.frame1,width=15, text='EXIT',relief='flat', **button_details,command=master.exit)
-            b5.grid(row=9,column=0,padx=5,pady=5)
+            b5.grid(row=10,column=0,padx=5,pady=5)
 
     class menu:
         def __init__(self,master):
@@ -1559,6 +1562,11 @@ class gui_class:
     def u_shaped(self):
         self.app.command="u_shaped"
         self.command = "u_shaped"
+        self.end.set(self.end.get()+1)
+
+    def z_shaped(self):
+        self.app.command="z_shaped"
+        self.command = "z_shaped"
         self.end.set(self.end.get()+1)
 
     def restart(self):
