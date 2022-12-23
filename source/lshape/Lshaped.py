@@ -120,8 +120,18 @@ def find_paths(graph, triplet, cip):
     triangular_cycles = opr.get_trngls(graph.matrix)
     digraph = opr.get_directed(graph.matrix)
     graph.bdy_nodes, graph.bdy_edges = opr.get_bdy(triangular_cycles, digraph)
-    clockwise_outer_boundary = opr.ordered_bdy(graph.bdy_nodes, graph.bdy_edges)
-    print("checking for clockwise outer boundary ", clockwise_outer_boundary)
+    ordered_boundary = opr.ordered_bdy(graph.bdy_nodes, graph.bdy_edges)
+    
+    clockwise_outer_boundary = []
+
+    for i in range(len(ordered_boundary)):
+        if ordered_boundary[i] == a:
+            clockwise_outer_boundary.extend(ordered_boundary[i:])
+            break
+
+    clockwise_outer_boundary.extend(ordered_boundary[:i])
+
+    print("checking for clocking outer boundary", clockwise_outer_boundary)
 
     tripletInCip = False
     for arr in cip:
