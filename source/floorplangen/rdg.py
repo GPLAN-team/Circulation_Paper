@@ -13,8 +13,9 @@ This module contains the following functions:
     * construct_floorplan - constructs dimensioned rfloorplan for PTPG.
     * get_dimensions - returns dimension of each room.
 """
-import numpy as np 
+import numpy as np
 from . import dual as dual
+
 
 def construct_dual(matrix, nodecnt, mergednodes, irreg_nodes):
     """Constructs dual for a PTPG.
@@ -40,12 +41,15 @@ def construct_dual(matrix, nodecnt, mergednodes, irreg_nodes):
         room_y_right_top: A list representing the y coordinate of the middle top of right edge of the room.
     """
     t1_matrix = dual.populate_t1_matrix(matrix, nodecnt)
+    print("check 1")
     t2_matrix = dual.populate_t2_matrix(matrix, nodecnt)
+    print("check 2")
     room_x, room_y, room_width, room_height = get_dimensions(matrix, nodecnt, t1_matrix, t2_matrix)
     return [room_x
-            , room_y
-            , room_width
-            , room_height]
+        , room_y
+        , room_width
+        , room_height]
+
 
 def get_dimensions(matrix, nodecnt, t1_matrix, t2_matrix):
     """Returns dimension of each room.
@@ -62,15 +66,15 @@ def get_dimensions(matrix, nodecnt, t1_matrix, t2_matrix):
         room_width: A list representing the width of the rooms.
         room_height: A list representing the height of the rooms.
     """
-    room_x = np.zeros(nodecnt-4)
-    room_y = np.zeros(nodecnt-4)
-    room_height = np.zeros(nodecnt-4)
-    room_width = np.zeros(nodecnt-4)
+    room_x = np.zeros(nodecnt - 4)
+    room_y = np.zeros(nodecnt - 4)
+    room_height = np.zeros(nodecnt - 4)
+    room_width = np.zeros(nodecnt - 4)
     for node in range(matrix.shape[0]):
-        if node >= nodecnt-4:
+        if node >= nodecnt - 4:
             continue
         row, col = np.where(t1_matrix[1:-1] == node)
-        if row.shape[0] == 0:#remove this later
+        if row.shape[0] == 0:  # remove this later
             continue
         counts = np.bincount(row)
         max_row = np.argmax(counts)

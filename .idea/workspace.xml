@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b38a418d-e218-4d75-8a1f-e2a1e6f112b3" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/source/lshape/canonicalTransition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HOW_TO_CONTRIBUTE.md" beforeDir="false" afterPath="$PROJECT_DIR$/HOW_TO_CONTRIBUTE.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bdy.py" beforeDir="false" afterPath="$PROJECT_DIR$/bdy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pythongui/boundary_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/pythongui/boundary_gui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pythongui/catalogue_maker.py" beforeDir="false" afterPath="$PROJECT_DIR$/pythongui/catalogue_maker.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pythongui/dimensiongui.py" beforeDir="false" afterPath="$PROJECT_DIR$/pythongui/dimensiongui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pythongui/drawing.py" beforeDir="false" afterPath="$PROJECT_DIR$/pythongui/drawing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pythongui/final.py" beforeDir="false" afterPath="$PROJECT_DIR$/pythongui/final.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pythongui/gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/pythongui/gui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pythongui/tablenoscroll.py" beforeDir="false" afterPath="$PROJECT_DIR$/pythongui/tablenoscroll.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/boundary/cip.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/boundary/cip.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/boundary/news.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/boundary/news.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/circulation/circulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/circulation/circulation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/dimensioning/block_checker.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/dimensioning/block_checker.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/dimensioning/convert_adj_equ_sym.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/dimensioning/convert_adj_equ_sym.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/dimensioning/floorplan_to_st.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/dimensioning/floorplan_to_st.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/dimensioning/solve_linear.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/dimensioning/solve_linear.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/floorplangen/contraction.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/floorplangen/contraction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/floorplangen/dual.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/floorplangen/dual.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/floorplangen/expansion.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/floorplangen/expansion.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/floorplangen/flippable.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/floorplangen/flippable.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/floorplangen/rdg.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/floorplangen/rdg.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/floorplangen/transformation.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/floorplangen/transformation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/graphoperations/biconnectivity.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/graphoperations/biconnectivity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/graphoperations/earclipping.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/graphoperations/earclipping.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/graphoperations/graph_crossings.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/graphoperations/graph_crossings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/graphoperations/graph_crossings1.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/graphoperations/graph_crossings1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/graphoperations/oneconnectivity.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/graphoperations/oneconnectivity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/graphoperations/operations.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/graphoperations/operations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/graphoperations/triangularity.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/graphoperations/triangularity.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/inputgraph.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/inputgraph.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/irregular/septri.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/irregular/septri.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/irregular/shortcutresolver.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/irregular/shortcutresolver.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/lshape/Lshaped.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/lshape/Lshaped.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/lshape/canonical.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/lshape/canonical.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/polygonal/canonical.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/polygonal/canonical.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/polygonal/draw.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/polygonal/draw.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/polygonal/lshape.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/polygonal/lshape.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/polygonal/poly.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/polygonal/poly.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/polygonal/polygui.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/polygonal/polygui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/polygonal/staircaseshape.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/polygonal/staircaseshape.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/polygonal/tshape.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/polygonal/tshape.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/polygonal/ushape.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/polygonal/ushape.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/source/polygonal/zshape.py" beforeDir="false" afterPath="$PROJECT_DIR$/source/polygonal/zshape.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2JH4f6BTffxyJx89N0mIgqqBDqb" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Github/GPLAN&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;MTConfigurable&quot;
+  }
+}</component>
+  <component name="RunManager">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="GPLAN" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b38a418d-e218-4d75-8a1f-e2a1e6f112b3" name="Changes" comment="" />
+      <created>1671721774790</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1671721774790</updated>
+      <workItem from="1671721779013" duration="212000" />
+      <workItem from="1671733551882" duration="300000" />
+      <workItem from="1671733873873" duration="1246000" />
+      <workItem from="1671774292059" duration="59000" />
+      <workItem from="1671774374802" duration="307000" />
+      <workItem from="1671811979765" duration="1447000" />
+      <workItem from="1671813436219" duration="7819000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/GPLAN$main.coverage" NAME="main Coverage Results" MODIFIED="1671824039674" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+</project>
