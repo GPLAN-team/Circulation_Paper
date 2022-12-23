@@ -89,7 +89,7 @@ class gui_class:
         self.root = tk.Tk()
         self.canonicalObject = cano.canonical()
         self.entry_door = []
-
+        self.letter = ""
         self.v1 = 0
         self.v2 = 0
         self.vn = 0
@@ -1360,25 +1360,25 @@ class gui_class:
                            command=master.polygonal_inputbox)
             b7.grid(row=7, column=0, padx=5, pady=5)
 
-            b8 = tk.Button(master.frame1, width=15, text='U Shaped Floor Plan', relief='flat', **button_details,
-                           command=master.u_shaped)
+            b8 = tk.Button(master.frame1, width=15, text='Letter Shaped Floor Plan', relief='flat', **button_details,
+                           command=master.letter_inputbox)
             b8.grid(row=8, column=0, padx=5, pady=5)
 
-            b9 = tk.Button(master.frame1, width=15, text='Z Shaped Floor Plan', relief='flat', **button_details,
-                           command=master.z_shaped)
-            b9.grid(row=9, column=0, padx=5, pady=5)
+            # b9 = tk.Button(master.frame1, width=15, text='Z Shaped Floor Plan', relief='flat', **button_details,
+            #                command=master.z_shaped)
+            # b9.grid(row=9, column=0, padx=5, pady=5)
 
-            b10 = tk.Button(master.frame1, width=15, text='T Shaped Floor Plan', relief='flat', **button_details,
-                            command=master.t_shaped)
-            b10.grid(row=10, column=0, padx=5, pady=5)
+            # b10 = tk.Button(master.frame1, width=15, text='T Shaped Floor Plan', relief='flat', **button_details,
+            #                 command=master.t_shaped)
+            # b10.grid(row=10, column=0, padx=5, pady=5)
 
             b11 = tk.Button(master.frame1, width=15, text='Staircase Shaped Floor Plan', relief='flat',
                             **button_details, command=master.staircase_shaped)
-            b11.grid(row=11, column=0, padx=5, pady=5)
+            b11.grid(row=9, column=0, padx=5, pady=5)
 
-            b12 = tk.Button(master.frame1, width=15, text='L Shaped Floor Plan', relief='flat',
-                            **button_details, command=master.l_shaped)
-            b12.grid(row=12, column=0, padx=5, pady=5)
+            # b12 = tk.Button(master.frame1, width=15, text='L Shaped Floor Plan', relief='flat',
+            #                 **button_details, command=master.l_shaped)
+            # b12.grid(row=12, column=0, padx=5, pady=5)
             # b3 = tk.Button(master.frame1,width=15, text='Circulation',relief='flat',**button_details,command=master.change_entry_gui)
             # b3.grid(row=4,column=0,padx=5,pady=5)
 
@@ -1395,7 +1395,7 @@ class gui_class:
             # b6.grid(row=6,column=0,padx=5,pady=5)
 
             b5 = tk.Button(master.frame1, width=15, text='EXIT', relief='flat', **button_details, command=master.exit)
-            b5.grid(row=13, column=0, padx=5, pady=5)
+            b5.grid(row=10, column=0, padx=5, pady=5)
 
     class menu:
         def __init__(self, master):
@@ -1612,29 +1612,9 @@ class gui_class:
             self.dclass.root.destroy()
             self.dissecting = 1
 
-    def u_shaped(self):
-        self.app.command = "u_shaped"
-        self.command = "u_shaped"
-        self.end.set(self.end.get() + 1)
-
-    def z_shaped(self):
-        self.app.command = "z_shaped"
-        self.command = "z_shaped"
-        self.end.set(self.end.get() + 1)
-
-    def t_shaped(self):
-        self.app.command = "t_shaped"
-        self.command = "t_shaped"
-        self.end.set(self.end.get() + 1)
-
     def staircase_shaped(self):
         self.app.command = "staircase_shaped"
         self.command = "staircase_shaped"
-        self.end.set(self.end.get() + 1)
-
-    def l_shaped(self):
-        self.app.command = "l_shaped"
-        self.command = "l_shaped"
         self.end.set(self.end.get() + 1)
 
     def restart(self):
@@ -1773,6 +1753,68 @@ class gui_class:
         # else: 
         #     tk.messagebox.showerror("Error", "ERROR!! THE INITIAL GRAPH IS NON PLANAR, START AGAIN")
         # TODO NOt working if error
+
+    def letter_inputbox(self):
+        """This function takes user input for letter shaped floor plans
+        """
+        self.top = tk.Toplevel(self.root, width=300, height=300)
+        root = self.top
+        sub_text = tk.Label(root,
+                            text="""Choose the letter structure of Floorplan:""",
+                            justify=tk.LEFT,
+                            padx=20)
+        sub_text.grid(row=3)
+        btn1 = tk.Radiobutton(root,
+                              text="L Shape",
+                              padx=20,
+                              variable=self.choice,
+                              value=1)
+        btn1.grid(row=4, column=0)
+        btn2 = tk.Radiobutton(root,
+                              text="T Shape",
+                              padx=20,
+                              variable=self.choice,
+                              value=2)
+        btn2.grid(row=4, column=1)
+
+        btn3 = tk.Radiobutton(root,
+                              text="Z Shape",
+                              padx=20,
+                              variable=self.choice,
+                              value=3)
+        btn3.grid(row=4, column=2)
+
+        btn4 = tk.Radiobutton(root,
+                              text="U Shape",
+                              padx=20,
+                              variable=self.choice,
+                              value=4)
+        btn4.grid(row=4, column=3)
+
+        ex = tk.Button(root, text="Submit", command=self.letterChoiceFunction)
+        ex.grid(row=6)
+
+
+    def letterChoiceFunction(self):
+        self.top.destroy()
+        if(self.choice.get() == 1):
+            self.letter = "L Shape"
+            self.lettershape()
+        elif(self.choice.get() == 2):
+            self.letter = "T Shape"
+            self.lettershape()
+        elif(self.choice.get() == 3):
+            self.letter = "Z Shape"
+            self.lettershape()
+        elif(self.choice.get() == 4):
+            self.letter = "U Shape"
+            self.lettershape()
+
+    def lettershape(self):
+        self.top.destroy()
+        self.app.command = "letter_shape"
+        self.command = "letter_shape"
+        self.end.set(self.end.get() + 1)
 
     def choiceFunction(self):
         self.top.destroy()

@@ -5,7 +5,7 @@ from networkx.algorithms.core import core_number
 from networkx.classes import graph
 
 from source.floorplangen import rdg
-from source.lshape.canonical import canonical
+from source.lettershape.lshape.canonical import canonical
 import source.boundary.cip as cip
 import source.graphoperations.operations as opr
 import numpy as np
@@ -13,7 +13,7 @@ import source.boundary.news as news
 import source.irregular.shortcutresolver as sr
 import source.floorplangen.contraction as cntr
 import source.floorplangen.expansion as exp
-import source.lshape.canonicalTransition as Canonical_LShaped
+import source.lettershape.lshape.canonicalTransition as Canonical_LShaped
 import pythongui.drawing as draw
 
 
