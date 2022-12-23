@@ -15,6 +15,7 @@ from random import randint
 import source.polygonal.ushape
 import source.polygonal.zshape
 import source.polygonal.tshape
+import source.polygonal.staircaseshape
 from .graphoperations import biconnectivity as bcn
 from .graphoperations import oneconnectivity as onc
 from .graphoperations import operations as opr
@@ -759,3 +760,6 @@ def zshaped(graph):
 
 def tshaped(graph):
     source.polygonal.tshape.TShapedFloorplan(graph)
+
+def staircaseshaped(graph):
+    source.polygonal.staircaseshape.StaircaseShapedFloorplan(graph)
