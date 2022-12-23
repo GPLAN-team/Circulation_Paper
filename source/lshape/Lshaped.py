@@ -35,14 +35,17 @@ def LShapedFloorplan(graph, nodes_data):
         return "cips greater than 5"
     triplet = find_triplet(graph)
     path1 = find_paths(graph, triplet, cip)
+    print("checking path1", path1)
     new_adjacency_mat = connect_northeast(graph, path1)
+    print("checking new_adjacency_matrix", new_adjacency_mat)
     graph.user_matrix = new_adjacency_mat
     graph.cip = find_cips(graph)
     new_adjacency_mat = add_NESW(graph, new_adjacency_mat, path1)
     graph.matrix = new_adjacency_mat
-    print("=====graph.matrix after adding NESW======")
+    graph.matrix[graph.north][graph.south] = 1
+    graph.matrix[graph.south][graph.north] = 1
+    print("checking final graph.matrix ", graph.matrix)
 
-    print(graph.matrix)
     can = canonical()
     can.displayInputGraph(graph.nodecnt, graph.matrix, nodes_data)
     can.runWithArguments(graph.nodecnt, graph.west, graph.south, graph.north, triplet, graph, graph.matrix)
@@ -51,15 +54,7 @@ def LShapedFloorplan(graph, nodes_data):
     print(can.graph_data['indexToCanOrd'])
     my_rel = Canonical_LShaped.Canonical_L_Shaped(can.graph_data['indexToCanOrd'], graph, nodes_data, triplet)
     graph.matrix = my_rel
-    print("Matrix set: ", graph.matrix)
-    # get_rel(graph, path1)
-    # get_flippable(graph, triplet)
     get_floorplan(graph, triplet)
-
-
-# get_rel(graph, path1)
-# get_flippable(graph, triplet)
-# get_floorplan(graph,triplet)
 
 
 def find_cips(graph):
@@ -70,8 +65,6 @@ def find_cips(graph):
     ordered_boundary = opr.ordered_bdy(graph.bdy_nodes, graph.bdy_edges)
 
     cips = cip.find_cip(ordered_boundary, shortcuts)
-    print("====cip====")
-    print(cips)
     return cips
 
 
@@ -126,58 +119,17 @@ def find_paths(graph, triplet, cip):
 
     triangular_cycles = opr.get_trngls(graph.matrix)
     digraph = opr.get_directed(graph.matrix)
-    outer_vertices, outer_boundary = opr.get_bdy(triangular_cycles, digraph)
-
-    from collections import defaultdict
-
-    outer_boundary_adj_mat = defaultdict(list)
-    clockwise_outer_boundary = []
-
-    clockwise_outer_boundary.append(a)
-    clockwise_outer_boundary.append(b)
-    clockwise_outer_boundary.append(c)
-
-    for edge in outer_boundary:
-        outer_boundary_adj_mat[edge[0]].append(edge[1])
-
-    visited = {}
-
-    for i in outer_vertices:
-        visited[i] = False
-
-    visited[a] = True
-    visited[b] = True
-    visited[c] = True
-    src = c
-    print(outer_boundary_adj_mat)
-    while len(clockwise_outer_boundary) < len(outer_vertices):
-        if not visited[outer_boundary_adj_mat[src][0]]:
-            clockwise_outer_boundary.append(outer_boundary_adj_mat[src][0])
-            visited[outer_boundary_adj_mat[src][0]] = True
-            src = outer_boundary_adj_mat[src][0]
-        else:
-            clockwise_outer_boundary.append(outer_boundary_adj_mat[src][1])
-            visited[outer_boundary_adj_mat[src][1]] = True
-            src = outer_boundary_adj_mat[src][1]
-
-    print("====clockwise outer boundary=====")
-    print(clockwise_outer_boundary)
-
-    #   4__P4__0
-    #   |      |\
-    #   |      | \ P0
-    #   |      |  \
-    # P3|      |___\1
-    #   |           |
-    #   |           | P1
-    #   |___________|
-    #   3    P2      2
+    graph.bdy_nodes, graph.bdy_edges = opr.get_bdy(triangular_cycles, digraph)
+    clockwise_outer_boundary = opr.ordered_bdy(graph.bdy_nodes, graph.bdy_edges)
+    print("checking for clockwise outer boundary ", clockwise_outer_boundary)
 
     tripletInCip = False
     for arr in cip:
         if a in arr and b in arr and c in arr:
             tripletInCip = True
             break
+
+    print("checking triplet in CIP value", tripletInCip)
 
     path1 = []
     path1.append(a)
@@ -197,12 +149,16 @@ def find_paths(graph, triplet, cip):
             print(i, " ===== ", clockwise_outer_boundary[i])
             if clockwise_outer_boundary[i] in possible_corners_in_cips:
                 path1.extend(clockwise_outer_boundary[3:i + 1])
+                print("checking for path1 1", path1)
                 break
 
         if clockwise_outer_boundary[0] not in possible_corners_in_cips:
             for i in range(len(clockwise_outer_boundary) - 1, 2, -1):
+                print("i", i)
                 if clockwise_outer_boundary[i] in possible_corners_in_cips:
-                    path1.insert(clockwise_outer_boundary[i:len(clockwise_outer_boundary)], 0)
+                    for j in range(i, len(clockwise_outer_boundary)):
+                        path1.insert(0, clockwise_outer_boundary[len(clockwise_outer_boundary) - 1])
+                        print("checking for path1 2", path1)
                     break
 
     if len(cip) == 4:
@@ -399,13 +355,17 @@ def find_cips_L_shaped(graph):
             graph.cip = boundary_path_single(news.find_bdy(cips), opr.ordered_bdy(graph.bdy_nodes, graph.bdy_edges),
                                              corner_points)
         else:
-            shortcut = sr.get_shortcut(graph)
+            triangular_cycles = opr.get_trngls(graph.matrix)
+            digraph = opr.get_directed(graph.matrix)
+            graph.bdy_nodes, graph.bdy_edges = opr.get_bdy(triangular_cycles, digraph)
+            shortcut = sr.get_shortcut(graph.matrix, graph.bdy_nodes, graph.bdy_edges)
+            ordered_boundary = opr.ordered_bdy(graph.bdy_nodes, graph.bdy_edges)
             while (len(shortcut) > 4):
                 index = randint(0, len(shortcut) - 1)
                 sr.remove_shortcut(shortcut[index], graph, graph.rdg_vertices, graph.rdg_vertices2,
                                    graph.to_be_merged_vertices)
                 shortcut.pop(index)
-            cips = cip.find_cip(graph)
+            cips = cip.find_cip(ordered_boundary,shortcut)
             graph.cip = boundary_path_single(news.find_bdy(cips), opr.ordered_bdy(graph.bdy_nodes, graph.bdy_edges),
                                              corner_points)
     cips = graph.cip
