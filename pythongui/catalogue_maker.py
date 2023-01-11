@@ -119,12 +119,9 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100, dimensioned =
     # for each_room in range(len(rfp_data['room_x_top_left'])):
     #     pdf.text(x + grid_w, y + each_room * 5 + 5, 'Room ' + str(each_room) + ' : ' + str(rfp_data['room_width'][each_room]) + ' X ' + str(rfp_data['room_height'][each_room]) + '\n')
 
-    # print(rfp_data['mergednodes'])
+
     flag = 0
-    print("####")
-    print(em)
-    print(rfp_data)
-    print("####")
+
     for each_room in range(len(rfp_data['room_x'])):
         if each_room in rfp_data['extranodes']:
             continue
@@ -147,9 +144,6 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100, dimensioned =
         if flag == 1:
             flag = 0
             occ = np.where(em == each_room)
-            print("####")
-            print(occ)
-            print("####")
 
             lt = []
             rt = []
@@ -245,6 +239,7 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100, dimensioned =
                 #         txt=message)
                 #     y_disp = 7
                 #     message = str(rfp_data['room_height'][each_room])
+
                 pdf.set_font_size(2.0)
                 pdf.text(
                     x + scale * int(rfp_data['room_x'][each_room]) + x_disp,

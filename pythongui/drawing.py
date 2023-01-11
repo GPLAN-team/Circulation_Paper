@@ -7,6 +7,8 @@ import turtle
 # import ptpg
 import source.floorplangen.dual as dual
 import math
+import source.polygonal.poly as poly
+from source.polygonal.draw import DrawOuterBoundary
 
 scale = 300
 origin = {'x': 300, 'y': -150}
@@ -165,3 +167,24 @@ def draw_rdg(graph_data,count,pen,mode,color_list,room_names,origin):
             pen.penup()
             value+=1
 
+def draw_poly(graph_data,count,pen,mode,color_list,room_names,origin,outer_boundary,shape):
+    innerBoundary = []
+    if(outer_boundary!=[]): #To take active front as input first in the drawing
+        temp = outer_boundary[0]
+        for i in range(0,len(outer_boundary)):
+            corner = []
+            if i==0:
+                corner.append(outer_boundary[i][2])
+                corner.append(outer_boundary[i][3])
+            else:
+                corner.append(outer_boundary[i][2])
+                corner.append(2*outer_boundary[0][3] - outer_boundary[i][3])
+            innerBoundary.append(corner)
+        corner1 = []
+        corner1.append(outer_boundary[0][0])
+        corner1.append(outer_boundary[0][1])    
+        innerBoundary.append(corner1)
+    
+    db = poly.dissected(graph_data,pen,color_list,shape,innerBoundary)
+    # obj = DrawOuterBoundary(graph_data,pen,color_list)
+    
