@@ -153,7 +153,9 @@ class circulation:
             v2 (int, optional): Second endpoint of the exterior edge to start the circulation algorithm. Defaults to 2.
         """
         graph = deepcopy(self.graph)
-        print(nx.to_numpy_matrix(graph))
+        # Use to_numpy_array instead of to_numpy_matrix if Networkx 3.0 or above
+        # print(nx.to_numpy_matrix(graph))
+        print(nx.to_numpy_array(graph))
         # n is the number of vertices in the initial graph
         n = len(graph)
         m = n
