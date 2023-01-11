@@ -298,12 +298,10 @@ class InputGraph:
             height = np.transpose(height)
             self.room_width = width.flatten()
             self.room_height = height.flatten()
-            self.extranodes, self.mergednodes, self.irreg_nodes1 = self.extranodes[i], self.mergednodes[i], \
-                                                                   self.irreg_nodes1[i]
-            # self.room_x = self.room_x[i]
-            # self.room_y = self.room_y[i]
-            self.room_x, self.room_y = dual.get_coordinates(encoded_matrix, self.nodecnt + 4, self.room_width,
-                                                            self.room_height, hor_dgph)
+
+            self.extranodes, self.mergednodes, self.irreg_nodes1 = self.extranodes[i], self.mergednodes[i], self.irreg_nodes1[i]
+            self.room_x, self.room_y = dual.get_coordinates(encoded_matrix, self.nodecnt + 4, self.room_width, self.room_height, hor_dgph)
+
             for j in range(0, len(self.room_x)):
                 self.room_x[j] = round(self.room_x[j], 3)
             for j in range(0, len(self.room_y)):

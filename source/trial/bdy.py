@@ -3,22 +3,22 @@
 import numpy as np
 import networkx as nx
 from random import randint
-from source.graphoperations import biconnectivity as bcn
-from source.graphoperations import oneconnectivity as onc
-from source.graphoperations import operations as opr
-from source.graphoperations import graph_crossings as gc
-from source.graphoperations import triangularity as trng
-from source.irregular import shortcutresolver as sr
-from source.irregular import septri as st
-from source.floorplangen import contraction as cntr
-from source.floorplangen import expansion as exp
-from source.floorplangen import rdg as rdg
-from source.floorplangen import transformation as transform
-from source.floorplangen import flippable as flp
-from source.dimensioning import floorplan_to_st as fpts
-from source.dimensioning import block_checker as bc
-from source.boundary import cip as cip
-from source.boundary import news as news
+from ..graphoperations import biconnectivity as bcn
+from ..graphoperations import oneconnectivity as onc
+from ..graphoperations import operations as opr
+from ..graphoperations import graph_crossings as gc
+from ..graphoperations import triangularity as trng
+from ..irregular import shortcutresolver as sr
+from ..irregular import septri as st
+from ..floorplangen import contraction as cntr
+from ..floorplangen import expansion as exp
+from ..floorplangen import rdg as rdg
+from ..floorplangen import transformation as transform
+from ..floorplangen import flippable as flp
+from ..dimensioning import floorplan_to_st as fpts
+from ..dimensioning import block_checker as bc
+from ..boundary import cip as cip
+from ..boundary import news as news
 
 class Boundary:
     """A Boundary class for boundary identification of the graph.
@@ -78,15 +78,15 @@ class Boundary:
         self.fpcnt = 0
         self.coordinates = [np.array(x) for x in node_coordinates]
 
-        # # Check if input has crossings
-        # x_coord = [x[0] for x in node_coordinates]
-        # y_coord = [x[1] for x in node_coordinates]
-        # if(gc.check_intersection(x_coord, y_coord, self.matrix)):
-        #     graph = nx.from_numpy_matrix(self.matrix)
-        #     new_node_coordinates = list(nx.planar_layout(graph).values())
-        #     self.coordinates = [np.array(x) for x in new_node_coordinates]
-        # else:
-        #     pass
+        # Check if input has crossings
+        x_coord = [x[0] for x in node_coordinates]
+        y_coord = [x[1] for x in node_coordinates]
+        if(gc.check_intersection(x_coord, y_coord, self.matrix)):
+            graph = nx.from_numpy_matrix(self.matrix)
+            new_node_coordinates = list(nx.planar_layout(graph).values())
+            self.coordinates = [np.array(x) for x in new_node_coordinates]
+        else:
+            pass
     
     def identify_bdy(self):
 
@@ -100,16 +100,17 @@ class Boundary:
         bcn_edges = []
         if (not bcn.is_biconnected(self.matrix)):
             bcn_edges = bcn.biconnect(self.matrix)
-        for edge in bcn_edges:
-            self.matrix[edge[0]][edge[1]] = 1
-            self.matrix[edge[1]][edge[0]] = 1
-            self.edgecnt += 1  # Extra edge added
+        
+        if(len(bcn_edges) > 0):
+            for edge in bcn_edges:
+                self.matrix[edge[0]][edge[1]] = 1
+                self.matrix[edge[1]][edge[0]] = 1
+                self.edgecnt += 1  # Extra edge added
+            
         bcn_edges_added = len(bcn_edges) > 0
 
         #Triangularity
-        trng_edges,positions,tri_faces = trng.triangulate(self.matrix
-                                                ,bcn_edges_added
-                                                ,self.coordinates)
+        trng_edges,positions,tri_faces = trng.triangulate(self.matrix,bcn_edges_added,self.coordinates)
         for edge in trng_edges:
             self.matrix[edge[0]][edge[1]] = 1
             self.matrix[edge[1]][edge[0]] = 1
@@ -121,23 +122,20 @@ class Boundary:
         #Edge to vertex transformation
         for edge in bcn_edges:
             self.extranodes.append(self.nodecnt)
-            self.matrix, tri_faces, positions, extra_edges_cnt = transform.transform_edges(
-                self.matrix, edge, tri_faces, positions)
+            self.matrix, tri_faces, positions, extra_edges_cnt = transform.transform_edges(self.matrix, edge, tri_faces, positions)
             self.nodecnt += 1  # Extra node added
             self.edgecnt += extra_edges_cnt
         
         for edge in trng_edges:
             self.extranodes.append(self.nodecnt)
-            self.matrix, tri_faces, positions, extra_edges_cnt = transform.transform_edges(
-                self.matrix, edge, tri_faces, positions)
+            self.matrix, tri_faces, positions, extra_edges_cnt = transform.transform_edges(self.matrix, edge, tri_faces, positions)
             self.nodecnt += 1  # Extra node added
             self.edgecnt += extra_edges_cnt
 
         
         #Separating Triangle Elimination
         if(self.nodecnt - self.edgecnt + len(opr.get_trngls(self.matrix)) != 1):
-            ptpg_matrices, extra_nodes = st.handle_STs(
-                self.matrix, positions, 1)
+            ptpg_matrices, extra_nodes = st.handle_STs(self.matrix, positions, 1)
             self.matrix = ptpg_matrices[0]
             self.nodecnt = self.matrix.shape[0]
             self.edgecnt = int(np.count_nonzero(self.matrix == 1)/2)
