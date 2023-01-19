@@ -598,10 +598,10 @@ def run():
 
 def make_dissection_corridor(gclass):
     dis = nx.Graph()
-    dis = nx.from_numpy_matrix(gclass.dclass.mat)
+    dis = nx.from_numpy_array(gclass.dclass.mat)
     m = len(dis)
     spanned = circulation.BFS(dis, gclass.e1.get(), gclass.e2.get())
-    gclass.cir_dim_mat = nx.to_numpy_matrix(spanned)
+    gclass.cir_dim_mat = nx.to_numpy_array(spanned)
     # colors = ['#4BC0D9','#76E5FC','#6457A6','#5C2751','#7D8491','#BBBE64','#64F58D','#9DFFF9','#AB4E68','#C4A287','#6F9283','#696D7D','#1B1F3B','#454ADE','#FB6376','#6C969D','#519872','#3B5249','#A4B494','#CCFF66','#FFC800','#FF8427','#0F7173','#EF8354','#795663','#AF5B5B','#667761','#CF5C36','#F0BCD4','#ADB2D3','#FF1B1C','#6A994E','#386641','#8B2635','#2E3532','#124E78']*10
     colors = ['#4BC0D9'] * 10
     rnames = []
