@@ -280,7 +280,7 @@ class gui_class:
             return [len(self.nodes_data),self.edge_count,self.edges,self.command,self.master.checkvar1.get(),list(filter(None, [row[1].get() for row in self.table._data_vars])),self.hex_list, node_coordinate,self.master.checkvar2.get(), self.master.checkvar3.get()]
             
            # return [len(self.nodes_data), self.edge_count, self.edges, self.command, self.master.checkvar1.get(),
-                 #   list(filter(None, [row[1].get() for row in self.table._data_vars])), self.hex_list, node_coordinate]
+                    list(filter(None, [row[1].get() for row in self.table._data_vars])), self.hex_list, node_coordinate]
 
 
         def createCanvas(self):
