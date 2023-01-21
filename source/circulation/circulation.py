@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from copy import deepcopy
 import itertools
+# from ..trial.bdy import *
 
 class Point:
     def __init__(self, x: float, y: float):
@@ -864,9 +865,7 @@ def main():
     # test_comm_neighbors()
     # test_move_edges()
     # test_adjust_RFP_to_circ()
-    # test_is_subgraph()
-    # test_multiple_circulation()
-
+    test_multiple_circulation()
     
 
 if __name__ == "__main__":
