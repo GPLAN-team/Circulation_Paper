@@ -25,9 +25,7 @@ def is_biconnected(matrix):
     Returns:
         boolean: A boolean indicating TRUE if biconnected, FALSE otherwise.
     """
-    # Use from_numpy_array instead of from_numpy_matrix if Networkx 3.0 or above
-    # nxgraph = nx.from_numpy_matrix(matrix)
-    nxgraph = nx.from_numpy_array(matrix)
+    nxgraph = nx.from_numpy_matrix(matrix)
     return nx.is_biconnected(nxgraph)
 
 def get_cutvertices(nxgraph):
