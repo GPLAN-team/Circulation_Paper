@@ -403,6 +403,56 @@ def run():
                         # gclass.ocan.add_tab()
                         # gclass.pen = gclass.ocan.getpen()
                         # gclass.pen.speed(0)
+                else:
+                    old_dims = [[0] * gclass.value[0]
+                        , [0] * gclass.value[0]
+                        , [0] * gclass.value[0]
+                        , [0] * gclass.value[0]
+                        , ""
+                        , [0] * gclass.value[0]
+                        , [0] * gclass.value[0]]
+                    min_width, max_width, min_height, max_height, symm_string, min_aspect, max_aspect, plot_width, plot_height = dimgui.gui_fnc(
+                        old_dims, gclass.value[0])
+                    dimensional_constraints = [min_width, max_width, min_height, max_height, symm_string, min_aspect,
+                                            max_aspect, plot_width, plot_height]
+                    start = time.time()
+                    try:
+                        graph.oneconnected_dual("multiple")
+                    except inputgraph.OCError:
+                        gclass.show_warning("Can not generate rectangular floorplan.")
+                        graph.irreg_multiple_dual()
+                    except inputgraph.BCNError:
+                        graph.irreg_multiple_dual()
+                    graph.multiple_floorplan(min_width, min_height, max_width, max_height, symm_string, min_aspect,
+                                            max_aspect, plot_width, plot_height)
+                    end = time.time()
+                    printe("Time taken: " + str((end - start) * 1000) + " ms")
+                    printe("Number of floorplans: " + str(len(graph.room_x)))
+                    gclass.multiple_output_found = 1
+                    for idx in range(len(graph.room_x)):
+                        graph_data = {
+                            'room_x': graph.room_x[idx],
+                            'room_y': graph.room_y[idx],
+                            'room_width': graph.room_width[idx],
+                            'room_height': graph.room_height[idx],
+                            'area': graph.area[idx],
+                            'extranodes': graph.extranodes[idx],
+                            'mergednodes': graph.mergednodes[idx],
+                            'irreg_nodes': graph.irreg_nodes1[idx]
+                        }
+                        gclass.output_data.append(graph_data)
+                        gclass.dimensional_constraints = dimensional_constraints
+                        gclass.ptpg = graph
+                        # gclass.ocan.add_tab()
+                        # gclass.pen = gclass.ocan.getpen()
+                        # gclass.pen.speed(0)
+                        # draw.draw_rdg(graph_data
+                        #     ,1
+                        #     ,gclass.pen
+                        #     ,1
+                        #     ,gclass.value[6]
+                        #     ,[]
+                        #     ,origin)
             elif (gclass.command == "poly"):  # Polygonal Floorplan
                 start = time.time()
                 # graph.irreg_single_dual()
@@ -430,56 +480,6 @@ def run():
                                , gclass.value[6]
                                , []
                                , origin, gclass.outer_boundary, gclass.shape)
-            else:
-                old_dims = [[0] * gclass.value[0]
-                    , [0] * gclass.value[0]
-                    , [0] * gclass.value[0]
-                    , [0] * gclass.value[0]
-                    , ""
-                    , [0] * gclass.value[0]
-                    , [0] * gclass.value[0]]
-                min_width, max_width, min_height, max_height, symm_string, min_aspect, max_aspect, plot_width, plot_height = dimgui.gui_fnc(
-                    old_dims, gclass.value[0])
-                dimensional_constraints = [min_width, max_width, min_height, max_height, symm_string, min_aspect,
-                                           max_aspect, plot_width, plot_height]
-                start = time.time()
-                try:
-                    graph.oneconnected_dual("multiple")
-                except inputgraph.OCError:
-                    gclass.show_warning("Can not generate rectangular floorplan.")
-                    graph.irreg_multiple_dual()
-                except inputgraph.BCNError:
-                    graph.irreg_multiple_dual()
-                graph.multiple_floorplan(min_width, min_height, max_width, max_height, symm_string, min_aspect,
-                                         max_aspect, plot_width, plot_height)
-                end = time.time()
-                printe("Time taken: " + str((end - start) * 1000) + " ms")
-                printe("Number of floorplans: " + str(len(graph.room_x)))
-                gclass.multiple_output_found = 1
-                for idx in range(len(graph.room_x)):
-                    graph_data = {
-                        'room_x': graph.room_x[idx],
-                        'room_y': graph.room_y[idx],
-                        'room_width': graph.room_width[idx],
-                        'room_height': graph.room_height[idx],
-                        'area': graph.area[idx],
-                        'extranodes': graph.extranodes[idx],
-                        'mergednodes': graph.mergednodes[idx],
-                        'irreg_nodes': graph.irreg_nodes1[idx]
-                    }
-                    gclass.output_data.append(graph_data)
-                    gclass.dimensional_constraints = dimensional_constraints
-                    gclass.ptpg = graph
-                    # gclass.ocan.add_tab()
-                    # gclass.pen = gclass.ocan.getpen()
-                    # gclass.pen.speed(0)
-                    # draw.draw_rdg(graph_data
-                    #     ,1
-                    #     ,gclass.pen
-                    #     ,1
-                    #     ,gclass.value[6]
-                    #     ,[]
-                    #     ,origin)
 
             gclass.time_taken = (end - start) * 1000
             gclass.num_rfp = len(graph.room_x)
