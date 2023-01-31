@@ -538,31 +538,49 @@ def make_dissection_corridor(gclass):
 #     # draw.draw_rdg(G,1,gclass.pen,G.to_be_merged_vertices,G.rdg_vertices,0,gclass.value[6],gclass.value[5])
 #     G.circulation(gclass.pen,gclass.ocan.canvas, C, 1, 2)
 
-def call_circulation(graph_data, edge_set, entry):
+def call_circulation(graph_data, gclass, coord, is_dimensioned, dim_constraints, remove_corridor):
+
     g = nx.Graph()
+    edge_set = gclass.value[2]
 
     for x in edge_set:
         g.add_edge(x[0], x[1])
-
+    
     n = len(g)
 
     rooms = []
     for i in range(n):
-        rooms.append(
-            cir.Room(i, graph_data.get("room_x")[i], graph_data.get("room_y")[i] + graph_data.get("room_height")[i],
-                     graph_data.get("room_x")[i] + graph_data.get("room_width")[i], graph_data.get("room_y")[i]))
+        rooms.append(cir.Room(i, graph_data.get("room_x")[i], graph_data.get("room_y")[i] + graph_data.get("room_height")[i], graph_data.get("room_x")[i] + graph_data.get("room_width")[i], graph_data.get("room_y")[i]))
 
     # cir.plot(g,n)
     rfp = cir.RFP(g, rooms)
 
-    circulation_obj = cir.circulation(g, rfp)
-    circulation_result = circulation_obj.circulation_algorithm(entry[0], entry[1])
+    circulation_obj = cir.circulation(g, gclass.corridor_thickness, rfp)
+    # circulation_obj = cir.circulation(g, rfp)
+    if is_dimensioned == True:
+        circulation_obj.is_dimensioned = True
+        circulation_obj.dimension_constraints = dim_constraints
+    # circulation_result = circulation_obj.circulation_algorithm(entry[0], entry[1])
+    # circulation_result = circulation_obj.multiple_circulation(coord)
+    circulation_result = circulation_obj.circulation_algorithm()
     if circulation_result == 0:
         return None
+    
+    if remove_corridor == True:
+        corridors = circulation_obj.adjacency
+        gclass.remove_corridor_gui(corridors)
+        print("Edges to remove: ",gclass.remove_edges)
+
+        for x in gclass.remove_edges:
+            circulation_obj.remove_corridor(circulation_obj.circulation_graph,x[0],x[1])
+        
+        
+    # To remove entry corridor alone we are just shifting rooms by looking at second corridor vertex
+    # Done by shifting the range left bound in for loop of adjust_RFP_to_circulation()
     circulation_obj.adjust_RFP_to_circulation()
 
     for room in circulation_obj.RFP.rooms:
-        print("Room ", room.id, ":")
+        print("Room ",room.id, ":")
         print("Push top edge by: ", room.rel_push_T)
         print("Push bottom edge by: ", room.rel_push_B)
         print("Push left edge by: ", room.rel_push_L)
@@ -585,23 +603,53 @@ def call_circulation(graph_data, edge_set, entry):
     graph_data['room_y'] = np.array(room_y)
     graph_data['room_height'] = np.array(room_height)
     graph_data['room_width'] = np.array(room_width)
+    graph_data['area'] = np.array(circulation_obj.room_area)
+    return (graph_data, circulation_obj.is_dimensioning_successful)
 
-    return graph_data
 
+def draw_circulation(def draw_circulation(graph_data, pen, canvas, color_list):
+    """This is the draw function specifically for the circulation module
 
-def draw_circulation(graph_data, canvas):
-    origin_x, origin_y = -200, -100
+    Args:
+        graph_data (dict): Contains the room coordinates, dimensions, area, etc.
+        pen (output_canvas class in gui.py): To write area of each room
+        canvas (output_canvas class in gui.py): To draw the rooms
+        color_list (list): Color of each room
+    """
+    
+    origin_x, origin_y = -200,-100
     scale = 50
     room_x = graph_data["room_x"]
     room_y = graph_data["room_y"]
     room_height = graph_data["room_height"]
     room_width = graph_data["room_width"]
     for i in range(len(room_x)):
-        canvas.create_rectangle(origin_x + scale * room_x[i], origin_y + scale * room_y[i],
-                                origin_x + scale * (room_x[i] + room_width[i]),
-                                origin_y + scale * (room_y[i] + room_height[i]), fill="#4BC0D9")
-        canvas.create_text(origin_x + scale * (room_x[i] + room_width[i] / 2),
-                           origin_y + scale * (room_y[i] + room_height[i] / 2), text=str(i))
+        canvas.create_rectangle(origin_x + scale*room_x[i], origin_y + scale*room_y[i], origin_x + scale*(room_x[i] + room_width[i]), origin_y + scale*(room_y[i] + room_height[i]), fill = color_list[i])
+        canvas.create_text(origin_x + scale*(room_x[i] + room_width[i]/2), origin_y + scale*(room_y[i] + room_height[i]/2), text = str(i))
+    
+    # Printing dimensions in case it is dimensioned
+    # Gets the max x coordinate (rightmost end of floorplan)
+    x_max = np.max(graph_data['room_x']) + graph_data['room_width'][np.argmax(graph_data['room_x'])]
+    # Gets the max y coordinate (topmost end of floorplan)
+    y_max = np.max(graph_data['room_y'])
+
+
+    value = 1 # variable to write next area in next line
+    pen.penup()
+    if(len(graph_data['area']) != 0):
+        pen.setposition(x_max* scale + origin_x + 50, y_max* scale + origin_y - 30)
+        pen.write('Dimensions of Each Room' ,font=("Arial", 20, "normal"))
+        for i in range(0,len(graph_data['area'])):
+            if i in graph_data['extranodes']:
+                continue
+            pen.setposition(x_max* scale + origin_x+50, y_max* scale + origin_y - 30 - value*30)
+            pen.write('Room ' + str(i)+ ': Width= '+ str(round(graph_data['room_width'][i],1)) + ' Height= ' + str(round(graph_data['room_height'][i], 1)),font=("Arial", 15, "normal"))
+            pen.penup()
+            # Moving pen to next line
+            value+=1
+
+    # draw door
+    # print("Entry: ", entry)
 
 
 if __name__ == "__main__":

@@ -144,15 +144,35 @@ class gui_class:
         self.app = self.PlotApp(self.frame2, self)
         self.root.title('Input Graph')
         self.checkvar1 = tk.IntVar()
+        self.checkvar2 = tk.IntVar() # For dimensioned circ
+        self.checkvar3 = tk.IntVar() # For remove/add circulation
+
         self.e1 = tk.IntVar()
         self.e2 = tk.IntVar()
 
         self.tabledata = []
-        self.frame1 = tk.Frame(self.root, bg=col[2])
+        self.frame11 = tk.Frame(self.root, bg=col[2])
+        self.frame11.grid(row=0, column=0)
+        
+
+        self.frame1 = tk.Canvas(self.frame11, bg=col[2])
         self.frame1.grid(row=0, column=0)
-        label1 = tk.LabelFrame(self.frame1, text="tools")
+        vsb = tk.Scrollbar(self.frame11, orient="vertical", command=self.frame1.yview)
+        vsb.grid(row=0, column=1, sticky='ns')
+        self.frame1.configure(yscrollcommand=vsb.set)
+        self.frame1.config(scrollregion=self.frame1.bbox("all"))
+
+
+        # myscrollbar=tk.Scrollbar(self.frame1,orient="vertical")
+        # myscrollbar.grid(row=0, column=1)
+        # self.frame1.config(command=self.frame1.yview)
+
+
+        # myscrollbar.pack(side="right",fill="y")
+
+        label1 = tk.LabelFrame(self.frame11, text="tools")
         label1.grid(row=0, column=0, pady=10)
-        self.frame3 = tk.Frame(self.root, bg=col[2])
+        self.frame3 = tk.Frame(self.frame11, bg=col[2])
         self.frame3.grid(row=1, column=0)
         self.Buttons(self.frame1, self)
         self.menu(self)
@@ -1356,13 +1376,19 @@ class gui_class:
                            command=master.change_entry_gui)
             b6.grid(row=6, column=0, padx=5, pady=5)
 
+            c1 = tk.Checkbutton(master.frame1, text = "Dimensioned Circulation",relief='flat',**button_details,selectcolor='#4A4E69',width=13 ,variable = master.checkvar2,onvalue = 1, offvalue = 0)
+            c1.grid(row=7,column=0,padx=5,pady=5)
+
+            c2 = tk.Checkbutton(master.frame1, text = "Remove Circulation",relief='flat',**button_details,selectcolor='#4A4E69',width=13 ,variable = master.checkvar3,onvalue = 1, offvalue = 0)
+            c2.grid(row=8,column=0,padx=5,pady=5)
+
             b7 = tk.Button(master.frame1, width=15, text='Polygonal Floorplans', relief='flat', **button_details,
                            command=master.polygonal_inputbox)
-            b7.grid(row=7, column=0, padx=5, pady=5)
+            b7.grid(row=9, column=0, padx=5, pady=5)
 
             b8 = tk.Button(master.frame1, width=15, text='Letter Shaped Floor Plan', relief='flat', **button_details,
                            command=master.letter_inputbox)
-            b8.grid(row=8, column=0, padx=5, pady=5)
+            b8.grid(row=10, column=0, padx=5, pady=5)
 
             # b9 = tk.Button(master.frame1, width=15, text='Z Shaped Floor Plan', relief='flat', **button_details,
             #                command=master.z_shaped)
@@ -1374,7 +1400,7 @@ class gui_class:
 
             b11 = tk.Button(master.frame1, width=15, text='Staircase Shaped Floor Plan', relief='flat',
                             **button_details, command=master.staircase_shaped)
-            b11.grid(row=9, column=0, padx=5, pady=5)
+            b11.grid(row=11, column=0, padx=5, pady=5)
 
             # b12 = tk.Button(master.frame1, width=15, text='L Shaped Floor Plan', relief='flat',
             #                 **button_details, command=master.l_shaped)
@@ -1395,7 +1421,7 @@ class gui_class:
             # b6.grid(row=6,column=0,padx=5,pady=5)
 
             b5 = tk.Button(master.frame1, width=15, text='EXIT', relief='flat', **button_details, command=master.exit)
-            b5.grid(row=10, column=0, padx=5, pady=5)
+            b5.grid(row=12, column=0, padx=5, pady=5)
 
     class menu:
         def __init__(self, master):
