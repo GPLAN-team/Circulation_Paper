@@ -1961,8 +1961,8 @@ class gui_class:
     def change_entry_gui(self):
         """This function takes user input for starting edge/door for the corridor
         """
-        self.top = tk.Toplevel(self.root, width=300, height=300)
-        root = self.top        
+        self.top = tk.Toplevel(self.root, width=800, height=400)
+        root = self.top
         root.geometry("400x100")
         root.title('Corridor thickness')
         # entry_text = tk.Label(root, text="Enter the two rooms adjacent to the new entry door")
@@ -2007,60 +2007,82 @@ class gui_class:
     #     ex.grid(row = 3)
 
     def entry_ender(self):
-        self.left = self.l.get() + 1
-        self.right = self.r.get() + 1
-        self.entry_door = [self.left, self.right]
-        self.end.set(self.end.get() + 1)
+        # self.left = self.l.get() + 1
+        # self.right = self.r.get() + 1
+        # self.entry_door = [self.left, self.right]
+        self.corridor_thickness = self.ct.get()
+        self.end.set(self.end.get()+1)
         self.top.destroy()
-
-        self.app.command = "circulation"
-        self.command = "circulation"
-        self.end.set(self.end.get() + 1)
-
-    def remove_corridor_gui(self, adjacency):
-        """GUI for user to indicate where to remove corridors
-
-        Args:
-            remove_corridor (List): List to indicate to which existing corridors we want to remove
-        """
-        self.adjacency = adjacency
-        for i in range(len(adjacency)):
-            self.remove_or_not.append(tk.IntVar(value=0))
-        self.top = tk.Toplevel(self.root, width=2000, height=1000)
-        root = self.top
-        root.geometry("400x400")
-        root.title('Remove corridor')
-        corr_edges = list(self.adjacency.values())
-        corr_text = tk.Label(root,text="Enter 1 if you want to remove corridor",justify=tk.CENTER)
-        corr_text.grid(row= 3, column= 10, ipadx = 5, ipady = 20)
-        for i in range(1,len(adjacency)):
-            text = tk.Label(root, text = str(corr_edges[i][0]) + "           " + str(corr_edges[i][1]))
-            text.grid(row=i+30,column=8)
-            rem_val = tk.Entry(root, textvariable=self.remove_or_not[i])
-            rem_val.grid(row=i+30,column=10)
-
-        ex = tk.Button(root,text = "Submit",command = self.remove_corridor_done, justify=tk.CENTER)
-        ex.place(relx=0.4 , rely= 0.025*(10+len(adjacency)))
-
-        ex1 = tk.Button(root,text = "Remove all",command = self.remove_all, justify=tk.CENTER)
-        ex1.place(relx=0.6 , rely= 0.025*(10+len(adjacency)))
-    
-    def remove_corridor_done(self):
-        corr_edges = list(self.adjacency.values())
-        for i in range(len(corr_edges)):
-            if(self.remove_or_not[i].get()):
-                self.remove_edges.append(corr_edges[i])
         
-        # self.end.set(self.end.get()+1)
-        self.top.destroy()
-
         self.app.command="circulation"
         self.command = "circulation"
         self.end.set(self.end.get()+1)
 
-    def remove_all(self):
-        for i in range(len(self.remove_or_not)):
-            self.remove_or_not[i].set(1)
+    def remove_corridor_gui(self, adjacency):
+        """GUI for user to indicate where to remove corridors
+        Args:
+            adjacency (dict): Dictionary having keys as the corridor vertices and
+                              the values as the pair of rooms the corridor connects
+        Returns:
+            rem_edges (List): List of edges between which the corridor vertex has to be removed
+        """
+        # Required variables
+        adj_list = list(adjacency.values()) # List to display the corridors as a list
+        rem_or_not = [] # List to hold values 0 or 1 (1 if corridor needs to be removed)
+        rem_edges = [] # List of edges where corridors are to be removed
+
+        # GUI initialization for the window
+        root = tk.Toplevel()
+        root.title('Remove corridor')
+        root.geometry(str(400) + 'x' + str(400))
+        # Desc = tk.Label(root, text="Enter 1 if you want to remove corridor", font=("Times New Roman", 12))
+        # Desc.place(relx=0.60, rely=0.1, anchor='ne')
+        corr_text = tk.Label(root,text="Enter 1 if you want to remove corridor",justify=tk.CENTER)
+        corr_text.grid(row= 3, column= 10, ipadx = 5, ipady = 20)
+
+        # Initializing the rem_or_not array
+        for i in range(len(adjacency)):
+            rem_or_not.append(tk.IntVar(value=0))
+        
+        # For getting user input for which corridors to remove
+        for i in range(1,len(adjacency)):
+            text = tk.Label(root, text = str(adj_list[i][0]) + "           " + str(adj_list[i][1]))
+            text.grid(row=i+30,column=8)
+            rem_val = tk.Entry(root, textvariable=rem_or_not[i])
+            rem_val.grid(row=i+30,column=10)
+
+        # When submit is clicked
+        def rem_corr_submit():
+            for i in range(len(rem_or_not)):
+                # Checks if the remove corridor value is zero or not
+                if(rem_or_not[i].get()):
+                    rem_edges.append(adj_list[i])
+                    
+            print("rem_corridor_submit")
+            root.destroy()
+
+        # When we want to remove all corridors
+        def rem_all():
+            for i in range(len(rem_or_not)):
+                rem_or_not[i].set(1)
+        
+        done_btn = tk.Button(root, text='Submit', padx=5, command=rem_corr_submit)
+        done_btn.place(relx=0.4, rely=0.9, anchor='ne')
+
+        rem_all_btn = tk.Button(root, text="Remove all", padx=5, command=rem_all)
+        rem_all_btn.place(relx=0.8, rely=0.9, anchor='ne')
+
+        root.wait_window(root)
+        print("rem_corr_gui")
+        print("To remove the corridors between: ")
+        for i in range(len(rem_edges)):
+            print(rem_edges[i])
+
+        self.app.command="circulation"
+        self.command = "circulation"
+        self.end.set(self.end.get()+1)
+            
+        return rem_edges
         
     def save_file(self, filename="Rectangular Dual Graph.txt"):
         # self.root.filename = self.value
