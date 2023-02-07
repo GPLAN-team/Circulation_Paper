@@ -543,16 +543,18 @@ def run():
                         gclass.output_data.append(graph_data)
                         gclass.dimensional_constraints = dimensional_constraints
                         gclass.ptpg = graph
-                        # gclass.ocan.add_tab()
-                        # gclass.pen = gclass.ocan.getpen()
-                        # gclass.pen.speed(0)
-                        # draw.draw_rdg(graph_data
-                        #     ,1
-                        #     ,gclass.pen
-                        #     ,1
-                        #     ,gclass.value[6]
-                        #     ,[]
-                        #     ,origin)
+                        print_all_rfp = False
+                        if print_all_rfp == True:
+                            gclass.ocan.add_tab()
+                            gclass.pen = gclass.ocan.getpen()
+                            gclass.pen.speed(0)
+                            draw.draw_rdg(graph_data
+                                ,1
+                                ,gclass.pen
+                                ,1
+                                ,gclass.value[6]
+                                ,[]
+                                ,origin)
             elif (gclass.command == "poly"):  # Polygonal Floorplan
                 start = time.time()
                 # graph.irreg_single_dual()
