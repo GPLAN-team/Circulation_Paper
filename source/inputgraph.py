@@ -505,6 +505,8 @@ class InputGraph:
             height = np.transpose(height)
             self.room_width[i] = width.flatten()
             self.room_height[i] = height.flatten()
+            self.room_x[i], self.room_y[i] = dual.get_coordinates(encoded_matrix, rel_matrix.shape[0], 
+                                                                  self.room_width[i], self.room_height[i], hor_dgph)
             for j in range(0, len(self.room_x[i])):
                 self.room_x[i][j] = round(self.room_x[i][j], 3)
             for j in range(0, len(self.room_y[i])):
