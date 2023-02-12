@@ -88,15 +88,18 @@ class gui_class:
         self.command = "Null"
         self.value = []
         self.root =tk.Tk()
+        # For entry to start circulation
+        self.entry_door = []
+        self.l = tk.IntVar(None)
+        self.l.set(0)
+        self.r = tk.IntVar(None)
+        self.r.set(1)
+        self.left = 0
+        self.right = 1
+        self.entry_door.append(self.l)
+        self.entry_door.append(self.r)
 
-        # self.entry_door = []
-        
-        # self.l = tk.IntVar(None)
-        # self.l.set(0)
-        # self.r = tk.IntVar(None)
-        # self.r.set(1)
-        # self.left = 0
-        # self.right = 1
+
         # To get user input for corridor thickness
         self.ct = tk.DoubleVar(None)
         self.ct.set(0.1)
@@ -1961,58 +1964,45 @@ class gui_class:
     def change_entry_gui(self):
         """This function takes user input for starting edge/door for the corridor
         """
-        self.top = tk.Toplevel(self.root, width=800, height=400)
-        root = self.top
+        self.top1 = tk.Toplevel(self.root, width=1000, height=1000)
+        root = self.top1
+        root.geometry("500x125")
+        root.title('Circulation Entry Changer')
+        main_text = tk.Label(root, text="Enter the two rooms adjacent to the new entry door")
+        main_text.grid(row= 1, column= 0, padx = 20, ipady = 10)
+        l_val = tk.Entry(root, textvariable = self.l)
+        l_val.grid(row  = 3, column = 0)
+        r_val = tk.Entry(root, textvariable = self.r)
+        r_val.grid(row = 3, column = 2)
+        ex = tk.Button(root,text = "Submit",command = self.corridor_thickness_gui, justify=tk.CENTER)
+        ex.grid(padx=100, pady=20)
+
+    def corridor_thickness_gui(self):
+
+        """This function takes user input for starting edge/door for the corridor
+        """
+        self.top2 = tk.Toplevel(self.root, width=800, height=400)
+        root = self.top2
         root.geometry("400x100")
         root.title('Corridor thickness')
-        # entry_text = tk.Label(root, text="Enter the two rooms adjacent to the new entry door")
-        # # entry_text.grid(row = 3, column = 0)
-        # l_val = tk.Entry(root, textvariable = self.l)
-        # l_val.grid(row  = 3, column = 1)
-        # r_val = tk.Entry(root, textvariable = self.r)
-        # r_val.grid(row = 3, column = 2)
         corridor_text = tk.Label(root,text="Enter the corridor thickness")
         corridor_text.grid(row= 3, column= 0, ipadx = 5, ipady = 20)
         thickness = tk.Entry(root, textvariable=self.ct)
         thickness.grid(row  = 3, column = 2)
-        ex = tk.Button(root,text = "Submit",command = self.entry_ender, justify=tk.CENTER)
+        ex = tk.Button(root,text = "Submit",command = self.corridor_thickness_ender, justify=tk.CENTER)
         ex.grid(column= 1, ipadx=10)
 
-        # Added to handle when input door index is not integer
-        # # Make sure entered rooms are integers
-        # try:
-        #     int(self.l)
-        # except ValueError:
-        #     tk.messagebox.showerror("Error", "ERROR!! THE LEFT ROOM INDEX IS AN INTEGER")
-        
-        # try:
-        #     int(self.l)
-        # except ValueError:
-        #     tk.messagebox.showerror("Error", "ERROR!! THE RIGHT ROOM INDEX IS AN INTEGER")
-    
-
-    # def change_entry_gui(self) -> None:
-    #     """This function takes user input for starting edge/door for the corridor
-    #     """
-    #     self.top = tk.Toplevel(self.root, width = 300, height = 300)
-    #     root = self.top
-    #     root.title('Circulation Entry Changer')
-    #     main_text = tk.Label(root, text="Enter the two rooms adjacent to the new entry door")
-    #     main_text.grid(row = 0, column = 0)
-    #     l_val = tk.Entry(root, textvariable = self.l)
-    #     l_val.grid(row  = 1, column = 0)
-    #     r_val = tk.Entry(root, textvariable = self.r)
-    #     r_val.grid(row = 1, column = 1)
-    #     ex = tk.Button(root,text = "Submit",command = self.entry_ender)
-    #     ex.grid(row = 3)
-
-    def entry_ender(self):
-        # self.left = self.l.get() + 1
-        # self.right = self.r.get() + 1
-        # self.entry_door = [self.left, self.right]
+    def corridor_thickness_ender(self):
+        """This function concludes user input for corridor thickness and entry door
+            and transfers control to the background functions
+        """
+        self.left = self.l.get() + 1
+        self.right = self.r.get() + 1
+        self.entry_door = [self.left, self.right]
         self.corridor_thickness = self.ct.get()
         self.end.set(self.end.get()+1)
-        self.top.destroy()
+        self.top1.destroy()
+        self.top2.destroy()
         
         self.app.command="circulation"
         self.command = "circulation"
@@ -2053,6 +2043,8 @@ class gui_class:
 
         # When submit is clicked
         def rem_corr_submit():
+            """This function records the input for removing corridors
+            """
             for i in range(len(rem_or_not)):
                 # Checks if the remove corridor value is zero or not
                 if(rem_or_not[i].get()):
@@ -2063,6 +2055,8 @@ class gui_class:
 
         # When we want to remove all corridors
         def rem_all():
+            """This function gives an option to delete all corridors in single click
+            """
             for i in range(len(rem_or_not)):
                 rem_or_not[i].set(1)
         

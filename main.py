@@ -642,6 +642,7 @@ def call_circulation(graph_data, gclass, coord, is_dimensioned, dim_constraints,
 
     g = nx.Graph()
     edge_set = gclass.value[2]
+    entry = gclass.entry_door
 
     for x in edge_set:
         g.add_edge(x[0], x[1])
@@ -662,7 +663,7 @@ def call_circulation(graph_data, gclass, coord, is_dimensioned, dim_constraints,
         circulation_obj.dimension_constraints = dim_constraints
     # circulation_result = circulation_obj.circulation_algorithm(entry[0], entry[1])
     # circulation_result = circulation_obj.multiple_circulation(coord)
-    circulation_result = circulation_obj.circulation_algorithm()
+    circulation_result = circulation_obj.circulation_algorithm(entry[0],entry[1])
     if circulation_result == 0:
         return None
     
