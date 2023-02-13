@@ -383,118 +383,112 @@ def add_home_page(pdf, edges, num_rfp, time_taken):
     pdf.multi_cell(100, 10, "Number of floorplans: " +  str(num_rfp), 0, 1, 'C')
 
 def generate_catalogue(edges, num_rfp, time_taken, output_data, dimensional_constraints ):
-        print("[LOG] Downloading Catalogue")
-        pdf = PDF() 
-        add_home_page(pdf, edges, num_rfp, time_taken)
+    print("[LOG] Downloading Catalogue")
+    pdf = PDF() 
+    add_home_page(pdf, edges, num_rfp, time_taken)
+    
+    # origin = [ [75,75], [75,175], [75, 250], [175, 75], [175,175], [175, 250] ]
+    origin_x = 15
+    origin_y = 30
+
+    grid_height = 20
+    grid_width = 20
+
+    grid_cols = int( (pdf_w - 50) / grid_width )
+    grid_rows = int( (pdf_h - 70) / grid_height)
+    
+    rfp_no = 0
+    break_while = 0
+    while rfp_no < num_rfp:
         
-        # origin = [ [75,75], [75,175], [75, 250], [175, 75], [175,175], [175, 250] ]
-        origin_x = 15
-        origin_y = 30
+        pdf.add_page()
+        pdf.add_border()
+        # pdf.add_grid_lines()
+        pdf.cell(40)
+        pdf.cell(100,10, str(rfp_no) + " of " + str(num_rfp) + " Floor Plans",0,1,'C')
 
-        grid_height = 20
-        grid_width = 20
+        for i in range(grid_rows):
+            if break_while == 1:
+                break
 
-        grid_cols = int( (pdf_w - 50) / grid_width )
-        grid_rows = int( (pdf_h - 70) / grid_height)
-        
-        rfp_no = 0
-        break_while = 0
-        while rfp_no < num_rfp:
-            
-            pdf.add_page()
-            pdf.add_border()
-            pdf.add_grid_lines()
-            pdf.cell(40)
-            pdf.cell(100,10, str(rfp_no) + " of " + str(num_rfp) + " Floor Plans",0,1,'C')
-
-            for i in range(grid_rows):
-                if break_while == 1:
+            j = 0
+            while j < grid_cols:
+                if rfp_no >= num_rfp:
+                    break_while = 1
                     break
 
-                j = 0
-                while j < grid_cols:
-                    if rfp_no >= num_rfp:
-                        break_while = 1
-                        break
-
-                    rfp_x = origin_x + j * (grid_width + 2)
-                    rfp_y = origin_y + i * (grid_height + 2)
-                    rfp_data = output_data[rfp_no]
-                    draw_one_rfp(pdf, rfp_x, rfp_y, rfp_data, grid_width, grid_height)
-                    rfp_no += 1
-                    j += 1
-        pdf.output('latest_catalogue.pdf','F')
+                rfp_x = origin_x + j * (grid_width + 2)
+                rfp_y = origin_y + i * (grid_height + 2)
+                rfp_data = output_data[rfp_no]
+                draw_one_rfp(pdf, rfp_x, rfp_y, rfp_data, grid_width, grid_height)
+                rfp_no += 1
+                j += 1
+    # pdf.output('latest_catalogue.pdf','F')
+    save(pdf)
 
 def generate_catalogue_dimensioned(edges, num_rfp, time_taken, output_data, dimensional_constraints, fpcnt ):
-        print("[LOG] Downloading Dimensioned Catalogue")
-        pdf = PDF() 
-        add_home_page(pdf, edges, num_rfp, time_taken)
-        add_dimensional_constraints(pdf, dimensional_constraints, fpcnt, num_rfp)
-        
-        # origin = [ [75,75], [75,175], [75, 250], [175, 75], [175,175], [175, 250] ]
-        origin_x = 15
-        origin_y = 30
+    print("[LOG] Downloading Dimensioned Catalogue")
+    pdf = PDF() 
+    add_home_page(pdf, edges, num_rfp, time_taken)
+    add_dimensional_constraints(pdf, dimensional_constraints, fpcnt, num_rfp)
+    
+    # origin = [ [75,75], [75,175], [75, 250], [175, 75], [175,175], [175, 250] ]
+    origin_x = 15
+    origin_y = 30
 
-        grid_height = 50
-        grid_width = 30
+    grid_height = 50
+    grid_width = 30
 
-        grid_cols = int( (pdf_w - 30) / grid_width)
+    grid_cols = int( (pdf_w - 30) / grid_width)
 
-        grid_rows = int( (pdf_h - 30) / grid_height)
+    grid_rows = int( (pdf_h - 30) / grid_height)
+    
+    rfp_no = 0
+    break_while = 0
+    
+    grid_scale = get_scale(output_data[0], grid_width, grid_height) 
+    
+    while rfp_no < num_rfp:
         
-        rfp_no = 0
-        break_while = 0
-        
-        grid_scale = get_scale(output_data[0], grid_width, grid_height) 
-        
-        while rfp_no < num_rfp:
-            
-            pdf.add_page()
-            pdf.add_border_and_grid(grid_scale)
-            pdf.cell(40)
-            pdf.cell(100,10, str(rfp_no) + " of " + str(num_rfp) + " Floor Plans",0,1,'C')
+        pdf.add_page()
+        pdf.add_border_and_grid(grid_scale)
+        pdf.cell(40)
+        pdf.cell(100,10, str(rfp_no) + " of " + str(num_rfp) + " Floor Plans",0,1,'C')
 
-            for i in range(grid_rows):
-                if break_while == 1:
+        for i in range(grid_rows):
+            if break_while == 1:
+                break
+
+            j = 0
+            while j < grid_cols:
+                if rfp_no >= num_rfp:
+                    break_while = 1
                     break
 
-                j = 0
-                while j < grid_cols:
-                    if rfp_no >= num_rfp:
-                        break_while = 1
-                        break
+                rfp_x = origin_x + j * (grid_width + 2)
+                rfp_y = origin_y + i * (grid_height + 2)
+                rfp_data = output_data[rfp_no]
+                draw_one_rfp(pdf, rfp_x, rfp_y, rfp_data, grid_width, grid_height, dimensioned=1)
+                rfp_no += 1
+                j += 2
+    save(pdf)            
 
-                    rfp_x = origin_x + j * (grid_width + 2)
-                    rfp_y = origin_y + i * (grid_height + 2)
-                    rfp_data = output_data[rfp_no]
-                    draw_one_rfp(pdf, rfp_x, rfp_y, rfp_data, grid_width, grid_height, dimensioned=1)
-                    rfp_no += 1
-                    j += 2
+def save(pdf):
+    win = Tk()
+    win.geometry("250x150")
 
-        win = Tk()
-        win.geometry("750x250")
+    # Define the function
+    def save_file():
+        f = asksaveasfilename(initialfile='Catalogue.pdf', defaultextension=".pdf",
+                                filetypes=[("All Files", "*.*"), ('pdf file', '*.pdf')])
+        pdf.output(f, 'F')
+        print("saved at:", f)
 
-        # Define the function
-        def save_file():
-            f = asksaveasfilename(initialfile='Catalogue.pdf', defaultextension=".pdf",
-                                  filetypes=[("All Files", "*.*"), ('pdf file', '*.pdf')])
-            pdf.output(f, 'F')
-            print("saved at:", f)
-
-        # Create a button
-        btn = Button(win, text="Save", command=lambda: save_file())
-        btn.pack(pady=10)
-        win.after(3000, lambda: win.destroy())
-        win.mainloop()
-
-        # Success alert
-        root = Tk()
-        root.geometry("300x200")
-        w = Label(root, text='Success confirmation', font="30")
-        w.pack()
-        messagebox.showinfo("SUCCESS", "Catalogue downloaded successfully!")
-        root.mainloop()
-
+    # Create a button
+    btn = Button(win, text="Save", command=lambda: save_file())
+    btn.pack(pady=10)
+    win.after(3000, lambda: win.destroy())
+    win.mainloop()
 
 
 
