@@ -49,6 +49,18 @@ class PDF(FPDF):
         self.set_fill_color(255, 255, 255) # color for inner rectangle
         self.rect(8.0, 8.0, 194.0,282.0,'FD')
         self.set_margins(left=10, top=10, right=-10)
+            
+    def add_border_and_grid(self, scale):
+        self.add_border()
+        self.set_draw_color(211, 211, 211)
+        x=8.8  #horizontal grid lines
+        while(x<202.0):
+            self.line(x, 10.0, x, 289.0)
+            x = x + scale
+        y=11.2  #vertical grid lines
+        while(y<290.0):
+            self.line(10.0, y, 201.0, y)
+            y = y + scale        
 
     def add_title(self):
         self.set_title(title= "A catalogue of floor plans")
@@ -78,26 +90,14 @@ def make_encoded_matrix(nodecnt, room_x, room_y, room_width, room_height):
                 if encoded_matrix[room_y_arr[node] + height][room_x_arr[node] + width] == -1:
                     encoded_matrix[room_y_arr[node] + height][room_x_arr[node] + width] = node
     return encoded_matrix
-    # for node in range(nodecnt):
-    #     for width in range(room_width[node]):
-    #         for height in range(room_height[node]):
-                
-    # return encoded_matrix
 
-
-
-def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100, dimensioned = 0):
-
-    # em = get_encoded_matrix(len(rfp_data['room_x']), rfp_data['room_x'], rfp_data['room_y'], rfp_data['room_width'], rfp_data['room_height'])
-    em = make_encoded_matrix(len(rfp_data['room_x']), rfp_data['room_x'], rfp_data['room_y'], rfp_data['room_width'], rfp_data['room_height'])
-
+def get_scale(rfp_data, grid_w=100, grid_h=100): #Calculates the scaling factor for grid lines and rfp
     min_x = rfp_data['room_x'][0]
     min_y = rfp_data['room_y'][0]
     max_x = rfp_data['room_x'][0] + rfp_data['room_width'][0]
     max_y = rfp_data['room_y'][0] + rfp_data['room_height'][0]
-    # print("min_x, max_x, min_y, max_y" , min_x, max_x, min_y, max_y)
+    
     for each_room in range(len(rfp_data['room_x'])):
-
         min_x = min( min_x,  rfp_data['room_x'][each_room] )
         min_y = min( min_y,  rfp_data['room_y'][each_room] )
         max_x = min( max_x,  rfp_data['room_x'][each_room] + rfp_data['room_width'][each_room] )
@@ -106,22 +106,13 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100, dimensioned =
     plot_width = abs( min_x - max_x)
     plot_height = abs( min_y - max_y)
     scale = max( grid_h/plot_height, grid_w/plot_width) / 8
+    return scale
 
-    # pdf.text(
-    #         x + grid_w,
-    #         y,
-    #         txt = "Dimensions of each room" )
+def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100, dimensioned = 0):
+    em = make_encoded_matrix(len(rfp_data['room_x']), rfp_data['room_x'], rfp_data['room_y'], rfp_data['room_width'], rfp_data['room_height'])
 
-    # pdf.set_xy(x + grid_w - 10, y)
-
-
-    # Prints room dimensions sideways
+    scale = get_scale(rfp_data, grid_w, grid_h)
     
-    # pdf.text(x + grid_w, y, 'Dimensions \n')
-    # for each_room in range(len(rfp_data['room_x_top_left'])):
-    #     pdf.text(x + grid_w, y + each_room * 5 + 5, 'Room ' + str(each_room) + ' : ' + str(rfp_data['room_width'][each_room]) + ' X ' + str(rfp_data['room_height'][each_room]) + '\n')
-
-    # print(rfp_data['mergednodes'])
     flag = 0
     for each_room in range(len(rfp_data['room_x'])):
         if each_room in rfp_data['extranodes']:
@@ -136,10 +127,10 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100, dimensioned =
         pdf.set_fill_color(*rgb_colors[each_room])
         pdf.set_draw_color(0,0,0)
         pdf.rect( 
-        x + scale * int(rfp_data['room_x'][each_room]) ,
-        y + scale * int(rfp_data['room_y'][each_room]) , 
-        scale * int(rfp_data['room_width'][each_room]) , 
-        scale * int(rfp_data['room_height'][each_room]) ,
+        x + scale * round(rfp_data['room_x'][each_room], 1) ,
+        y + scale * round(rfp_data['room_y'][each_room], 1) , 
+        scale * round(rfp_data['room_width'][each_room], 1) , 
+        scale * round(rfp_data['room_height'][each_room], 1) ,
         'DF')
 
         if flag == 1:
@@ -278,16 +269,6 @@ def draw_one_rfp(pdf: PDF, x, y, rfp_data, grid_w=100, grid_h=100, dimensioned =
         line_width = 0.2
         pdf.set_line_width(line_width)
         pdf.set_draw_color(*rgb_colors[each_room])
-        # if rfp_data['room_x_bottom_left'][each_room] != rfp_data['room_x_bottom_right'][each_room]:
-        #     pdf.line(x + scale * rfp_data['room_x_bottom_left'][each_room] + line_width, y + scale * rfp_data['room_y'][each_room], x + scale * rfp_data['room_x_bottom_right'][each_room] - line_width, y + scale * rfp_data['room_y'][each_room])
-        # if rfp_data['room_x_top_left'][each_room] != rfp_data['room_x_top_right'][each_room]:
-        #     pdf.line(x + scale * rfp_data['room_x_top_left'][each_room] + line_width, y + scale * rfp_data['room_y'][each_room] + scale * rfp_data['room_height'][each_room] , x + scale * rfp_data['room_x_top_right'][each_room] - line_width, y + scale * rfp_data['room_y'][each_room] + scale * rfp_data['room_height'][each_room])
-        # if rfp_data['room_y_left_bottom'][each_room] != rfp_data['room_y_left_top'][each_room]:
-        #     pdf.line( x + scale * rfp_data['room_x'][each_room],y + scale * rfp_data['room_y_left_bottom'][each_room] + line_width ,x + scale * rfp_data['room_x'][each_room], y + scale * rfp_data['room_y_left_top'][each_room] - line_width )
-        # if rfp_data['room_y_right_bottom'][each_room] != rfp_data['room_y_right_top'][each_room]:
-        #     pdf.line( x + scale * rfp_data['room_x'][each_room] + scale * rfp_data['room_width'][each_room], y + scale * rfp_data['room_y_right_bottom'][each_room] + line_width , x + scale * rfp_data['room_x'][each_room] + scale * rfp_data['room_width'][each_room], y + scale * rfp_data['room_y_right_top'][each_room] - line_width)
-
-        
         pdf.set_draw_color(0,0,0)
 
 def fill_dimensional_constraints(pdf : PDF, room, dimensional_constraints):
@@ -405,7 +386,7 @@ def generate_catalogue(edges, num_rfp, time_taken, output_data, dimensional_cons
         print("[LOG] Downloading Catalogue")
         pdf = PDF() 
         add_home_page(pdf, edges, num_rfp, time_taken)
-        # add_dimensional_constraints(pdf, dimensional_constraints)
+        
         # origin = [ [75,75], [75,175], [75, 250], [175, 75], [175,175], [175, 250] ]
         origin_x = 15
         origin_y = 30
@@ -415,14 +396,14 @@ def generate_catalogue(edges, num_rfp, time_taken, output_data, dimensional_cons
 
         grid_cols = int( (pdf_w - 50) / grid_width )
         grid_rows = int( (pdf_h - 70) / grid_height)
-        # print(" cols rows" , grid_cols, grid_rows)
-
+        
         rfp_no = 0
         break_while = 0
         while rfp_no < num_rfp:
             
             pdf.add_page()
             pdf.add_border()
+            pdf.add_grid_lines()
             pdf.cell(40)
             pdf.cell(100,10, str(rfp_no) + " of " + str(num_rfp) + " Floor Plans",0,1,'C')
 
@@ -449,6 +430,7 @@ def generate_catalogue_dimensioned(edges, num_rfp, time_taken, output_data, dime
         pdf = PDF() 
         add_home_page(pdf, edges, num_rfp, time_taken)
         add_dimensional_constraints(pdf, dimensional_constraints, fpcnt, num_rfp)
+        
         # origin = [ [75,75], [75,175], [75, 250], [175, 75], [175,175], [175, 250] ]
         origin_x = 15
         origin_y = 30
@@ -459,14 +441,16 @@ def generate_catalogue_dimensioned(edges, num_rfp, time_taken, output_data, dime
         grid_cols = int( (pdf_w - 30) / grid_width)
 
         grid_rows = int( (pdf_h - 30) / grid_height)
-        # print(" cols rows" , grid_cols, grid_rows)
-
+        
         rfp_no = 0
         break_while = 0
+        
+        grid_scale = get_scale(output_data[0], grid_width, grid_height) 
+        
         while rfp_no < num_rfp:
             
             pdf.add_page()
-            pdf.add_border()
+            pdf.add_border_and_grid(grid_scale)
             pdf.cell(40)
             pdf.cell(100,10, str(rfp_no) + " of " + str(num_rfp) + " Floor Plans",0,1,'C')
 
