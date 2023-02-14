@@ -3,6 +3,7 @@
 from tkinter import *
 import tkinter as tk
 
+
 # def plot(graph: nx.Graph,m: int) -> None:
 #     """Plots thr graph using matplotlib
 
@@ -38,67 +39,67 @@ import tkinter as tk
 # h = nx.induced_subgraph(g,[x for x in range(5)])
 # plot(h,len(h))
 
-OZoneIzotopeSemiWhite = "#c0c4ca"
-buttonBackground = "#303336"
-buttonforeground = "#cdd0d7"
-BACKGROUND2 = "#1e1f21"
+# OZoneIzotopeSemiWhite = "#c0c4ca"
+# buttonBackground = "#303336"
+# buttonforeground = "#cdd0d7"
+# BACKGROUND2 = "#1e1f21"
 
-class DropDownButton():
-    def __init__(self, parent, placement, opTions, **kw):
-        self.parent = parent
-        self.options = opTions
+# class DropDownButton():
+#     def __init__(self, parent, placement, opTions, **kw):
+#         self.parent = parent
+#         self.options = opTions
 
-        self.om_variable = tk.StringVar(self.parent)
-        self.om_variable.set(self.options[0])
-        self.om_variable.trace('w', self.option_select)
+#         self.om_variable = tk.StringVar(self.parent)
+#         self.om_variable.set(self.options[0])
+#         self.om_variable.trace('w', self.option_select)
 
-        self.om = tk.OptionMenu(self.parent, self.om_variable, *self.options)
-        self.om["menu"].config(fg=buttonforeground, bg=buttonBackground, activebackground=OZoneIzotopeSemiWhite, activeforeground=BACKGROUND2, borderwidth = 0)
-        self.om.config(fg=buttonforeground, bg=buttonBackground, activebackground=OZoneIzotopeSemiWhite, activeforeground=BACKGROUND2, bd =0)
-        self.om.place(x = placement, y = 2)
-        self.om.bind("<Enter>", self.on_enter)
-        self.om.bind("<Leave>", self.on_leave)
+#         self.om = tk.OptionMenu(self.parent, self.om_variable, *self.options)
+#         self.om["menu"].config(fg=buttonforeground, bg=buttonBackground, activebackground=OZoneIzotopeSemiWhite, activeforeground=BACKGROUND2, borderwidth = 0)
+#         self.om.config(fg=buttonforeground, bg=buttonBackground, activebackground=OZoneIzotopeSemiWhite, activeforeground=BACKGROUND2, bd =0)
+#         self.om.place(x = placement, y = 2)
+#         self.om.bind("<Enter>", self.on_enter)
+#         self.om.bind("<Leave>", self.on_leave)
 
-        self.om_variable1 = tk.StringVar(self.parent)
-        self.om_variable1.set(self.options[0])
-        self.om_variable1.trace('w', self.option_select1)
+#         self.om_variable1 = tk.StringVar(self.parent)
+#         self.om_variable1.set(self.options[0])
+#         self.om_variable1.trace('w', self.option_select1)
 
-        self.om1 = tk.OptionMenu(self.parent, self.om_variable1, *self.options)
-        self.om1["menu"].config(fg=buttonforeground, bg=buttonBackground, activebackground=OZoneIzotopeSemiWhite, activeforeground=BACKGROUND2, borderwidth = 0)
-        self.om1.config(fg=buttonforeground, bg=buttonBackground, activebackground=OZoneIzotopeSemiWhite, activeforeground=BACKGROUND2, bd =0)
-        self.om1.place(x = placement, y = 2)
-        self.om1.bind("<Enter>", self.on_enter1)
-        self.om1.bind("<Leave>", self.on_leave1)
+#         self.om1 = tk.OptionMenu(self.parent, self.om_variable1, *self.options)
+#         self.om1["menu"].config(fg=buttonforeground, bg=buttonBackground, activebackground=OZoneIzotopeSemiWhite, activeforeground=BACKGROUND2, borderwidth = 0)
+#         self.om1.config(fg=buttonforeground, bg=buttonBackground, activebackground=OZoneIzotopeSemiWhite, activeforeground=BACKGROUND2, bd =0)
+#         self.om1.place(x = placement, y = 2)
+#         self.om1.bind("<Enter>", self.on_enter1)
+#         self.om1.bind("<Leave>", self.on_leave1)
 
-    def on_enter(self, event):
-        if self.om == self.options[0]:
-            print ("Floorplan generation")
-        elif self.om_variable.get() == self.options[1]:
-            print ("Rectangular")
-        else:
-            print("Irregular")
+#     def on_enter(self, event):
+#         if self.om == self.options[0]:
+#             print ("Floorplan generation")
+#         elif self.om_variable.get() == self.options[1]:
+#             print ("Rectangular")
+#         else:
+#             print("Irregular")
 
-    def on_leave(self, enter):
-        print ("leave")
+#     def on_leave(self, enter):
+#         print ("leave")
 
-    def option_select(self, *args):
-        print (self.om_variable.get())
+#     def option_select(self, *args):
+#         print (self.om_variable.get())
     
-    def on_enter1(self, event):
-        if self.om == self.options[0]:
-            print ("Circulation")
-        elif self.om_variable.get() == self.options[1]:
-            print ("Dimensioned")
-        else:
-            print("Add/Remove")
+#     def on_enter1(self, event):
+#         if self.om == self.options[0]:
+#             print ("Circulation")
+#         elif self.om_variable.get() == self.options[1]:
+#             print ("Dimensioned")
+#         else:
+#             print("Add/Remove")
 
-    def on_leave1(self, enter):
-        print ("leave")
+#     def on_leave1(self, enter):
+#         print ("leave")
 
-    def option_select1(self, *args):
-        print (self.om_variable1.get())
+#     def option_select1(self, *args):
+#         print (self.om_variable1.get())
 
-root = tk.Tk()
-DropDownButton(root, 55, ['Floorplan gen', 'Rectangular', 'Irregular'])
-DropDownButton(root, 200, ['Circulation', 'Dimensioned', 'Add/Remove'])
-root.mainloop()
+# root = tk.Tk()
+# DropDownButton(root, 55, ['Floorplan gen', 'Rectangular', 'Irregular'])
+# DropDownButton(root, 200, ['Circulation', 'Dimensioned', 'Add/Remove'])
+# root.mainloop()

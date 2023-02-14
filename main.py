@@ -135,39 +135,34 @@ def run():
                         graph.single_floorplan(min_width,min_height,max_width,max_height,symm_string, min_aspect, max_aspect, plot_width, plot_height)
                     end = time.time()
                     printe("Time taken: " + str((end-start)*1000) + " ms")
-                    for idx in range(len(graph.room_x)):
-                        graph_data = {
-                                'room_x': graph.room_x,
-                                'room_y': graph.room_y,
-                                'room_width': graph.room_width,
-                                'room_height': graph.room_height,
-                                'area': graph.area,
-                                'extranodes': graph.extranodes,
-                                'mergednodes': graph.mergednodes,
-                                'irreg_nodes': graph.irreg_nodes1
-                            }
+                    graph_data = {
+                            'room_x': graph.room_x,
+                            'room_y': graph.room_y,
+                            'room_width': graph.room_width,
+                            'room_height': graph.room_height,
+                            'area': graph.area,
+                            'extranodes': graph.extranodes,
+                            'mergednodes': graph.mergednodes,
+                            'irreg_nodes': graph.irreg_nodes1
+                        }
 
-                        # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
-                        dim_constraints = [min_width, max_width, min_height, max_height, min_aspect, max_aspect]
-                        (new_graph_data, success) = call_circulation(graph_data, gclass, node_coord, is_dimensioned, dim_constraints, remove_corridor)
-                        print("Constraints: ", dim_constraints)
-                        print("New graph data: ", new_graph_data)
-                        print("success: ", success)                        
-                        # If there was some error in algorithm execution new_graph_data will be empty
-                        # we display the pop-up error message
-                        if new_graph_data == None:
-                            tk.messagebox.showerror("Error", "ERROR!! THE INITIAL CHOSEN ENTRY EDGE MUST BE EXTERIOR EDGE")
-                        
-                        # If no issues we continue to draw the corridor
-                        else :
-                            if (success == False):
-                                continue
-                            # draw_circulation(new_graph_data, gclass.ocan.canvas, gclass.value[6], gclass.entry_door)
-                            # draw_circulation(new_graph_data, gclass.pen, gclass.ocan.canvas, gclass.value[6])
+                    # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
+                    dim_constraints = [min_width, max_width, min_height, max_height, min_aspect, max_aspect]
+                    (new_graph_data, success) = call_circulation(graph_data, gclass, node_coord, is_dimensioned, dim_constraints, remove_corridor)
+                    print("Constraints: ", dim_constraints)
+                    print("New graph data: ", new_graph_data)
+                    print("success: ", success)                        
+                    # If there was some error in algorithm execution new_graph_data will be empty
+                    # we display the pop-up error message
+                    if new_graph_data == None:
+                        tk.messagebox.showerror("Error", "ERROR!! THE INITIAL CHOSEN ENTRY EDGE MUST BE EXTERIOR EDGE")
+                    
+                    # If no issues we continue to draw the corridor
+                    else :
+                        if (success):
                             draw.draw_rdg(new_graph_data, 1, gclass.pen, 1, gclass.value[6], [],origin)
                             feasible_dim = 1
-                            break
-                    
+
                     if(feasible_dim == 0):
                         tk.messagebox.showerror("Error", "ERROR!! NO CIRCULATION POSSIBLE FOR GIVEN DIMENSIONS")
                 
