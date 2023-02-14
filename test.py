@@ -1,9 +1,40 @@
 # import networkx as nx
 # import matplotlib.pyplot as plt
-from tkinter import *
 import tkinter as tk
+from tkinter import ttk
+from tkinter import *
 
+root = Tk()
+root.title("Test GUI GPLAN")
+root.geometry("500x400")
 
+# Create a Main Frame
+main_frame = Frame(root)
+main_frame.pack(fill=BOTH, expand=1)
+
+# Create Canvas
+my_canvas = Canvas(main_frame)
+my_canvas.pack(side=LEFT,fill=BOTH,expand=1)
+
+# Add Scrollbar to the canvas
+my_scrollbar = ttk.Scrollbar(main_frame, orient=VERTICAL, command=my_canvas.yview)
+my_scrollbar.pack(side=RIGHT, fill=Y)
+
+# Configure the canvas
+my_canvas.configure(yscrollcommand=my_scrollbar.set)
+my_canvas.bind('<Configure>',lambda e: my_canvas.configure(scrollregion=my_canvas.bbox("all")))
+
+# Create another frame inside the canvas
+second_frame = Frame(my_canvas)
+
+# Add that new frame to a window in the canvas
+my_canvas.create_window((0,0), window=second_frame, anchor="nw")
+
+corr_text = tk.Label(second_frame,text="Enter 1 if you want to remove corridor",justify=tk.CENTER).grid(row=1, column=2)
+for i in range(50):
+    Button(second_frame, text=f'Button {i}').grid(row=i, column=0, padx=10, pady=10)
+
+root.mainloop()
 # def plot(graph: nx.Graph,m: int) -> None:
 #     """Plots thr graph using matplotlib
 

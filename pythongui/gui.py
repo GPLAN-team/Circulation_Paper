@@ -2025,9 +2025,30 @@ class gui_class:
         root = tk.Toplevel()
         root.title('Remove corridor')
         root.geometry(str(400) + 'x' + str(400))
-        # Desc = tk.Label(root, text="Enter 1 if you want to remove corridor", font=("Times New Roman", 12))
-        # Desc.place(relx=0.60, rely=0.1, anchor='ne')
-        corr_text = tk.Label(root,text="Enter 1 if you want to remove corridor",justify=tk.CENTER)
+        
+        # Create a Main Frame
+        main_frame = tk.Frame(root)
+        main_frame.pack(fill=tk.BOTH, expand=1)
+
+        # Create Canvas
+        my_canvas = tk.Canvas(main_frame)
+        my_canvas.pack(side=tk.LEFT,fill=tk.BOTH,expand=1)
+
+        # Add Scrollbar to the canvas
+        my_scrollbar = ttk.Scrollbar(main_frame, orient=tk.VERTICAL, command=my_canvas.yview)
+        my_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Configure the canvas
+        my_canvas.configure(yscrollcommand=my_scrollbar.set)
+        my_canvas.bind('<Configure>',lambda e: my_canvas.configure(scrollregion=my_canvas.bbox("all")))
+
+        # Create another frame inside the canvas
+        second_frame = tk.Frame(my_canvas)
+
+        # Add that new frame to a window in the canvas
+        my_canvas.create_window((0,0), window=second_frame, anchor="nw")
+
+        corr_text = tk.Label(second_frame,text="Enter 1 if you want to remove corridor",justify=tk.CENTER)
         corr_text.grid(row= 3, column= 10, ipadx = 5, ipady = 20)
 
         # Initializing the rem_or_not array
@@ -2036,9 +2057,9 @@ class gui_class:
         
         # For getting user input for which corridors to remove
         for i in range(1,len(adjacency)):
-            text = tk.Label(root, text = str(adj_list[i][0]) + "           " + str(adj_list[i][1]))
+            text = tk.Label(second_frame, text = str(adj_list[i][0]) + "           " + str(adj_list[i][1]))
             text.grid(row=i+30,column=8)
-            rem_val = tk.Entry(root, textvariable=rem_or_not[i])
+            rem_val = tk.Entry(second_frame, textvariable=rem_or_not[i])
             rem_val.grid(row=i+30,column=10)
 
         # When submit is clicked
@@ -2067,6 +2088,7 @@ class gui_class:
         rem_all_btn.place(relx=0.8, rely=0.9, anchor='ne')
 
         root.wait_window(root)
+        # root.mainloop()
         print("rem_corr_gui")
         print("To remove the corridors between: ")
         for i in range(len(rem_edges)):
