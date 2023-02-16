@@ -72,7 +72,6 @@ def run():
                     graph.irreg_single_dual()
                     end = time.time()
                     printe("Time taken: " + str((end-start)*1000) + " ms")
-                    print("type of roomx " + str(type(graph.room_x)))
                     graph_data = {
                             'room_x': graph.room_x,
                             'room_y': graph.room_y,
@@ -172,7 +171,6 @@ def run():
                     graph.irreg_single_dual()
                     end = time.time()
                     printe("Time taken: " + str((end-start)*1000) + " ms")
-                    print("type of roomx " + str(type(graph.room_x)))
                     graph_data = {
                             'room_x': graph.room_x,
                             'room_y': graph.room_y,
