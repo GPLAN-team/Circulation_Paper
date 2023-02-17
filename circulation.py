@@ -379,6 +379,11 @@ class circulation:
         #  and the direction of common edge with respect to room1 (N/S/E/W)
         common_edge = self.find_common_edges(room1, room2)
 
+        # Note: T - top edge, B - bottom edge, L - left edge, R - right edge
+        # Note: N - north, S - south, E - east, W - west
+        # Note: (room1.id, "S", "T", room2.id, "N", "B") means that the top edge of room 1 has to be moved South
+        # and the bottom edge of room 2 has to be moved North
+
         # Forming the gap between room1 and room2 first
         if(common_edge[4][1] == "N"):
             self.temp_push_states.append([(room1.id, "S", "T", room2.id, "N", "B")])
@@ -466,7 +471,7 @@ class circulation:
 
     def find_common_neighbors(self,room1: Room,room2: Room, last_visited: Room) -> list:
         """For each common neighbor of room1 and room2, checks if that neighbor shares an edge with
-           room1 or room2 along the direction of common edge between room1 and room2. After each check it appends
+           room1 or room2 along the direction of common edge between room1 and room2. After each check append
            the neighbor, the orientation of common edge and the direction in which the room has to be shifted to form
            corridor between room1 and room2.
 
