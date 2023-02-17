@@ -167,63 +167,63 @@ def draw_rdg(graph_data,count,pen,mode,color_list,room_names,origin):
             pen.penup()
             value+=1
 
-    # Drawing grid
-    # method to draw y-axis lines
-    def drawy(val):
+    # # Drawing grid
+    # # method to draw y-axis lines
+    # def drawy(val):
         
-        # line
-        pen.forward(300)
+    #     # line
+    #     pen.forward(300)
         
-        # set position
-        pen.up()
-        pen.setpos(val,300)
-        pen.down()
+    #     # set position
+    #     pen.up()
+    #     pen.setpos(val,300)
+    #     pen.down()
         
-        # another line
-        pen.backward(300)
+    #     # another line
+    #     pen.backward(300)
         
-        # set position again
-        pen.up()
-        pen.setpos(val+10,0)
-        pen.down()
+    #     # set position again
+    #     pen.up()
+    #     pen.setpos(val+10,0)
+    #     pen.down()
         
-    # method to draw y-axis lines
-    def drawx(val):
+    # # method to draw y-axis lines
+    # def drawx(val):
         
-        # line
-        pen.forward(300)
+    #     # line
+    #     pen.forward(300)
         
-        # set position
-        pen.up()
-        pen.setpos(300,val)
-        pen.down()
+    #     # set position
+    #     pen.up()
+    #     pen.setpos(300,val)
+    #     pen.down()
         
-        # another line
-        pen.backward(300)
+    #     # another line
+    #     pen.backward(300)
         
-        # set position again
-        pen.up()
-        pen.setpos(0,val+10)
-        pen.down()
+    #     # set position again
+    #     pen.up()
+    #     pen.setpos(0,val+10)
+    #     pen.down()
     
-    # set turtle features
-    pen.speed(100)
-    pen.left(90)
-    pen.color('black')
+    # # set turtle features
+    # pen.speed(100)
+    # pen.left(90)
+    # pen.color('black')
 
-    # y lines
-    for i in range(origin['x'] - int(width),origin['x'] + int(width)):
-        drawy(scale*(i+1))
+    # # y lines
+    # for i in range(origin['x'] - int(width),origin['x'] + int(width)):
+    #     drawy(scale*(i+1))
 
-    # set position for x lines
-    pen.right(90)
-    pen.up()
-    pen.setpos(0,0)
-    pen.down()
+    # # set position for x lines
+    # pen.right(90)
+    # pen.up()
+    # pen.setpos(0,0)
+    # pen.down()
 
-    # x lines
-    for i in range(origin['y']-int(width),origin['y'] + int(width)):
-        drawx(scale*(i+1))
+    # # x lines
+    # for i in range(origin['y']-int(width),origin['y'] + int(width)):
+    #     drawx(scale*(i+1))
 
 def draw_poly(graph_data,count,pen,mode,color_list,room_names,origin,outer_boundary,shape):
     innerBoundary = []
