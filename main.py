@@ -93,6 +93,9 @@ def run():
                     
                     # new_graph_data = call_circulation(graph_data, gclass.value[2], gclass.entry_door, gclass.corridor_thickness)
                     (new_graph_data, success) = call_circulation(graph_data, gclass, node_coord, is_dimensioned, dim_constraints, remove_corridor)
+                    print("Node coord:", node_coord)
+                    print("is_dimensioned: ",is_dimensioned)
+                    print("Dim constraints: ", dim_constraints)
                     # If there was some error in algorithm execution new_graph_data will be empty
                     # we display the pop-up error message
                     if new_graph_data == None:
@@ -150,7 +153,10 @@ def run():
                     (new_graph_data, success) = call_circulation(graph_data, gclass, node_coord, is_dimensioned, dim_constraints, remove_corridor)
                     print("Constraints: ", dim_constraints)
                     print("New graph data: ", new_graph_data)
-                    print("success: ", success)                        
+                    print("success: ", success)
+                    print("Node coord:", node_coord)
+                    print("is_dimensioned: ",is_dimensioned)
+                    print("Edge set: ", gclass.value[2])                     
                     # If there was some error in algorithm execution new_graph_data will be empty
                     # we display the pop-up error message
                     if new_graph_data == None:
