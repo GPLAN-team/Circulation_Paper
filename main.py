@@ -665,6 +665,7 @@ def call_circulation(graph_data, gclass, coord, is_dimensioned, dim_constraints,
     # circulation_result = circulation_obj.circulation_algorithm(entry[0], entry[1])
     # circulation_result = circulation_obj.multiple_circulation(coord)
     circulation_result = circulation_obj.circulation_algorithm(entry[0],entry[1])
+    circulation_obj.donot_include(len(g),circulation_obj.circulation_graph,1)
     if circulation_result == 0:
         return None
     
