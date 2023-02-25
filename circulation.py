@@ -111,6 +111,9 @@ class circulation:
         """
 
         to_remove =[]
+        self.circulation_graph = deepcopy(circ)
+
+        plot(self.circulation_graph, len(self.circulation_graph))
 
         for x in nx.neighbors(circ,v):
             if(x >= graph_size):
@@ -118,7 +121,10 @@ class circulation:
         
         for x in to_remove:
             p = self.corridor_boundary_rooms(x)
-            self.remove_corridor(circ,p[0],p[1])
+            self.remove_corridor(self.circulation_graph,p[0],p[1])
+        
+        plot(self.circulation_graph, len(self.circulation_graph))
+        
 
 
     def remove_corridor(self,graph:nx.Graph,v1:int = 0,v2:int = 1)->None:
@@ -342,6 +348,7 @@ class circulation:
         start = min(list(self.adjacency.keys()))
         print("First corridor: ",start)
         print("Last corridor: ",end)
+        print("ADJACENCIES: ",self.adjacency)
         for corridor in range(start + 1, end + 1):
             if corridor in list(self.adjacency.keys()):
                 global i
