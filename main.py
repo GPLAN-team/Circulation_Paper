@@ -657,6 +657,7 @@ def call_circulation(graph_data, gclass, coord, is_dimensioned, dim_constraints,
     # cir.plot(g,n)
     rfp = cir.RFP(g, rooms)
 
+    cir.plot(g,n)
     circulation_obj = cir.circulation(g, gclass.corridor_thickness, rfp)
     # circulation_obj = cir.circulation(g, rfp)
     if is_dimensioned == True:
@@ -665,7 +666,8 @@ def call_circulation(graph_data, gclass, coord, is_dimensioned, dim_constraints,
     # circulation_result = circulation_obj.circulation_algorithm(entry[0], entry[1])
     # circulation_result = circulation_obj.multiple_circulation(coord)
     circulation_result = circulation_obj.circulation_algorithm(entry[0],entry[1])
-    circulation_obj.donot_include(len(g),circulation_obj.circulation_graph,1)
+    cir.plot(circulation_obj.circulation_graph, len(circulation_obj.circulation_graph))
+    # circulation_obj.donot_include(len(g),circulation_obj.circulation_graph,1)
     if circulation_result == 0:
         return None
     
