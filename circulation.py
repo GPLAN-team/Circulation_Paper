@@ -138,7 +138,11 @@ class circulation:
         self.circulation_graph = deepcopy(graph)
         # n = len(self.circulation_graph)
         m = len(self.graph)
-        
+
+        # Modifying so that v1 < v2
+        v1 = v1 if v1 < v2 else v2
+        v2 = v2 if v1 < v2 else v1
+
         # To ensure both the vertices are rooms
         if(v1 < m and v2 < m):
             # To ensure the rooms are adjacent
@@ -202,56 +206,6 @@ class circulation:
                         p = np.random.randint()%2
                         self.circulation_graph.add_edge(x[0],x[1])
                         self.circulation_graph.add_edge(x[p],x[3-p])
-                        mod_circ = nx.contracted_edge(self.circulation_graph, (v1,i), self_loops=False)
-
-                    print("Before deletion:", self.adjacency)
-                    self.circulation_graph = mod_circ
-                    # Remove the entry of corridor i from adjacency dict
-                    del self.adjacency[i]
-
-                    print("After deletion:", self.adjacency)
-                
-                elif([v2,v1] in self.adjacency.values()):
-                    # Get the corridor vertex
-                    i = list(self.adjacency.keys())[list(self.adjacency.values()).index([v2,v1])]
-
-                    # Approach 1(Not working): Contracting one endpoint and the corridor to reverse the subdivision
-                    # Approach 2(Not working): 1. Delete the corridor vertex 2. Add edge connecting the two rooms
-                    # Approach 3:
-                    # Finding the vertex to which we must contract
-                    x = list(nx.common_neighbors(self.circulation_graph,i,v1))
-                    y = list(nx.common_neighbors(self.circulation_graph,i,v2))
-
-                    # Find the room that is part of the required triangle
-                    for r in x+y:
-                        if(r < m):
-                            break
-                    
-                    # Decision for contracting edge between the i and v1 or i and v2
-                    # c1 is a boolean variable that holds truth value of "There is a corridor joining v1 and r"
-                    c1 = ([r,v1] in self.adjacency.values()) or ([v1,r] in self.adjacency.values())
-                    # c2 is a boolean variable that holds truth value of "There is a corridor joining v2 and r"
-                    c2 = ([r,v2] in self.adjacency.values()) or ([v2,r] in self.adjacency.values())
-
-                    # Case 1: Both are false - happens when i is the last corridor
-                    if(not (c1 or c2)):
-                        # Doesn't matter if you contract v1-i or v2-i
-                        mod_circ = nx.contracted_edge(self.circulation_graph, (v1,i), self_loops=False)
-                    
-                    # Case 2: One of c1 or c2 is true - most common case
-                    elif(c1 and not c2):
-                        # Contract v2-i
-                        mod_circ = nx.contracted_edge(self.circulation_graph, (v2,i), self_loops=False)
-                    
-                    elif(c2 and not c1):
-                        # Contract v1-i
-                        mod_circ = nx.contracted_edge(self.circulation_graph, (v1,i), self_loops=False)
-                    
-                    # Case 3: Both are true - happens when both v2-r and v1-r are part of another interior face of the graph
-                    elif(c1 and c2):
-                        # Confirm from sir
-                        # Remove edge between r and i else creates unnecessary adjaceny after contraction
-                        self.circulation_graph.remove_edge(r,i)
                         mod_circ = nx.contracted_edge(self.circulation_graph, (v1,i), self_loops=False)
 
                     print("Before deletion:", self.adjacency)
