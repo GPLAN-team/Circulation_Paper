@@ -66,7 +66,8 @@ class circulation:
         # self.room_width = []
         # self.room_height = []
         self.is_dimensioning_successful = False    
-    
+
+# ---------------------------------------- FUNCTIONS SPECIFIC TO MULTIPLE CIRCULATION ----------------------------------------
     def multiple_circulation(self,coord:List) -> None:
 
         self.find_exterior_edges(coord)
@@ -100,7 +101,9 @@ class circulation:
             else:
                 for i in range(len(x) - 1):
                     self.exterior_edges.append([x[i], x[i+1]])
-    
+
+
+# ---------------------------------------- FUNCTIONS SPECIFIC TO REMOVING CIRCULATION ----------------------------------------    
     def donot_include(self,graph_size:int, circ:nx.Graph, v: int = 0) -> None:
         """Use this function to make the room corresponding to v isolated (no corridor connects it)
 
@@ -124,8 +127,6 @@ class circulation:
             self.remove_corridor(self.circulation_graph,p[0],p[1])
         
         plot(self.circulation_graph, len(self.circulation_graph))
-        
-
 
     def remove_corridor(self,graph:nx.Graph,v1:int = 0,v2:int = 1)->None:
         """To remove corridor vertex between v1 and v2 if exists
@@ -183,7 +184,24 @@ class circulation:
                     elif(c1 and c2):
                         # Confirm from sir
                         # Remove edge between r and i else creates unnecessary adjaceny after contraction
-                        self.circulation_graph.remove_edge(r,i)
+                        # self.circulation_graph.remove_edge(r,i)
+                        self.circulation_graph.remove_node(i)
+                        # Adding back the edge v1-v2
+                        self.circulation_graph.add_edge(v1,v2)
+
+                        # Now we have a 5 cycle. We have to triangulate further
+                        x=[]
+                        x.append(list(self.adjacency.keys())[list(self.adjacency.values()).index([r,v1])])
+                        x.append(list(self.adjacency.keys())[list(self.adjacency.values()).index([r,v2])])
+                        x.append(v1)
+                        x.append(v2)
+
+                        # Now x has [corridor on r-v1, corridor on r-v2, v1, v2]
+                        # We pick a random number p so that either x[0]-x[3] is there or x[1]-x[2] is there
+                        # And we add the edge x[0]-x[1]
+                        p = np.random.randint()%2
+                        self.circulation_graph.add_edge(x[0],x[1])
+                        self.circulation_graph.add_edge(x[p],x[3-p])
                         mod_circ = nx.contracted_edge(self.circulation_graph, (v1,i), self_loops=False)
 
                     print("Before deletion:", self.adjacency)
@@ -250,6 +268,8 @@ class circulation:
         else:
             print("The two vertices passed must correspond to rooms")
 
+
+# -------------------------------------------------- CIRCULATION ALGORITHM ---------------------------------------------------
     def circulation_algorithm(self,v1: int = 1,v2: int = 2) -> int:
         """
         Applies the circulation algorithm on the PTPG graph
@@ -259,9 +279,7 @@ class circulation:
             v2 (int, optional): Second endpoint of the exterior edge to start the circulation algorithm. Defaults to 2.
         """
         graph = deepcopy(self.graph)
-        # Use to_numpy_array instead of to_numpy_matrix if Networkx 3.0 or above
-        # print(nx.to_numpy_matrix(graph))
-        # print(nx.to_numpy_array(graph))
+
         # n is the number of vertices in the initial graph
         n = len(graph)
         m = n
@@ -305,6 +323,11 @@ class circulation:
         # Now the final_adjacency dictionary contains the pair of rooms adjacent to each corridor
         final_adjacency = dict(zip(corridor_vertices, list(adjacency.values())))
 
+        # Having each value pair in sorted order
+        for x in list(final_adjacency.keys()):
+            y = final_adjacency[x]
+            final_adjacency[x] = sorted(y)
+
         # Now A stores the adjacency matrix of the graph, the nodelist parameter ensures the proper order of rows
         # corresponding to the node id
         A = nx.adjacency_matrix(graph, nodelist=range(m))
@@ -330,9 +353,10 @@ class circulation:
         [a,b] = self.adjacency.get(corridor_vertex)
         
         return [a,b]
-    
-    # Main function integrating the others
-    def adjust_RFP_to_circulation(self) -> None:
+
+
+# ------------------------------------- FUNCTIONS TO ADJUST RFP FOR INSERTING CIRCULATION ------------------------------------
+    def adjust_RFP_to_circulation(self) -> None:    
         """
         Adjusts the RFP to form the circulation
 
@@ -342,13 +366,14 @@ class circulation:
         Returns:
             None
         """       
-        # For each corridor vertex we find the pair of rooms that this corridor connects
-        # Shifted left bound by 1 to shift the boundary only from the second corridor vertex
         end = max(list(self.adjacency.keys()))
         start = min(list(self.adjacency.keys()))
         print("First corridor: ",start)
         print("Last corridor: ",end)
         print("ADJACENCIES: ",self.adjacency)
+
+        # For each corridor vertex we find the pair of rooms that this corridor connects
+        # Shifted left bound by 1 to shift the boundary only from the second corridor vertex
         for corridor in range(start + 1, end + 1):
             if corridor in list(self.adjacency.keys()):
                 global i
@@ -390,7 +415,6 @@ class circulation:
                     self.room_area.append("W:{0}; H:{1}; A:{2}".format(round(self.dimensions[i][0], 2), 
                                             round(self.dimensions[i][1], 2), round(self.dimensions[i][0] * self.dimensions[i][1], 2)))
 
-    
     def add_corridor_between_2_rooms(self,room1: Room,room2: Room) -> None:
         """Adds corridors between 2 given rooms. First finds the common edge between the two rooms
            then finds the temporary push states (the neighbor and shift direction). In the next step, for
@@ -401,8 +425,12 @@ class circulation:
             room2 (int): Room index of second room
         """
         print(f"STEP {i}.2 OF CIRCULATION....IN PROCESS")
-        # This tuple has 5 elements, namely the x and y of left end of common edge, x and y of right end of common edge
-        #  and the direction of common edge with respect to room1 (N/S/E/W)
+        # This tuple has 5 elements:
+        #  1) x coordinate of left(/top) end of common edge
+        #  2) y coordinate of left(/top) end of common edge
+        #  3) x coordinate of right(/bottom) end of common edge
+        #  4) y coordinate of right(/bottom) end of common edge
+        #  5) the direction of common edge with respect to room1 (N/S/E/W)
         common_edge = self.find_common_edges(room1, room2)
 
         # Note: T - top edge, B - bottom edge, L - left edge, R - right edge
@@ -457,7 +485,6 @@ class circulation:
                 self.calculate_edge_move(self.RFP.rooms[each_tuple[0]], each_tuple[1], each_tuple[2])
                 self.calculate_edge_move(self.RFP.rooms[each_tuple[3]], each_tuple[4], each_tuple[5])
 
-
     def find_common_edges(self,room1: Room,room2: Room) -> tuple:
         """Given two rooms this function finds the common edges between the two rooms
 
@@ -475,6 +502,7 @@ class circulation:
         # print("In find common edges: room1.bry= ",room1.bottom_right_y)
         # print("In find common edges: room2.tly= ",room2.top_left_y)
         # print("In find common edges: room2.bry= ",room2.bottom_right_y)
+
         # Case1: The rooms are vertically (same y coordinates)
         # Room1 is below Room2
         if room1.top_left_y == room2.bottom_right_y:
@@ -522,6 +550,7 @@ class circulation:
         neighbors_room2 = []
         orientation = 'x'
         height = 0
+
         # Common edge is parallel to x axis
         if(common_edge[1] == common_edge[3]):
             height = common_edge[1]
@@ -618,8 +647,7 @@ class circulation:
         
         elif(direction == "N" and coordinate == "T"):
             room_obj.rel_push_T = max(room_obj.rel_push_T, 0.5*self.corridor_thickness) if room_obj.rel_push_T >= 0 else room_obj.rel_push_T
-
-            
+    
         elif(direction == "N" and coordinate == "B"):
             room_obj.rel_push_B = max(room_obj.rel_push_B, 0.5*self.corridor_thickness) if room_obj.rel_push_B >= 0 else room_obj.rel_push_B
         
@@ -644,6 +672,8 @@ class circulation:
         width = room.bottom_right_x- room.top_left_x
         self.dimensions[room.id] = [width, height]
 
+
+# --------------------------------------- FUNCTIONS SPECIFIC TO DIMENSIONED CIRCULATION --------------------------------------
     def check_dimensions_feasibility(self) -> bool:
         """This checks which dimensioned floorplans still satisfies the dimensional constraints after adding circulation
 
@@ -670,7 +700,7 @@ class circulation:
         else:
             return True  
 
-
+# ----------------------------------------------------- HELPER FUNCTIONS -----------------------------------------------------
 def wheel_graph(n: int) -> Tuple[nx.Graph, list]:
     """Returns a wheel graph of size n and its positional coordinates
 
@@ -989,7 +1019,7 @@ def main():
 
         rfp = RFP(g, [room1, room2, room3, room4])
 
-        circulation_obj = circulation(g, rfp)
+        circulation_obj = circulation(g, 0.1, rfp)
         """, room1, room3)"""
         door1 = int(input("Enter one end of entry edge: "))
         door2 = int(input("Enter other end of entry edge: "))
@@ -1069,8 +1099,8 @@ def main():
     # test_comm_edges()
     # test_comm_neighbors()
     # test_move_edges()
-    # test_adjust_RFP_to_circ()
-    test_remove_corridor()
+    test_adjust_RFP_to_circ()
+    # test_remove_corridor()
     # test_multiple_circ()
     
 

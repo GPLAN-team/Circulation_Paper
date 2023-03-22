@@ -654,68 +654,67 @@ def call_circulation(graph_data, gclass, coord, is_dimensioned, dim_constraints,
     for i in range(n):
         rooms.append(cir.Room(i, graph_data.get("room_x")[i], graph_data.get("room_y")[i] + graph_data.get("room_height")[i], graph_data.get("room_x")[i] + graph_data.get("room_width")[i], graph_data.get("room_y")[i]))
 
-    # cir.plot(g,n)
     rfp = cir.RFP(g, rooms)
 
     cir.plot(g,n)
     circulation_obj = cir.circulation(g, gclass.corridor_thickness, rfp)
-    # circulation_obj = cir.circulation(g, rfp)
+
+    # Add dimensional constraints if chosen option is "dimensioned circulation"
     if is_dimensioned == True:
         circulation_obj.is_dimensioned = True
         circulation_obj.dimension_constraints = dim_constraints
-    # circulation_result = circulation_obj.circulation_algorithm(entry[0], entry[1])
-    # circulation_result = circulation_obj.multiple_circulation(coord)
+
+    # Apply circulation algorithn
     circulation_result = circulation_obj.circulation_algorithm(entry[0],entry[1])
     cir.plot(circulation_obj.circulation_graph, len(circulation_obj.circulation_graph))
-    # circulation_obj.donot_include(len(g),circulation_obj.circulation_graph,1)
     if circulation_result == 0:
         return None
     
-    if remove_corridor == True:
-        # Created a deepcopy of object to display circulation before
-        # we display GUI for removing corridor
-        circ = copy.deepcopy(circulation_obj)
-        circ.adjust_RFP_to_circulation()
+    # if remove_corridor == True:
+    #     # Created a deepcopy of object to display circulation before
+    #     # we display GUI for removing corridor
+    #     circ = copy.deepcopy(circulation_obj)
+    #     circ.adjust_RFP_to_circulation()
 
-        # Printing how much shift was done for each room
-        for room in circ.RFP.rooms:
-            print("Room ",room.id, ":")
-            print("Push top edge by: ", room.rel_push_T)
-            print("Push bottom edge by: ", room.rel_push_B)
-            print("Push left edge by: ", room.rel_push_L)
-            print("Push right edge by: ", room.rel_push_R)
-            print(room.target)
-            print('\n')
+    #     # Printing how much shift was done for each room
+    #     for room in circ.RFP.rooms:
+    #         print("Room ",room.id, ":")
+    #         print("Push top edge by: ", room.rel_push_T)
+    #         print("Push bottom edge by: ", room.rel_push_B)
+    #         print("Push left edge by: ", room.rel_push_L)
+    #         print("Push right edge by: ", room.rel_push_R)
+    #         print(room.target)
+    #         print('\n')
 
-        room_x1 = []
-        room_y1 = []
-        room_height1 = []
-        room_width1 = []
+    #     room_x1 = []
+    #     room_y1 = []
+    #     room_height1 = []
+    #     room_width1 = []
 
-        # Getting the required values
-        for room in circ.RFP.rooms:
-            room_x1.append(room.top_left_x)
-            room_y1.append(room.bottom_right_y)
-            room_height1.append(abs(room.top_left_y - room.bottom_right_y))
-            room_width1.append(abs(room.top_left_x - room.bottom_right_x))
+    #     # Getting the required values
+    #     for room in circ.RFP.rooms:
+    #         room_x1.append(room.top_left_x)
+    #         room_y1.append(room.bottom_right_y)
+    #         room_height1.append(abs(room.top_left_y - room.bottom_right_y))
+    #         room_width1.append(abs(room.top_left_x - room.bottom_right_x))
 
-        graph_data1 = {}
-        graph_data1['room_x'] = np.array(room_x1)
-        graph_data1['room_y'] = np.array(room_y1)
-        graph_data1['room_height'] = np.array(room_height1)
-        graph_data1['room_width'] = np.array(room_width1)
-        graph_data1['area'] = np.array(circulation_obj.room_area)
-        graph_data1['extranodes'] = graph_data['extranodes']
-        graph_data1['mergednodes'] = graph_data['mergednodes']
-        graph_data1['irreg_nodes'] = graph_data['irreg_nodes']
-        draw.draw_rdg(graph_data1, 1, gclass.pen, 1, gclass.value[6], [], origin)
+    #     graph_data1 = {}
+    #     graph_data1['room_x'] = np.array(room_x1)
+    #     graph_data1['room_y'] = np.array(room_y1)
+    #     graph_data1['room_height'] = np.array(room_height1)
+    #     graph_data1['room_width'] = np.array(room_width1)
+    #     graph_data1['area'] = np.array(circulation_obj.room_area)
+    #     graph_data1['extranodes'] = graph_data['extranodes']
+    #     graph_data1['mergednodes'] = graph_data['mergednodes']
+    #     graph_data1['irreg_nodes'] = graph_data['irreg_nodes']
+    #     draw.draw_rdg(graph_data1, 1, gclass.pen, 1, gclass.value[6], [], origin)
 
-        # Now going back to flow of removing circulation
-        corridors = circulation_obj.adjacency
-        rem_edges = gclass.remove_corridor_gui(corridors)
+    #     # Now going back to flow of removing circulation
+    #     corridors = circulation_obj.adjacency
+    #     rem_edges = gclass.remove_corridor_gui(corridors)
 
-        for x in rem_edges:
-            circulation_obj.remove_corridor(circulation_obj.circulation_graph,x[0],x[1])
+    #     for x in rem_edges:
+    #         circulation_obj.remove_corridor(circulation_obj.circulation_graph,x[0],x[1])
         
         
     # To remove entry corridor alone we are just shifting rooms by looking at second corridor vertex
