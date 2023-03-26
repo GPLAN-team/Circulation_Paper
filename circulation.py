@@ -328,7 +328,7 @@ class circulation:
 
         # For each corridor vertex we find the pair of rooms that this corridor connects
         # Shifted left bound by 1 to shift the boundary only from the second corridor vertex
-        for corridor in range(start + 1, end + 1):
+        for corridor in range(start, end + 1):
             if corridor in list(self.adjacency.keys()):
                 global i
                 i +=1
@@ -622,6 +622,9 @@ class circulation:
         room.top_left_x += room.rel_push_L
         room.bottom_right_y += room.rel_push_B
         room.bottom_right_x += room.rel_push_R
+
+        print("TESTING CIRCULATION")
+        print(f"Room {room.id}: ", [room.top_left_x,room.top_left_y,room.bottom_right_x,room.bottom_right_y])
         height = room.top_left_y - room.bottom_right_y
         width = room.bottom_right_x- room.top_left_x
         self.dimensions[room.id] = [width, height]
