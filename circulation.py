@@ -186,27 +186,30 @@ class circulation:
                     
                     # Case 3: Both are true - happens when both v2-r and v1-r are part of another interior face of the graph
                     elif(c1 and c2):
-                        # Confirm from sir
-                        # Remove edge between r and i else creates unnecessary adjaceny after contraction
-                        # self.circulation_graph.remove_edge(r,i)
-                        self.circulation_graph.remove_node(i)
-                        # Adding back the edge v1-v2
-                        self.circulation_graph.add_edge(v1,v2)
+                        # # Confirm from sir
+                        # # Remove edge between r and i else creates unnecessary adjaceny after contraction
+                        # # self.circulation_graph.remove_edge(r,i)
+                        # self.circulation_graph.remove_node(i)
+                        # # Adding back the edge v1-v2
+                        # self.circulation_graph.add_edge(v1,v2)
 
-                        # Now we have a 5 cycle. We have to triangulate further
-                        x=[]
-                        x.append(list(self.adjacency.keys())[list(self.adjacency.values()).index([r,v1])])
-                        x.append(list(self.adjacency.keys())[list(self.adjacency.values()).index([r,v2])])
-                        x.append(v1)
-                        x.append(v2)
+                        # # Now we have a 5 cycle. We have to triangulate further
+                        # x=[]
+                        # x.append(list(self.adjacency.keys())[list(self.adjacency.values()).index([r,v1])])
+                        # x.append(list(self.adjacency.keys())[list(self.adjacency.values()).index([r,v2])])
+                        # x.append(v1)
+                        # x.append(v2)
 
-                        # Now x has [corridor on r-v1, corridor on r-v2, v1, v2]
-                        # We pick a random number p so that either x[0]-x[3] is there or x[1]-x[2] is there
-                        # And we add the edge x[0]-x[1]
-                        p = np.random.randint()%2
-                        self.circulation_graph.add_edge(x[0],x[1])
-                        self.circulation_graph.add_edge(x[p],x[3-p])
-                        mod_circ = nx.contracted_edge(self.circulation_graph, (v1,i), self_loops=False)
+                        # # Now x has [corridor on r-v1, corridor on r-v2, v1, v2]
+                        # # We pick a random number p so that either x[0]-x[3] is there or x[1]-x[2] is there
+                        # # And we add the edge x[0]-x[1]
+                        # p = np.random.randint()%2
+                        # self.circulation_graph.add_edge(x[0],x[1])
+                        # self.circulation_graph.add_edge(x[p],x[3-p])
+                        # mod_circ = nx.contracted_edge(self.circulation_graph, (v1,i), self_loops=False)
+
+                        # Confirmed with sir - no need to remove circulation
+                        print("Can't remove this corridor")
 
                     print("Before deletion:", self.adjacency)
                     self.circulation_graph = mod_circ
