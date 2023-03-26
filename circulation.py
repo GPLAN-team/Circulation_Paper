@@ -331,7 +331,7 @@ class circulation:
 
         # For each corridor vertex we find the pair of rooms that this corridor connects
         # Shifted left bound by 1 to shift the boundary only from the second corridor vertex
-        for corridor in range(start, end + 1):
+        for corridor in range(start + 1, end + 1):
             if corridor in list(self.adjacency.keys()):
                 global i
                 i +=1
