@@ -8,13 +8,15 @@ from tkinter import *
 import turtle
 
 
-a = {0: [1,2], 1: [4,3], 2: [6,7]}
+# a = {0: [1,2], 1: [4,3], 2: [6,7]}
 
-for x in list(a.keys()):
-    y = a[x]
-    a[x] = sorted(y)
+# for x in list(a.keys()):
+#     y = a[x]
+#     a[x] = sorted(y)
 
-print(a)
+# print(a)
+a = [1,4,7,2,10,-2,100,234]
+print(min(a))
 
 # sc=turtle.Screen()
 # trtl=turtle.Turtle()

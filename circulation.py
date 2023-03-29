@@ -298,22 +298,117 @@ class circulation:
         [a,b] = self.adjacency.get(corridor_vertex)
         
         return [a,b]
-    
-    def minimize_circ(self) -> None:
-        """This function helps remove redundant circulation space so that the rooms aren't shrinked too much
+
+
+# --------------------------------------------------- MINIMUM TREE SET COVER ------------------------------------------------------
+    def list_intersect(self,l1,l2):
+        """This function helps in finding intersection of two lists
+
+        Args:
+            l1 (List): First list
+            l2 (List): Second list
+
+        Returns:
+            int: The number of common elements of l1 and l2 if exists else 0
         """
-        # Step1 - For each room vertex, find the list of corridors it is adjacent to but not on its edge
+        set_1 = set(l1)
+        set_2 = set(l2)
+
+        if(set_1 & set_2):
+            return len(list(set_1 & set_2))
+        else:
+            return 0
+    
+    def min_tree_set_cover(self,A,b):
+        """This function finds the smallest number of elements of L whose union equals the set X
+
+        Args:
+            
+
+        Returns:
+            List: The minimum set cover
+        """
+        # Define an empty list that collects the minimum set cover so far
+        msc = []
+
+        # Get the set and the subsets
+        X = list(range(len(self.graph)))
+        for i in b:
+            rooms_already_covered = A[i]
+            X = [x for x in X if x not in rooms_already_covered]
+        L = list(A.values())
+
+        # Repeat until X is empty
+        while(len(X) > 0):
+            # Get the number of elements each subset in L covers the set X
+            intersections_count = [self.list_intersect(X,l) for l in L]
+            # Get the index of the subset that covered X to max extent
+            j = intersections_count.index(max(intersections_count))
+            # Add that corresponding subset
+            msc.append(L[j])
+            # Remove the elements that have been covered from X
+            X = [x for x in X if x not in L[j]]
+        
+        return msc
+
+# -------------------------------------------------- MINIMIZE CIRCULATION ----------------------------------------------------
+    def remove_redundant_corridors(self) -> None:
+        """Finds which corridors are redundant and returns the list of the required corridor vertices so that the rooms aren't shrinked too much
+
+        Returns:
+            List: List containing the corridor vertices that are required for minimum circulation
+        """
+        # Step 1a - For each corridor vertex, find the list of room vertices it is adjacent to
         m = len(self.graph)
         # This list of lists will contains the list of corridors each room is adjacent to
-        corridors = []
+        rooms_dict = {}
+        for c in range(m+1,len(self.circulation_graph)):
+            # We take > m instead of >= m since we anyways don't include the first corridor since it
+            # corresponds to a door
+            rooms_v = []
+            rooms_v = self.corridor_boundary_rooms(c)
+            x = list(nx.common_neighbors(self.graph,rooms_v[0], rooms_v[1]))
+            rooms_v = rooms_v + x
+            rooms_dict.update({c:rooms_v})
+
+        # Step 1b - For each room vertex we get list of corridors it is adjacent to
+        # This list of lists will contains the list of corridors each room is adjacent to
+        corridors_dict = {}
         for v in range(m):
             corridors_v = [i for i in self.circulation_graph.neighbors(v) if i >= m]
-            print(f"CORRIDORS OF ROOM {v}: ",corridors_v)
-        # Step2 - Get the tree of corridor vertices
-        # Step3 - Identify the leaf vertices - we have to delete one or more leaves
-        # Step4 - Exclude those corridors which are there in corridors_v and corridors_v is a singleton
-        # Step5 - Identify the required property and then decide to remove or not
+            corridors_dict.update({v: corridors_v})
 
+        # Step 2 - Get the tree of corridor vertices
+        self.corridor_tree = nx.induced_subgraph(self.circulation_graph, range(len(self.graph), len(self.circulation_graph)))
+
+        # Step 3 - Find minimum set cover of vertices with the subsets given in rooms_set
+        corridors = []
+        # Check for each room x
+        for x in list(corridors_dict.keys()):
+            # If the number of corridors it is adjacent to is just 1
+            if (len(corridors_dict[x]) == 1):
+                # Important since we ignore first corridor
+                if corridors_dict[x][0] != m:
+                    # Note down which corridor
+                    corridors.append(corridors_dict[x][0])
+
+        msc_corridors = self.min_tree_set_cover(rooms_dict, corridors)
+        for x in msc_corridors:
+            corridors.append(list(rooms_dict.keys())[list(rooms_dict.values()).index(x)])
+
+        # Step 4 - Add the corridor vertices so that the whole graph is connected
+        # Find every pair of rooms and see if there exists a path in the corridor tree
+        iterator_to_connect = [(a,b) for a in corridors for b in corridors if a<b]
+        
+        # For every pair of corridors found
+        for (s,t) in iterator_to_connect:
+            # Find the unique path in corridor tree
+            path = nx.all_simple_paths(self.corridor_tree, s, t)
+            for v in list(path)[0]:
+                if(v not in corridors):
+                    corridors.append(v)
+        
+        return corridors
 
 # ------------------------------------- FUNCTIONS TO ADJUST RFP FOR INSERTING CIRCULATION ------------------------------------
     def adjust_RFP_to_circulation(self) -> None:    
@@ -326,8 +421,8 @@ class circulation:
         Returns:
             None
         """
-
-        self.minimize_circ()
+        # Minimize the circulation
+        required_corridors = self.remove_redundant_corridors()
 
         if(len(list(self.adjacency.keys())) > 0):
             end = max(list(self.adjacency.keys()))
@@ -340,12 +435,15 @@ class circulation:
             # Shifted left bound by 1 to shift the boundary only from the second corridor vertex
             for corridor in range(start + 1, end + 1):
                 if corridor in list(self.adjacency.keys()):
-                    global i
-                    i +=1
-                    # Step 1 - get the rooms the corridor connects
-                    [room1, room2] = self.corridor_boundary_rooms(corridor)
-                    # Step 2 - add the corridor space between room1 and room2
-                    self.add_corridor_between_2_rooms(self.RFP.rooms[room1],self.RFP.rooms[room2])
+                    if corridor in required_corridors:
+                        global i
+                        i +=1
+                        # Step 1 - get the rooms the corridor connects
+                        [room1, room2] = self.corridor_boundary_rooms(corridor)
+                        # Step 2 - add the corridor space between room1 and room2
+                        self.add_corridor_between_2_rooms(self.RFP.rooms[room1],self.RFP.rooms[room2])
+                    else:
+                        continue
                 else:
                     continue
             
