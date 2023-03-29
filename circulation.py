@@ -186,30 +186,18 @@ class circulation:
                     
                     # Case 3: Both are true - happens when both v2-r and v1-r are part of another interior face of the graph
                     elif(c1 and c2):
-                        # # Confirm from sir
-                        # # Remove edge between r and i else creates unnecessary adjaceny after contraction
-                        # # self.circulation_graph.remove_edge(r,i)
-                        # self.circulation_graph.remove_node(i)
-                        # # Adding back the edge v1-v2
-                        # self.circulation_graph.add_edge(v1,v2)
+                        # Method1(not working):
+                        # i. Remove edge between r and i else creates unnecessary adjaceny after contraction 
+                        # ii. Add back the edge v1-v2
+                        # iii. Triangulate the resulting 5-cycle
 
-                        # # Now we have a 5 cycle. We have to triangulate further
-                        # x=[]
-                        # x.append(list(self.adjacency.keys())[list(self.adjacency.values()).index([r,v1])])
-                        # x.append(list(self.adjacency.keys())[list(self.adjacency.values()).index([r,v2])])
-                        # x.append(v1)
-                        # x.append(v2)
-
-                        # # Now x has [corridor on r-v1, corridor on r-v2, v1, v2]
-                        # # We pick a random number p so that either x[0]-x[3] is there or x[1]-x[2] is there
-                        # # And we add the edge x[0]-x[1]
-                        # p = np.random.randint()%2
-                        # self.circulation_graph.add_edge(x[0],x[1])
-                        # self.circulation_graph.add_edge(x[p],x[3-p])
-                        # mod_circ = nx.contracted_edge(self.circulation_graph, (v1,i), self_loops=False)
-
-                        # Confirmed with sir - no need to remove circulation
-                        print("Can't remove this corridor")
+                        # Method2 (suggested by sir):
+                        # i. Contract either v1-r or v2-r randomly
+                        # ii. Remove the extra adjacency
+                        v = [v1,v2]
+                        p = np.random.randint()%2
+                        mod_circ = nx.contracted_edge(self.circulation_graph, (v[p],i), self_loops=False)
+                        mod_circ.remove_edge(v[p],r)
 
                     print("Before deletion:", self.adjacency)
                     self.circulation_graph = mod_circ
@@ -322,55 +310,59 @@ class circulation:
 
         Returns:
             None
-        """       
-        end = max(list(self.adjacency.keys()))
-        start = min(list(self.adjacency.keys()))
-        print("First corridor: ",start)
-        print("Last corridor: ",end)
-        print("ADJACENCIES: ",self.adjacency)
+        """
+        if(len(list(self.adjacency.keys())) > 0):
+            end = max(list(self.adjacency.keys()))
+            start = min(list(self.adjacency.keys()))
+            print("First corridor: ",start)
+            print("Last corridor: ",end)
+            print("ADJACENCIES: ",self.adjacency)
 
-        # For each corridor vertex we find the pair of rooms that this corridor connects
-        # Shifted left bound by 1 to shift the boundary only from the second corridor vertex
-        for corridor in range(start + 1, end + 1):
-            if corridor in list(self.adjacency.keys()):
-                global i
-                i +=1
-                # Step 1 - get the rooms the corridor connects
-                [room1, room2] = self.corridor_boundary_rooms(corridor)
-                # Step 2 - add the corridor space between room1 and room2
-                self.add_corridor_between_2_rooms(self.RFP.rooms[room1],self.RFP.rooms[room2])
-            else:
-                continue
+            # For each corridor vertex we find the pair of rooms that this corridor connects
+            # Shifted left bound by 1 to shift the boundary only from the second corridor vertex
+            for corridor in range(start + 1, end + 1):
+                if corridor in list(self.adjacency.keys()):
+                    global i
+                    i +=1
+                    # Step 1 - get the rooms the corridor connects
+                    [room1, room2] = self.corridor_boundary_rooms(corridor)
+                    # Step 2 - add the corridor space between room1 and room2
+                    self.add_corridor_between_2_rooms(self.RFP.rooms[room1],self.RFP.rooms[room2])
+                else:
+                    continue
+            
+            # Step 3 - For rooms that are connected by corridors we directly assign relative push values
+            # as calculated in add_corridor_between_2_rooms fn
+            for room in self.RFP.rooms:
+                if(room.target.get('T') != 0):
+                    room.rel_push_T = room.target.get('T')
+
+                if(room.target.get('B') != 0):
+                    room.rel_push_B = room.target.get('B')
+
+                if(room.target.get('L') != 0):
+                    room.rel_push_L = room.target.get('L')
+
+                if(room.target.get('R') != 0):
+                    room.rel_push_R = room.target.get('R')
+
+            # Step 4 - Make the changes to the coordinates
+            for room in self.RFP.rooms:
+                self.push_edges(room)
+            
+            # Step 5 (optional) - if dimensioned circulation, then display and check the dimensions
+            print(self.dimensions)
+            if(self.is_dimensioned == True):
+                is_feasible = self.check_dimensions_feasibility()
+                self.is_dimensioning_successful = is_feasible
+                if is_feasible == True:
+                    for i in range(len(self.dimension_constraints[0])):
+                        # self.room_area.append(self.dimensions[i][0] * self.dimensions[i][1])
+                        self.room_area.append("W:{0}; H:{1}; A:{2}".format(round(self.dimensions[i][0], 2), 
+                                                round(self.dimensions[i][1], 2), round(self.dimensions[i][0] * self.dimensions[i][1], 2)))
         
-        # Step 3 - For rooms that are connected by corridors we directly assign relative push values
-        # as calculated in add_corridor_between_2_rooms fn
-        for room in self.RFP.rooms:
-            if(room.target.get('T') != 0):
-                room.rel_push_T = room.target.get('T')
-
-            if(room.target.get('B') != 0):
-                room.rel_push_B = room.target.get('B')
-
-            if(room.target.get('L') != 0):
-                room.rel_push_L = room.target.get('L')
-
-            if(room.target.get('R') != 0):
-                room.rel_push_R = room.target.get('R')
-
-        # Step 4 - Make the changes to the coordinates
-        for room in self.RFP.rooms:
-            self.push_edges(room)
-        
-        # Step 5 (optional) - if dimensioned circulation, then display and check the dimensions
-        print(self.dimensions)
-        if(self.is_dimensioned == True):
-            is_feasible = self.check_dimensions_feasibility()
-            self.is_dimensioning_successful = is_feasible
-            if is_feasible == True:
-                for i in range(len(self.dimension_constraints[0])):
-                    # self.room_area.append(self.dimensions[i][0] * self.dimensions[i][1])
-                    self.room_area.append("W:{0}; H:{1}; A:{2}".format(round(self.dimensions[i][0], 2), 
-                                            round(self.dimensions[i][1], 2), round(self.dimensions[i][0] * self.dimensions[i][1], 2)))
+        else:
+            return
 
     def add_corridor_between_2_rooms(self,room1: Room,room2: Room) -> None:
         """Adds corridors between 2 given rooms. First finds the common edge between the two rooms
