@@ -298,6 +298,21 @@ class circulation:
         [a,b] = self.adjacency.get(corridor_vertex)
         
         return [a,b]
+    
+    def minimize_circ(self) -> None:
+        """This function helps remove redundant circulation space so that the rooms aren't shrinked too much
+        """
+        # Step1 - For each room vertex, find the list of corridors it is adjacent to but not on its edge
+        m = len(self.graph)
+        # This list of lists will contains the list of corridors each room is adjacent to
+        corridors = []
+        for v in range(m):
+            corridors_v = [i for i in self.circulation_graph.neighbors(v) if i >= m]
+            print(f"CORRIDORS OF ROOM {v}: ",corridors_v)
+        # Step2 - Get the tree of corridor vertices
+        # Step3 - Identify the leaf vertices - we have to delete one or more leaves
+        # Step4 - Exclude those corridors which are there in corridors_v and corridors_v is a singleton
+        # Step5 - Identify the required property and then decide to remove or not
 
 
 # ------------------------------------- FUNCTIONS TO ADJUST RFP FOR INSERTING CIRCULATION ------------------------------------
@@ -311,6 +326,9 @@ class circulation:
         Returns:
             None
         """
+
+        self.minimize_circ()
+
         if(len(list(self.adjacency.keys())) > 0):
             end = max(list(self.adjacency.keys()))
             start = min(list(self.adjacency.keys()))
