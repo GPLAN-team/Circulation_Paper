@@ -65,7 +65,8 @@ class circulation:
         self.room_area = []
         # self.room_width = []
         # self.room_height = []
-        self.is_dimensioning_successful = False    
+        self.is_dimensioning_successful = False
+        self.corridor_tree = nx.Graph()
 
 # ---------------------------------------- FUNCTIONS SPECIFIC TO MULTIPLE CIRCULATION ----------------------------------------
     def multiple_circulation(self,coord:List) -> None:
@@ -282,6 +283,7 @@ class circulation:
 
         self.circulation_graph = graph
         self.adjacency = final_adjacency
+        self.corridor_tree = nx.induced_subgraph(self.circulation_graph, range(len(self.graph), len(self.circulation_graph)))
         return 1
 
     def corridor_boundary_rooms(self,corridor_vertex: nx.Graph.nodes) -> list:
@@ -352,7 +354,7 @@ class circulation:
         return msc
 
 # -------------------------------------------------- MINIMIZE CIRCULATION ----------------------------------------------------
-    def remove_redundant_corridors(self) -> None:
+    def remove_redundant_corridors(self) -> List:
         """Finds which corridors are redundant and returns the list of the required corridor vertices so that the rooms aren't shrinked too much
 
         Returns:
@@ -362,14 +364,16 @@ class circulation:
         m = len(self.graph)
         # This list of lists will contains the list of corridors each room is adjacent to
         rooms_dict = {}
-        for c in range(m+1,len(self.circulation_graph)):
+        for c in self.adjacency.keys():
             # We take > m instead of >= m since we anyways don't include the first corridor since it
             # corresponds to a door
             rooms_v = []
-            rooms_v = self.corridor_boundary_rooms(c)
+            rooms_v = self.adjacency.get(c)
             x = list(nx.common_neighbors(self.graph,rooms_v[0], rooms_v[1]))
             rooms_v = rooms_v + x
             rooms_dict.update({c:rooms_v})
+        
+        print("ROOM to CORRIDOR: ", rooms_dict)
 
         # Step 1b - For each room vertex we get list of corridors it is adjacent to
         # This list of lists will contains the list of corridors each room is adjacent to
@@ -377,11 +381,9 @@ class circulation:
         for v in range(m):
             corridors_v = [i for i in self.circulation_graph.neighbors(v) if i >= m]
             corridors_dict.update({v: corridors_v})
+        print("CORRIDOR to ROOM: ", corridors_dict)        
 
-        # Step 2 - Get the tree of corridor vertices
-        self.corridor_tree = nx.induced_subgraph(self.circulation_graph, range(len(self.graph), len(self.circulation_graph)))
-
-        # Step 3 - Find minimum set cover of vertices with the subsets given in rooms_set
+        # Step 2 - Find minimum set cover of vertices with the subsets given in rooms_set
         corridors = []
         # Check for each room x
         for x in list(corridors_dict.keys()):
@@ -396,7 +398,7 @@ class circulation:
         for x in msc_corridors:
             corridors.append(list(rooms_dict.keys())[list(rooms_dict.values()).index(x)])
 
-        # Step 4 - Add the corridor vertices so that the whole graph is connected
+        # Step 3 - Add the corridor vertices so that the whole graph is connected
         # Find every pair of rooms and see if there exists a path in the corridor tree
         iterator_to_connect = [(a,b) for a in corridors for b in corridors if a<b]
         
@@ -423,6 +425,7 @@ class circulation:
         """
         # Minimize the circulation
         required_corridors = self.remove_redundant_corridors()
+        print("Required corridors: ", required_corridors)
 
         if(len(list(self.adjacency.keys())) > 0):
             end = max(list(self.adjacency.keys()))
