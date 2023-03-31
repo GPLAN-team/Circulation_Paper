@@ -364,7 +364,8 @@ class circulation:
         m = len(self.graph)
         # This list of lists will contains the list of corridors each room is adjacent to
         rooms_dict = {}
-        for c in self.adjacency.keys():
+        refer_list_corridors = [x for x in self.adjacency.keys() if x > m]
+        for c in refer_list_corridors:
             # We take > m instead of >= m since we anyways don't include the first corridor since it
             # corresponds to a door
             rooms_v = []
@@ -397,6 +398,8 @@ class circulation:
         msc_corridors = self.min_tree_set_cover(rooms_dict, corridors)
         for x in msc_corridors:
             corridors.append(list(rooms_dict.keys())[list(rooms_dict.values()).index(x)])
+        
+        print("CORRIDORS: ",corridors)
 
         # Step 3 - Add the corridor vertices so that the whole graph is connected
         # Find every pair of rooms and see if there exists a path in the corridor tree
