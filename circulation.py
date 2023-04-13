@@ -401,17 +401,17 @@ class circulation:
         
         print("CORRIDORS: ",corridors)
 
-        # Step 3 - Add the corridor vertices so that the whole graph is connected
-        # Find every pair of rooms and see if there exists a path in the corridor tree
-        iterator_to_connect = [(a,b) for a in corridors for b in corridors if a<b]
+        # # Step 3 - Add the corridor vertices so that the whole graph is connected
+        # # Find every pair of rooms and see if there exists a path in the corridor tree
+        # iterator_to_connect = [(a,b) for a in corridors for b in corridors if a<b]
         
-        # For every pair of corridors found
-        for (s,t) in iterator_to_connect:
-            # Find the unique path in corridor tree
-            path = nx.all_simple_paths(self.corridor_tree, s, t)
-            for v in list(path)[0]:
-                if(v not in corridors):
-                    corridors.append(v)
+        # # For every pair of corridors found
+        # for (s,t) in iterator_to_connect:
+        #     # Find the unique path in corridor tree
+        #     path = nx.all_simple_paths(self.corridor_tree, s, t)
+        #     for v in list(path)[0]:
+        #         if(v not in corridors):
+        #             corridors.append(v)
         
         return corridors
 
