@@ -48,7 +48,7 @@ class RFP:
     #Functions to create RFP from the graph
 
 class circulation:
-    def __init__(self,graph: nx.Graph, thickness: float = 0.1, rfp: RFP = None) -> None:
+    def __init__(self,graph: nx.Graph, thickness: float = 0.1, rfp: RFP = None, opti: int = 1) -> None:
         self.graph = graph
         self.adjacency = {}
         self.circulation_graph = nx.Graph() 
@@ -67,6 +67,7 @@ class circulation:
         # self.room_height = []
         self.is_dimensioning_successful = False
         self.corridor_tree = nx.Graph()
+        self.rem_red_rooms = opti
 
 # ---------------------------------------- FUNCTIONS SPECIFIC TO MULTIPLE CIRCULATION ----------------------------------------
     def multiple_circulation(self,coord:List) -> None:
@@ -426,9 +427,14 @@ class circulation:
         Returns:
             None
         """
-        # Minimize the circulation
-        required_corridors = self.remove_redundant_corridors()
+        # Minimize the circulation if required
+        required_corridors = list(self.adjacency.keys())
+
+        # If user asks for minimizing
+        if(self.rem_red_rooms == 1):
+            required_corridors = self.remove_redundant_corridors()
         print("Required corridors: ", required_corridors)
+        # required_corridors = self.remove_redundant_corridors()
 
         if(len(list(self.adjacency.keys())) > 0):
             end = max(list(self.adjacency.keys()))

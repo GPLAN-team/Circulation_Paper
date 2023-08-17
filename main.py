@@ -657,7 +657,7 @@ def call_circulation(graph_data, gclass, coord, is_dimensioned, dim_constraints,
     rfp = cir.RFP(g, rooms)
 
     cir.plot(g,n)
-    circulation_obj = cir.circulation(g, gclass.corridor_thickness, rfp)
+    circulation_obj = cir.circulation(g, gclass.corridor_thickness, rfp, gclass.rem)
 
     # Add dimensional constraints if chosen option is "dimensioned circulation"
     if is_dimensioned == True:

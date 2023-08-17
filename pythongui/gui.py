@@ -99,6 +99,9 @@ class gui_class:
         self.entry_door.append(self.l)
         self.entry_door.append(self.r)
 
+        # Remove redundant rooms
+        self.opti = tk.IntVar(None)
+        self.rem = 0
 
         # To get user input for corridor thickness
         self.ct = tk.DoubleVar(None)
@@ -1959,14 +1962,18 @@ class gui_class:
         #     self.outer_boundary[i] = self.outer_boundary[i+1]
         # self.outer_boundary[len(self.outer_boundary)-1] = first;
 
-        # poly.dissected(self.graph_data,self.pen,self.color_list,self.outer_boundary)
+        # poly.dissected(self.graph_data,self.pen,self.color_list,self.outer_boundary)        
+
+    def radio_sel(self):
+        self.rem = self.opti.get()
+        print("The redundant rooms will be removed")
 
     def change_entry_gui(self):
         """This function takes user input for starting edge/door for the corridor
         """
         self.top1 = tk.Toplevel(self.root, width=1000, height=1000)
         root = self.top1
-        root.geometry("500x125")
+        root.geometry("500x200")
         root.title('Circulation Entry Changer')
         main_text = tk.Label(root, text="Enter the two rooms adjacent to the new entry door")
         main_text.grid(row= 1, column= 0, padx = 20, ipady = 10)
@@ -1974,6 +1981,8 @@ class gui_class:
         l_val.grid(row  = 3, column = 0)
         r_val = tk.Entry(root, textvariable = self.r)
         r_val.grid(row = 3, column = 2)
+        opti_btn = tk.Radiobutton(root, text="Remove redundant corridors", padx=20, variable=self.opti, value=1, command=lambda: self.radio_sel())
+        opti_btn.grid(row = 7, column = 0)
         ex = tk.Button(root,text = "Submit",command = self.corridor_thickness_gui, justify=tk.CENTER)
         ex.grid(padx=100, pady=20)
 
