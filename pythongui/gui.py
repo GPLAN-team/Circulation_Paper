@@ -1966,7 +1966,12 @@ class gui_class:
 
     def radio_sel(self):
         self.rem = self.opti.get()
-        print("The redundant rooms will be removed")
+        print("The redundant corridors will be removed")
+    
+    def radio_desel(self):
+        self.opti.set(0)
+        self.rem = self.opti.get()
+        print("The whole spanning circulation will be displayed")
 
     def change_entry_gui(self):
         """This function takes user input for starting edge/door for the corridor
@@ -1983,6 +1988,8 @@ class gui_class:
         r_val.grid(row = 3, column = 2)
         opti_btn = tk.Radiobutton(root, text="Remove redundant corridors", padx=20, variable=self.opti, value=1, command=lambda: self.radio_sel())
         opti_btn.grid(row = 7, column = 0)
+        clear_button = tk.Button(root, text="Clear Selection", command=lambda: self.radio_desel())
+        clear_button.grid(row = 7, column = 2, pady=10)
         ex = tk.Button(root,text = "Submit",command = self.corridor_thickness_gui, justify=tk.CENTER)
         ex.grid(padx=100, pady=20)
 
