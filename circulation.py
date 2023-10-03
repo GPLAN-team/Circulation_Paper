@@ -355,7 +355,7 @@ class circulation:
         return msc
 
 # -------------------------------------------------- MINIMIZE CIRCULATION ----------------------------------------------------
-    def remove_redundant_corridors(self) -> List:
+    def remove_redundant_corridors(self, ref_corridors) -> List:
         """Finds which corridors are redundant and returns the list of the required corridor vertices so that the rooms aren't shrinked too much
 
         Returns:
@@ -365,8 +365,9 @@ class circulation:
         m = len(self.graph)
         # This list of lists will contains the list of corridors each room is adjacent to
         rooms_dict = {}
-        refer_list_corridors = [x for x in self.adjacency.keys() if x > m]
-        for c in refer_list_corridors:
+        # refer_list_corridors = [x for x in self.adjacency.keys() if x > m]
+        # for c in refer_list_corridors:
+        for c in ref_corridors:
             # We take > m instead of >= m since we anyways don't include the first corridor since it
             # corresponds to a door
             rooms_v = []
@@ -381,7 +382,7 @@ class circulation:
         # This list of lists will contains the list of corridors each room is adjacent to
         corridors_dict = {}
         for v in range(m):
-            corridors_v = [i for i in self.circulation_graph.neighbors(v) if i >= m]
+            corridors_v = [i for i in self.circulation_graph.neighbors(v) if i >= m and i in ref_corridors]
             corridors_dict.update({v: corridors_v})
         print("CORRIDOR to ROOM: ", corridors_dict)        
 
@@ -432,9 +433,15 @@ class circulation:
 
         # If user asks for minimizing
         if(self.rem_red_rooms == 1):
-            required_corridors = self.remove_redundant_corridors()
+            required_corridors = self.remove_redundant_corridors(required_corridors)
+
+            if(len(required_corridors) > 1):
+                # Repeat the minimum set cover to make it optimum if not
+                required_corridors = self.remove_redundant_corridors(required_corridors)
         print("Required corridors: ", required_corridors)
         # required_corridors = self.remove_redundant_corridors()
+
+
 
         if(len(list(self.adjacency.keys())) > 0):
             end = max(list(self.adjacency.keys()))
