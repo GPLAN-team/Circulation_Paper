@@ -677,6 +677,7 @@ def call_circulation(graph_data, gclass, coord, is_dimensioned, dim_constraints,
         circ.adjust_RFP_to_circulation()
 
         # Printing how much shift was done for each room
+        print("--------- FINAL VALUES ---------")
         print("\t\tT\tB\t\L\tR")
         for room in circ.RFP.rooms:
             print(f"{room.id}\t{room.rel_push_T}\t{room.rel_push_B}\t{room.rel_push_L}\t{room.rel_push_R}\t\t{room.target}")
@@ -723,7 +724,8 @@ def call_circulation(graph_data, gclass, coord, is_dimensioned, dim_constraints,
     # Done by shifting the range left bound in for loop of adjust_RFP_to_circulation()
     circulation_obj.adjust_RFP_to_circulation()
 
-     # Printing how much shift was done for each room
+    # Printing how much shift was done for each room
+    print("--------- FINAL VALUES ---------")
     print("\tT\tB\tL\tR")
     for room in circulation_obj.RFP.rooms:
         print(f"{room.id}\t{room.rel_push_T}\t{room.rel_push_B}\t{room.rel_push_L}\t{room.rel_push_R}")

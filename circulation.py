@@ -69,6 +69,13 @@ class circulation:
         self.corridor_tree = nx.Graph()
         self.rem_red_rooms = opti
 
+# ---------------------------------------- AUXILLIARY FUNCTIONS ----------------------------------------
+    def disp_rel_push(self, corr, room1, room2):
+        print(f"--------- CORRIDOR {corr} BETWEEN ROOMS {room1} & {room2} ---------")
+        print("\tT\tB\tL\tR")
+        for room in self.RFP.rooms:
+            print(f"{room.id}\t{room.rel_push_T}\t{room.rel_push_B}\t{room.rel_push_L}\t{room.rel_push_R}")
+
 # ---------------------------------------- FUNCTIONS SPECIFIC TO MULTIPLE CIRCULATION ----------------------------------------
     def multiple_circulation(self,coord:List) -> None:
 
@@ -461,6 +468,7 @@ class circulation:
                         [room1, room2] = self.corridor_boundary_rooms(corridor)
                         # Step 2 - add the corridor space between room1 and room2
                         self.add_corridor_between_2_rooms(self.RFP.rooms[room1],self.RFP.rooms[room2])
+                        self.disp_rel_push(corridor,room1,room2)
                     else:
                         continue
                 else:
