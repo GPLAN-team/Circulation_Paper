@@ -729,25 +729,25 @@ class circulation:
             room_obj.rel_push_R = max(room_obj.rel_push_R, 0.5*self.corridor_thickness) if room_obj.rel_push_R >= 0 else room_obj.rel_push_R
 
         elif(direction == "E" and coordinate == "L"):
-            room_obj.rel_push_L = max(room_obj.rel_push_L, 0.5*self.corridor_thickness) if room_obj.rel_push_L >= 0 else room_obj.rel_push_L
-
-        elif(direction == "W" and coordinate == "R"):
-            room_obj.rel_push_R = min(room_obj.rel_push_R, -0.5*self.corridor_thickness) if room_obj.rel_push_R <= 0 else room_obj.rel_push_R
+            room_obj.rel_push_L = max(room_obj.rel_push_L, 0.5*self.corridor_thickness) # if room_obj.rel_push_L >= 0 else room_obj.rel_push_L
 
         elif(direction == "W" and coordinate == "L"):
-            room_obj.rel_push_L = min(room_obj.rel_push_L, -0.5*self.corridor_thickness) if room_obj.rel_push_L <= 0 else room_obj.rel_push_L 
+            room_obj.rel_push_L = min(room_obj.rel_push_L, -0.5*self.corridor_thickness) if room_obj.rel_push_L <= 0 else room_obj.rel_push_L
+
+        elif(direction == "W" and coordinate == "R"):
+            room_obj.rel_push_R = min(room_obj.rel_push_R, -0.5*self.corridor_thickness) # if room_obj.rel_push_R <= 0 else room_obj.rel_push_R
         
         elif(direction == "N" and coordinate == "T"):
             room_obj.rel_push_T = max(room_obj.rel_push_T, 0.5*self.corridor_thickness) if room_obj.rel_push_T >= 0 else room_obj.rel_push_T
     
         elif(direction == "N" and coordinate == "B"):
-            room_obj.rel_push_B = max(room_obj.rel_push_B, 0.5*self.corridor_thickness) if room_obj.rel_push_B >= 0 else room_obj.rel_push_B
+            room_obj.rel_push_B = max(room_obj.rel_push_B, 0.5*self.corridor_thickness) # if room_obj.rel_push_B >= 0 else room_obj.rel_push_B
         
-        elif(direction == "S" and coordinate == "T"):
-            room_obj.rel_push_T = min(room_obj.rel_push_T, -0.5*self.corridor_thickness) if room_obj.rel_push_T <= 0 else room_obj.rel_push_T
-
         elif(direction == "S" and coordinate == "B"):
             room_obj.rel_push_B = min(room_obj.rel_push_B, -0.5*self.corridor_thickness) if room_obj.rel_push_B <= 0 else room_obj.rel_push_B
+
+        elif(direction == "S" and coordinate == "T"):
+            room_obj.rel_push_T = min(room_obj.rel_push_T, -0.5*self.corridor_thickness) # if room_obj.rel_push_T <= 0 else room_obj.rel_push_T
 
     def push_edges(self, room: Room) -> None:
         """This modifies the room coordinates (final step of adjustment)
