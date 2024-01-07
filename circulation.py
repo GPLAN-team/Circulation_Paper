@@ -74,7 +74,10 @@ class circulation:
         print(f"--------- CORRIDOR {corr} BETWEEN ROOMS {room1} & {room2} ---------")
         print("\tT\tB\tL\tR")
         for room in self.RFP.rooms:
-            print(f"{room.id}\t{room.rel_push_T}\t{room.rel_push_B}\t{room.rel_push_L}\t{room.rel_push_R}")
+            if room!=room1 and room!=room2:
+                print(f"{room.id}\t{room.rel_push_T}\t{room.rel_push_B}\t{room.rel_push_L}\t{room.rel_push_R}")
+            else:
+                print(f"{room.id}\t{room.target.get('T')}\t{room.target.get('B')}\t{room.target.get('L')}\t{room.target.get('R')}")
 
 # ---------------------------------------- FUNCTIONS SPECIFIC TO MULTIPLE CIRCULATION ----------------------------------------
     def multiple_circulation(self,coord:List) -> None:
@@ -615,7 +618,7 @@ class circulation:
         
         return common_edge
 
-    def find_common_neighbors(self,room1: Room,room2: Room, last_visited: Room) -> list:
+    def find_common_neighbors(self,room1: Room,room2: Room, last_visited: int) -> list:
         """For each common neighbor of room1 and room2, checks if that neighbor shares an edge with
            room1 or room2 along the direction of common edge between room1 and room2. After each check append
            the neighbor, the orientation of common edge and the direction in which the room has to be shifted to form
@@ -623,7 +626,8 @@ class circulation:
 
         Args:
             room1 (Room object): Room object of first room 
-            room2 (Room object): Room object of second room 
+            room2 (Room object): Room object of second room
+            last_visited (int): Room number of the previously checked room for neighbors (parent in recursion tree)
 
         Returns:
             [list]: list contains tuples that contain the corresponding room each neighbor is connected to
