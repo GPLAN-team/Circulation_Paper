@@ -585,7 +585,7 @@ class circulation:
 
         Args:
             room1 (Room object): Room object of first room 
-            room2 (Room object): Room object of second room 
+            room2 (Room object): Room object of second room
 
         Returns:
             [tuple]: This tuple has 5 elements, namely the x and y of left end of common edge, x and y of right end of common edge
@@ -671,25 +671,33 @@ class circulation:
             common_edge1 = self.find_common_edges(room, room1) 
             common_edge2 = self.find_common_edges(room, room2)
 
-            # Finding the direction/orientation of common edge between room and room1 wrt room1
-            if(common_edge1[4][1] == "N" and axis[0] == 'x'):
-                neighbors_room1.append((room.id, "N", "T", room1.id, "N", "B"))
-            elif(common_edge1[4][1] == "S" and axis[0] == 'x'):
-                neighbors_room1.append((room.id, "S", "B", room1.id, "S", "T"))
-            elif(common_edge1[4][1] == "W" and axis[0] == 'y'):
-                neighbors_room1.append((room.id, "W", "L", room1.id, "W", "R"))
-            elif(common_edge1[4][1] == "E" and axis[0] == 'y'):
-                neighbors_room1.append((room.id, "E", "R", room1.id, "E", "L"))
-                      
-            # Finding the direction/orientation of common edge between room and room2 wrt room2
-            elif(common_edge2[4][1] == "N" and axis[0] == 'x'):
-                neighbors_room2.append((room.id, "N", "T", room2.id, "N", "B"))
-            elif(common_edge2[4][1] == "S" and axis[0] == 'x'):
-                neighbors_room2.append((room.id, "S", "B", room2.id, "S", "T"))
-            elif(common_edge2[4][1] == "W" and axis[0] == 'y'):
-                neighbors_room2.append((room.id, "W", "L", room2.id, "W", "R"))
-            elif(common_edge2[4][1] == "E" and axis[0] == 'y'):
-                neighbors_room2.append((room.id, "E", "R", room2.id, "E", "L"))
+            dir1=common_edge1[4][1]
+            dir2=common_edge2[4][1]       
+            # Finding the direction/orientation of common edge between room and room1 wrt room
+            if(dir1 == "N" and axis[0] == 'x'):   # common edge is along the T edge of room
+                neighbors_room1.append((room.id, dir1, "T", room1.id, dir1, "B"))
+
+            elif(dir1 == "S" and axis[0] == 'x'): # common edge is along the B edge of room
+                neighbors_room1.append((room.id, dir1, "B", room1.id, dir1, "T"))
+
+            elif(dir1 == "W" and axis[0] == 'y'): # common edge is along the L edge of room
+                neighbors_room1.append((room.id, dir1, "L", room1.id, dir1, "R"))
+
+            elif(dir1 == "E" and axis[0] == 'y'): # common edge is along the R edge of room
+                neighbors_room1.append((room.id, dir1, "R", room1.id, dir1, "L"))
+
+            # Finding the direction/orientation of common edge between room and room2 wrt room
+            elif(dir2 == "N" and axis[0] == 'x'): # common edge is along the T edge of room
+                neighbors_room2.append((room.id, dir2, "T", room2.id, dir2, "B"))
+
+            elif(dir2 == "S" and axis[0] == 'x'): # common edge is along the B edge of room
+                neighbors_room2.append((room.id, dir2, "B", room2.id, dir2, "T"))
+
+            elif(dir2 == "W" and axis[0] == 'y'): # common edge is along the L edge of room
+                neighbors_room2.append((room.id, dir2, "L", room2.id, dir2, "R"))
+
+            elif(dir2 == "E" and axis[0] == 'y'): # common edge is along the R edge of room
+                neighbors_room2.append((room.id, dir2, "R", room2.id, dir2, "L"))
         
         # KEY STEP
         # Append the tuples in neigbors_room1 and neighbors_room2 to neighbors list (common for whole graph)
@@ -709,13 +717,13 @@ class circulation:
         for neighbor1 in neighbors_room1:
             neighbor_of_room1 = self.RFP.rooms[neighbor1[0]]
             self.find_common_neighbors(room1, neighbor_of_room1, room2.id)
-        
+
         # This for loop executes the function to find common edges for those that
         # share edge with room2 along the axis
         for neighbor2 in neighbors_room2:
             neighbor_of_room2 = self.RFP.rooms[neighbor2[0]]
-            self.find_common_neighbors(room2, neighbor_of_room2, room1.id)  
-        
+            self.find_common_neighbors(room2, neighbor_of_room2, room1.id)
+
     def calculate_edge_move(self,room: Room, direction: str, coordinate: str) -> None:
         """This function takes in two room objects and calculates by what value
            the corresponding common edge should be shifted in the required direction
