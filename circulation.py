@@ -491,6 +491,8 @@ class circulation:
 
                 if(room.target.get('R') != 0):
                     room.rel_push_R = room.target.get('R')
+            
+            print(f"TEMP PUSH: {self.temp_push_states}")
 
             # Step 4 - Make the changes to the coordinates
             for room in self.RFP.rooms:
