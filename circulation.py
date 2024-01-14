@@ -70,9 +70,9 @@ class circulation:
         self.rem_red_rooms = opti
 
         # To find alternative for conditions in calculate_edge_move fn
-        self.dir1 = " "
-        self.dir2 = " "
-        self.corr = 0
+        # self.dir1 = " "
+        # self.dir2 = " "
+        # self.corr = 0
         self.done_rooms = []
 
 # ---------------------------------------- AUXILLIARY FUNCTIONS ----------------------------------------
@@ -546,8 +546,8 @@ class circulation:
         # Forming the gap between room1 and room2 first
         if(common_edge[4][1] == "N"):
             self.temp_push_states.append([(room1.id, "S", "T", room2.id, "N", "B")])
-            self.dir1 = "S"
-            self.dir2 = "N"
+            dir1 = "S"
+            dir2 = "N"
             self.done_rooms.append([room1.id,"T",'c'])  # room1's top edge moved due to corridor
             self.done_rooms.append([room2.id,"B",'c'])  # room2's bottom edge moved due to corridor
 
@@ -559,8 +559,8 @@ class circulation:
 
         elif(common_edge[4][1] == "S"):
             self.temp_push_states.append([(room1.id, "N", "B", room2.id, "S", "T")])
-            self.dir1 = "N"
-            self.dir2 = "S"
+            dir1 = "N"
+            dir2 = "S"
             self.done_rooms.append([room1.id,"B",'c'])  # room1's bottom edge moved due to corridor
             self.done_rooms.append([room2.id,"T",'c'])  # room2's top edge moved due to corridor
 
@@ -572,8 +572,8 @@ class circulation:
 
         elif(common_edge[4][1] == "E"):
             self.temp_push_states.append([(room1.id, "W", "R", room2.id, "E", "L")])
-            self.dir1 = "W"
-            self.dir2 = "E"
+            dir1 = "W"
+            dir2 = "E"
             self.done_rooms.append([room1.id,"R",'c'])  # room1's right edge moved due to corridor
             self.done_rooms.append([room2.id,"L",'c'])  # room2's left edge moved due to corridor
 
@@ -585,8 +585,8 @@ class circulation:
 
         elif(common_edge[4][1] == "W"):
             self.temp_push_states.append([(room1.id, "E", "L", room2.id, "W", "R")])
-            self.dir1 = "E"
-            self.dir2 = "W"
+            dir1 = "E"
+            dir2 = "W"
             self.done_rooms.append([room1.id,"L",'c'])  # room1's left edge moved due to corridor
             self.done_rooms.append([room2.id,"R",'c'])  # room2's right edge moved due to corridor
 
@@ -597,7 +597,7 @@ class circulation:
             room2.target.update({'R': -0.5*self.corridor_thickness})
 
         # Finds the common neighbors and their push states for room1 and room2
-        self.find_common_neighbors(room1,room2, -1)
+        self.find_common_neighbors(room1,room2, -1,dir1,dir2)
 
         # Push the room edges as per the push states populated using the above function
         for tuple_list in self.temp_push_states:
@@ -644,7 +644,7 @@ class circulation:
         
         return common_edge
 
-    def find_common_neighbors(self,room1: Room,room2: Room, last_visited: int) -> list:
+    def find_common_neighbors(self,room1: Room,room2: Room, last_visited: int,mov1,mov2) -> list:
         """For each common neighbor of room1 and room2, checks if that neighbor shares an edge with
            room1 or room2 along the direction of common edge between room1 and room2. After each check append
            the neighbor, the orientation of common edge and the direction in which the room has to be shifted to form
@@ -698,47 +698,48 @@ class circulation:
             common_edge2 = self.find_common_edges(room, room2)
 
             dir1=common_edge1[4][1]
-            dir2=common_edge2[4][1]       
+            dir2=common_edge2[4][1]
+
             # Finding the direction/orientation of common edge between room and room1 wrt room
             if(dir1 == "N" and axis[0] == 'x'):
                 if([room.id,"T",'c'] not in self.done_rooms):   # common edge is along the T edge of room
-                    neighbors_room1.append((room.id, self.dir1, "T", room1.id, self.dir1, "B"))
+                    neighbors_room1.append((room.id, mov1, "T", room1.id, mov1, "B"))
                     self.done_rooms.append((room.id,"T",'n'))   # room's top edge modified due to neighbor to room1 & room 2
 
             elif(dir1 == "S" and axis[0] == 'x'):
                 if([room.id,"B",'c'] not in self.done_rooms): # common edge is along the B edge of room
-                    neighbors_room1.append((room.id, self.dir1, "B", room1.id, self.dir1, "T"))
+                    neighbors_room1.append((room.id, mov1, "B", room1.id, mov1, "T"))
                     self.done_rooms.append((room.id,"B",'n'))   # room's bottom edge modified due to neighbor to room1 & room 2
 
             elif(dir1 == "W" and axis[0] == 'y'):
                 if([room.id,"L",'c'] not in self.done_rooms): # common edge is along the L edge of room
-                    neighbors_room1.append((room.id, self.dir1, "L", room1.id, self.dir1, "R"))
+                    neighbors_room1.append((room.id, mov1, "L", room1.id, mov1, "R"))
                     self.done_rooms.append((room.id,"L",'n'))   # room's left edge modified due to neighbor to room1 & room 2
 
             elif(dir1 == "E" and axis[0] == 'y'):
                 if([room.id,"R",'c'] not in self.done_rooms): # common edge is along the R edge of room
-                    neighbors_room1.append((room.id, self.dir1, "R", room1.id, self.dir1, "L"))
+                    neighbors_room1.append((room.id, mov1, "R", room1.id, mov1, "L"))
                     self.done_rooms.append((room.id,"R",'n'))   # room's right edge modified due to neighbor to room1 & room 2
 
             # Finding the direction/orientation of common edge between room and room2 wrt room
             elif(dir2 == "N" and axis[0] == 'x'):
                 if([room.id,"T",'c'] not in self.done_rooms): # common edge is along the T edge of room
-                    neighbors_room2.append((room.id, self.dir2, "T", room2.id, self.dir2, "B"))
+                    neighbors_room2.append((room.id, mov2, "T", room2.id, mov2, "B"))
                     self.done_rooms.append((room.id,"T",'n'))   # room's top edge modified due to neighbor to room1 & room 2
 
             elif(dir2 == "S" and axis[0] == 'x'):
                 if([room.id,"B",'c'] not in self.done_rooms): # common edge is along the B edge of room
-                    neighbors_room2.append((room.id, self.dir2, "B", room2.id, self.dir2, "T"))
+                    neighbors_room2.append((room.id, mov2, "B", room2.id, mov2, "T"))
                     self.done_rooms.append((room.id,"B",'n'))   # room's bottom edge modified due to neighbor to room1 & room 2
 
             elif(dir2 == "W" and axis[0] == 'y'):
                 if([room.id,"L",'c'] not in self.done_rooms): # common edge is along the L edge of room
-                    neighbors_room2.append((room.id, self.dir2, "L", room2.id, self.dir2, "R"))
+                    neighbors_room2.append((room.id, mov2, "L", room2.id, mov2, "R"))
                     self.done_rooms.append((room.id,"L",'n'))   # room's left edge modified due to neighbor to room1 & room 2
 
             elif(dir2 == "E" and axis[0] == 'y'):
                 if([room.id,"R",'c'] not in self.done_rooms): # common edge is along the R edge of room
-                    neighbors_room2.append((room.id, self.dir2, "R", room2.id, self.dir2, "L"))
+                    neighbors_room2.append((room.id, mov2, "R", room2.id, mov2, "L"))
                     self.done_rooms.append((room.id,"R",'n'))   # room's right edge modified due to neighbor to room1 & room 2
         
         # KEY STEP
@@ -758,13 +759,15 @@ class circulation:
         # share edge with room1 along the axis
         for neighbor1 in neighbors_room1:
             neighbor_of_room1 = self.RFP.rooms[neighbor1[0]]
-            self.find_common_neighbors(room1, neighbor_of_room1, room2.id)
+            dir = neighbor1[1]
+            self.find_common_neighbors(room1, neighbor_of_room1, room2.id,dir,dir)
 
         # This for loop executes the function to find common edges for those that
         # share edge with room2 along the axis
         for neighbor2 in neighbors_room2:
             neighbor_of_room2 = self.RFP.rooms[neighbor2[0]]
-            self.find_common_neighbors(room2, neighbor_of_room2, room1.id)
+            dir = neighbor2[1]
+            self.find_common_neighbors(room2, neighbor_of_room2, room1.id,dir,dir)
 
     def calculate_edge_move(self,room: Room, direction: str, coordinate: str) -> None:
         """This function takes in two room objects and calculates by what value
