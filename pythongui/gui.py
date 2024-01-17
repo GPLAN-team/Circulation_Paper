@@ -2023,9 +2023,9 @@ class gui_class:
         self.top.destroy()
         self.top1 = tk.Toplevel(self.root, width=1000, height=1000)
         root = self.top1
-        root.geometry("500x200")
+        root.geometry("600x200")
         root.title('Circulation Entry Changer')
-        main_text = tk.Label(root, text="Enter the two rooms adjacent to the new entry door")
+        main_text = tk.Label(root, text="Enter the two rooms adjacent to the new entry door\n (Enter an edge that is on the outer boundary of the graph)",justify=tk.CENTER)
         main_text.grid(row= 1, column= 0, padx = 20, ipady = 10)
         l_val = tk.Entry(root, textvariable = self.l)
         l_val.grid(row  = 3, column = 0)
