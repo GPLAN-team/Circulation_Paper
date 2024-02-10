@@ -1368,25 +1368,25 @@ class gui_class:
         def __init__(self, root, master):
             button_details = {'wraplength': '150', 'bg': col[1], 'fg': 'white', 'font': ('lato', '14'), 'padx': 5,
                               'pady': 5, 'activebackground': col[2]}
-            b1 = tk.Button(master.frame1, width=10, text='Irregular Floor Plan', relief='flat', **button_details,
-                           command=master.single_floorplan)
-            b1.grid(row=1, column=0, padx=5, pady=5)
+            # b1 = tk.Button(master.frame1, width=10, text='Irregular Floor Plan', relief='flat', **button_details,
+            #                command=master.single_floorplan)
+            # b1.grid(row=1, column=0, padx=5, pady=5)
 
-            b2 = tk.Button(master.frame1, width=10, text='Multiple Irregular Floor Plans', relief='flat',
-                           **button_details, command=master.multiple_floorplan)
-            b2.grid(row=2, column=0, padx=5, pady=5)
+            # b2 = tk.Button(master.frame1, width=10, text='Multiple Irregular Floor Plans', relief='flat',
+            #                **button_details, command=master.multiple_floorplan)
+            # b2.grid(row=2, column=0, padx=5, pady=5)
 
-            c1 = tk.Checkbutton(master.frame1, text="Dimensioned", relief='flat', **button_details,
-                                selectcolor='#4A4E69', width=7, variable=master.checkvar1, onvalue=1, offvalue=0)
-            c1.grid(row=5, column=1, padx=5, pady=5)
+            # c1 = tk.Checkbutton(master.frame1, text="Dimensioned", relief='flat', **button_details,
+            #                     selectcolor='#4A4E69', width=7, variable=master.checkvar1, onvalue=1, offvalue=0)
+            # c1.grid(row=5, column=1, padx=5, pady=5)
 
-            b3 = tk.Button(master.frame1, width=10, text='Rectangular Floor Plan', relief='flat', **button_details,
-                           command=master.single_oc_floorplan)
-            b3.grid(row=3, column=0, padx=5, pady=5)
+            # b3 = tk.Button(master.frame1, width=10, text='Rectangular Floor Plan', relief='flat', **button_details,
+            #                command=master.single_oc_floorplan)
+            # b3.grid(row=3, column=0, padx=5, pady=5)
 
-            b4 = tk.Button(master.frame1, width=10, text='Multiple Rectangular Floor Plans', relief='flat',
-                           **button_details, command=master.multiple_oc_floorplan)
-            b4.grid(row=5, column=0, padx=5, pady=5)
+            # b4 = tk.Button(master.frame1, width=10, text='Multiple Rectangular Floor Plans', relief='flat',
+            #                **button_details, command=master.multiple_oc_floorplan)
+            # b4.grid(row=5, column=0, padx=5, pady=5)
 
             b6 = tk.Button(master.frame1, width=10, text='Circulation', relief='flat', **button_details,
                            command=master.circ_menu)
@@ -1398,13 +1398,13 @@ class gui_class:
             # c2 = tk.Checkbutton(master.frame1, text = "Remove Circulation",relief='flat',**button_details,selectcolor='#4A4E69',width=13 ,variable = master.checkvar3,onvalue = 1, offvalue = 0)
             # c2.grid(row=8,column=0,padx=5,pady=5)
 
-            b7 = tk.Button(master.frame1, width=10, text='Polygonal Floorplans', relief='flat', **button_details,
-                           command=master.polygonal_inputbox)
-            b7.grid(row=1, column=1, padx=5, pady=5)
+            # b7 = tk.Button(master.frame1, width=10, text='Polygonal Floorplans', relief='flat', **button_details,
+            #                command=master.polygonal_inputbox)
+            # b7.grid(row=1, column=1, padx=5, pady=5)
 
-            b8 = tk.Button(master.frame1, width=10, text='Letter Shaped Floor Plan', relief='flat', **button_details,
-                           command=master.letter_inputbox)
-            b8.grid(row=2, column=1, padx=5, pady=5)
+            # b8 = tk.Button(master.frame1, width=10, text='Letter Shaped Floor Plan', relief='flat', **button_details,
+            #                command=master.letter_inputbox)
+            # b8.grid(row=2, column=1, padx=5, pady=5)
 
             # b9 = tk.Button(master.frame1, width=10, text='Z Shaped Floor Plan', relief='flat', **button_details,
             #                command=master.z_shaped)
@@ -1414,9 +1414,9 @@ class gui_class:
             #                 command=master.t_shaped)
             # b10.grid(row=10, column=0, padx=5, pady=5)
 
-            b11 = tk.Button(master.frame1, width=10, text='Staircase Shaped Floor Plan', relief='flat',
-                            **button_details, command=master.staircase_shaped)
-            b11.grid(row=3, column=1, padx=5, pady=5)
+            # b11 = tk.Button(master.frame1, width=10, text='Staircase Shaped Floor Plan', relief='flat',
+            #                 **button_details, command=master.staircase_shaped)
+            # b11.grid(row=3, column=1, padx=5, pady=5)
 
             # b12 = tk.Button(master.frame1, width=10, text='L Shaped Floor Plan', relief='flat',
             #                 **button_details, command=master.l_shaped)
