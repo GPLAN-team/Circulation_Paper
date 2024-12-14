@@ -1779,12 +1779,12 @@ class gui_class:
                               variable=self.choice,
                               value=1)
         btn1.grid(row=4, column=0)
-        btn2 = tk.Radiobutton(root,
-                              text="Hexagon",
-                              padx=20,
-                              variable=self.choice,
-                              value=2)
-        btn2.grid(row=4, column=1)
+        # btn2 = tk.Radiobutton(root,
+        #                       text="Hexagon",
+        #                       padx=20,
+        #                       variable=self.choice,
+        #                       value=2)
+        # btn2.grid(row=4, column=1)
 
         btn3 = tk.Radiobutton(root,
                               text="Draw Structure",
@@ -2005,8 +2005,8 @@ class gui_class:
         btn1 = tk.Radiobutton(root, text="Normal", padx=20, variable=self.circ_choice, value=1, command=lambda: self.radio_sel("menu"))
         btn1.grid(row=4, column=0)
         
-        btn2 = tk.Radiobutton(root, text="Dimensioned circulation", padx=20, variable=self.circ_choice, value=2, command=lambda: self.radio_sel("menu"))
-        btn2.grid(row=4, column=1)
+        # btn2 = tk.Radiobutton(root, text="Dimensioned circulation", padx=20, variable=self.circ_choice, value=2, command=lambda: self.radio_sel("menu"))
+        # btn2.grid(row=4, column=1)
 
         btn3 = tk.Radiobutton(root, text="Remove corridors", padx=20, variable=self.circ_choice, value=3, command=lambda: self.radio_sel("menu"))
         btn3.grid(row=4, column=2)
