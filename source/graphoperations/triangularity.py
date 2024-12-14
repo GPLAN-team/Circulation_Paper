@@ -254,7 +254,7 @@ def triangulate(matrix,bcn_edges_added,pos):
         positions: A list containing coordinates of planar embedding.
 
     """
-    nxgraph = nx.from_numpy_matrix(matrix)
+    nxgraph = nx.from_numpy_array(matrix)
     if(not bcn_edges_added):
         positions = {i:pos[i] for i in range(len(pos))}
     else:

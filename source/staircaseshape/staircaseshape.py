@@ -1,7 +1,7 @@
 from pickle import FALSE, TRUE
 from random import randint
-from networkx.algorithms.centrality.betweenness_subset import betweenness_centrality_source
-from networkx.algorithms.core import core_number
+# from networkx.algorithms.centrality.betweenness_subset import betweenness_centrality_source
+# from networkx.algorithms.core import core_number
 from networkx.classes import graph
 from source.floorplangen import rdg as rdg
 import source.boundary.cip as cip

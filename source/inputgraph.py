@@ -546,7 +546,7 @@ class InputGraph:
         matrix = copy.deepcopy(self.matrix)
         matrix = np.array(matrix)
         nodes = len(matrix)
-        nxgraph = nx.from_numpy_matrix(matrix)
+        nxgraph = nx.from_numpy_array(matrix)
         cutvertices = bcn.get_cutvertices(nxgraph)
         components = onc.get_biconnected_components(nxgraph)
         adj_mats = []
